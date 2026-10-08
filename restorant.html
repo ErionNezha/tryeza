@@ -77,9 +77,9 @@ function buildPage() {
   if (rest.zona.some(z => /tarrac|tarracë|verand|kopsht|verore/i.test(z.emer)))
     pikat.push(["Tarracë / ambient i hapur", "Shijoje vaktin nën qiell të hapur"]);
   if (rest.maxPersona) pikat.push(["Deri në " + rest.maxPersona + " persona", "Ideale edhe për grupe e festa"]);
-  pikat.push(["Parkim: " + rest.parking, ""]);
+  if (rest.parking) pikat.push(["Parkim: " + rest.parking, ""]);
   pikat.push(["Kuzhina: " + rest.kuzhina.join(", "), "Çmim mesatar " + TRY.cmimTxt(rest.cmim)]);
-  while (pikat.length < 4) pikat.push(["Dress code: " + rest.dressCode, ""]);
+  while (pikat.length < 4 && rest.dressCode) pikat.push(["Dress code: " + rest.dressCode, ""]);
 
   /* ---------- menu e grupuar ---------- */
   const kats = [];
@@ -191,10 +191,10 @@ function buildPage() {
           ${(rest.telefon && digits) ? `<div><dt>Telefoni</dt><dd><a href="tel:+${digits}" style="color:var(--gold)">${TRY.esc(rest.telefon)}</a></dd></div>` : ""}
           <div><dt>Orari</dt><dd>${Object.entries(rest.orare).map(([d, o]) => `${TRY.esc(d)}: <b>${TRY.esc(o)}</b>`).join("<br>")}</dd></div>
           <div><dt>Kuzhina</dt><dd>${rest.kuzhina.map(TRY.esc).join(", ")}</dd></div>
-          <div><dt>Stili</dt><dd>${TRY.esc(rest.stil)}</dd></div>
-          <div><dt>Dress code</dt><dd>${TRY.esc(rest.dressCode)}</dd></div>
-          <div><dt>Parkimi</dt><dd>${TRY.esc(rest.parking)}</dd></div>
-          <div><dt>Pagesa</dt><dd>${rest.pagesa.map(TRY.esc).join(", ")}</dd></div>
+          ${rest.stil ? `<div><dt>Stili</dt><dd>${TRY.esc(rest.stil)}</dd></div>` : ""}
+          ${rest.dressCode ? `<div><dt>Dress code</dt><dd>${TRY.esc(rest.dressCode)}</dd></div>` : ""}
+          ${rest.parking ? `<div><dt>Parkimi</dt><dd>${TRY.esc(rest.parking)}</dd></div>` : ""}
+          ${(rest.pagesa && rest.pagesa.length) ? `<div><dt>Pagesa</dt><dd>${rest.pagesa.map(TRY.esc).join(", ")}</dd></div>` : ""}
           ${rest.maxPersona ? `<div><dt>Max persona</dt><dd>Deri në ${rest.maxPersona} persona</dd></div>` : ""}
           ${rest.ratingBurim ? `<div><dt>Vlerësimi</dt><dd>Nga ${TRY.esc(rest.ratingBurim)}</dd></div>` : ""}
         </dl>
