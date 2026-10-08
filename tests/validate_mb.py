@@ -37,9 +37,9 @@ with sync_playwright() as p:
     tot = int(re.search(r"([\d,]+)", tot_txt).group(1).replace(",", ""))
     ok("live total correct (3 dishes)", tot == exp * 2, f"exp={exp*2} got={tot}")
     ok("per-person total", re.sub(r"\D", "", pg.locator("#mbPerP").inner_text()) == str(exp))
-    cta_digits = re.sub(r"\D", "", pg.locator("#mbCta").inner_text())
-    ok("cta shows total", cta_digits == str(exp * 2), f"cta={pg.locator('#mbCta').inner_text()!r}")
-    ok("table filled with 3 emojis", pg.locator("#mbTableDishes text").count() == 3)
+    cta_txt = pg.locator("#mbCta").inner_text()
+    ok("cta shows fire label (firing flow)", "kuzhin" in cta_txt.lower(), f"cta={cta_txt!r}")
+    ok("table filled with 3 dishes", pg.locator("#mbTableDishes .mb-tdish").count() == 3)
     ok("preview list 3 items", pg.locator(".mb-item").count() == 3)
     pg.screenshot(path="screenshots/mb-01-added.png")
 
@@ -62,10 +62,13 @@ with sync_playwright() as p:
     ok("editorial suggestions shown", pg.locator(".mb-dish").count() == 15, f"count={pg.locator('.mb-dish').count()}")
     ok("editorial label clear", "Sugjerime të TRYEZA" in pg.content() and "jo menu zyrtare" in pg.content())
 
-    # 7. CTA -> restorant.html, menu in booking summary
+    # 7. CTA -> firing -> order screen -> "Shto te rezervimi" navigates, menu in booking summary
     pg.locator(".mb-add").first.click(); pg.wait_for_timeout(900)
-    pg.locator("#mbCta").click(); pg.wait_for_timeout(1200)
-    ok("cta navigates to restaurant", "restorant.html?id=tirana-mullixhiu" in pg.url)
+    pg.locator("#mbCta").click()
+    pg.wait_for_selector("#mbOrderOv.open", timeout=8000)
+    ok("cta opens order screen (firing flow)", pg.locator("#mbOrderOv.open").count() == 1)
+    pg.locator("#mbOrderGo").click(); pg.wait_for_timeout(1200)
+    ok("order-go navigates to restaurant", "restorant.html?id=tirana-mullixhiu" in pg.url)
     pg.wait_for_timeout(1500)
     summ = pg.locator("#bkSummary").inner_text()
     ok("menu in booking summary", "Menuja:" in summ and "L/person" in summ, summ[:120])

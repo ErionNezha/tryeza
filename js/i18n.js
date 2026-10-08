@@ -261,6 +261,16 @@ sq: {
 "mb.shareMenu":"🍽️ Menuja jonë: {items} ({total} L/person).",
 "mb.builderBtn":"🍽️ Krijo menunë e darkës","mb.builderHint":"Zgjidh pjatat për darkën — çmimi llogaritet live.",
 "mb.stepBar":"Hapi {s} nga {t}",
+"mb.resT":"Detajet e rezervimit",
+"mb.resDate":"Data",
+"mb.resTime":"Ora",
+"mb.resName":"Emri",
+"mb.resNamePh":"Emri yt",
+"mb.waAll":"📲 Dërgo gjithçka me WhatsApp",
+"mb.errName":"Shkruaj emrin (të paktën 3 shkronja)",
+"mb.errDate":"Zgjidh një datë të vlefshme (sot ose më vonë)",
+"mb.waSaved":"Rezervimi {code} u ruajt — po hapet WhatsApp-i… 📲",
+"mb.waMsg":"🍽️ Rezervim i ri nga TRYEZA — {rest}!\nKodi: {code}\n📅 {data} · 🕗 {ora}\n👥 {persona} persona\n🙋 {emer}\n\n— Menuja —\n{menu}\nTotali: {total} L{note}",
 },
 en: {
 "nav.home":"Home","nav.restaurants":"Restaurants","nav.allRest":"All restaurants","nav.cities":"Cities",
@@ -517,6 +527,16 @@ en: {
 "mb.shareMenu":"🍽️ Our menu: {items} ({total} L/person).",
 "mb.builderBtn":"🍽️ Build your dinner menu","mb.builderHint":"Pick the dishes for dinner — price calculated live.",
 "mb.stepBar":"Step {s} of {t}",
+"mb.resT":"Booking details",
+"mb.resDate":"Date",
+"mb.resTime":"Time",
+"mb.resName":"Name",
+"mb.resNamePh":"Your name",
+"mb.waAll":"📲 Send everything via WhatsApp",
+"mb.errName":"Enter your name (at least 3 characters)",
+"mb.errDate":"Choose a valid date (today or later)",
+"mb.waSaved":"Booking {code} saved — opening WhatsApp… 📲",
+"mb.waMsg":"🍽️ New booking from TRYEZA — {rest}!\nCode: {code}\n📅 {date} · 🕗 {time}\n👥 {persona} guests\n🙋 {name}\n\n— Menu —\n{menu}\nTotal: {total} L{note}",
 }};
   const getLang = () => {
     try { const l = localStorage.getItem(LS_KEY); return (l === "en" || l === "sq") ? l : "sq"; }

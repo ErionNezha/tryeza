@@ -116,13 +116,27 @@ if(document.readyState==='complete')ready();else{window.addEventListener('load',
     <label class="mb-kn"><span data-i18n="mb.kitchenNote">Shënim për kuzhinën</span>
       <textarea id="mbKitchen" rows="2" data-i18n-ph="mb.kitchenNotePh" placeholder="p.sh. pa gluten, pak kripë, alergji..."></textarea>
     </label>
+    <div class="mb-res">
+      <h3 data-i18n="mb.resT">Detajet e rezervimit</h3>
+      <div class="mb-res-grid">
+        <label><span data-i18n="mb.resDate">Data</span><input type="date" id="mbResDate"></label>
+        <label><span data-i18n="mb.resTime">Ora</span><select id="mbResTime"></select></label>
+        <label><span data-i18n="mb.guests">Persona</span>
+          <span class="qstep"><button type="button" id="mbResMinus" aria-label="−">−</button><b id="mbResNum">2</b><button type="button" id="mbResPlus" aria-label="+">+</button></span>
+        </label>
+        <label class="full"><span data-i18n="mb.resName">Emri</span><input type="text" id="mbResName" data-i18n-ph="mb.resNamePh" placeholder="Emri yt" autocomplete="name" maxlength="60"></label>
+      </div>
+    </div>
     <div class="mb-totals">
       <div class="row"><span data-i18n="mb.perPerson">për person</span><span id="mbOrderPerP">0 L</span></div>
       <div class="row grand"><span id="mbOrderTotalLbl">Totali</span><b id="mbOrderTotal">0 L</b></div>
     </div>
     <div class="mb-order-btns">
-      <button class="btn btn-ghost" id="mbOrderBack" data-i18n="mb.orderBack">Kthehu</button>
-      <button class="btn btn-gold" id="mbOrderGo"></button>
+      <button class="btn btn-wa btn-block" id="mbWaAll" data-i18n="mb.waAll">📲 Dërgo gjithçka me WhatsApp</button>
+      <div class="mb-order-row">
+        <button class="btn btn-ghost" id="mbOrderBack" data-i18n="mb.orderBack">Kthehu</button>
+        <button class="btn btn-gold" id="mbOrderGo"></button>
+      </div>
     </div>
   </div>
 </div>
@@ -462,6 +476,8 @@ if(!rest){
       bar.innerHTML = "+";
     }
     document.getElementById("gNum").textContent = persona;
+    const rn = document.getElementById("mbResNum");
+    if(rn) rn.textContent = persona;
   }
 
   /* ---------- firing: "Dërgo në kuzhinë 🔥" ---------- */
@@ -531,11 +547,33 @@ if(!rest){
   function openOrder(){
     renderOrderLines();
     document.getElementById("mbKitchen").value = kitchenNote || "";
+    initResFields();
     updateOrderTotals();
     const ov = document.getElementById("mbOrderOv");
     ov.classList.add("open");
     ov.setAttribute("aria-hidden","false");
     document.body.style.overflow = "hidden";
+  }
+  /* ---------- detajet e rezervimit në ekranin e porosisë ---------- */
+  function initResFields(){
+    const d = document.getElementById("mbResDate");
+    d.min = TRY.todayStr(); d.max = TRY.todayStr(60);
+    if(!d.value || d.value < d.min || d.value > d.max) d.value = TRY.todayStr();
+    const t = document.getElementById("mbResTime");
+    if(!t.options.length){
+      t.innerHTML = TRY.SLOTS.map(s=>'<option value="'+s+'"'+(s==="20:00"?" selected":"")+'>'+s+'</option>').join("");
+    }
+    document.getElementById("mbResNum").textContent = persona;
+    /* fshihe butonin WhatsApp nëse restoranti s'ka numër publik */
+    const waBtn = document.getElementById("mbWaAll");
+    if(waBtn) waBtn.style.display = TRY.waLink(rest, "x") ? "" : "none";
+  }
+  function setPersona(n){
+    n = Math.max(1, Math.min(20, n));
+    if(n===persona) return;
+    persona = n;
+    persist(); renderPreview(); renderOrderLines(); updateOrderTotals();
+    document.getElementById("mbResNum").textContent = persona;
   }
   function closeOrder(){
     const ov = document.getElementById("mbOrderOv");
@@ -560,6 +598,47 @@ if(!rest){
     TRY.toast(TRY.t("mb.savedT"));
     setTimeout(()=>{ location.href = "restorant.html?id="+encodeURIComponent(rest.id); }, 450);
   }
+  /* ---------- "Dërgo gjithçka me WhatsApp": rezervim real + wa.me ---------- */
+  function waSendAll(){
+    if(!sel.length){ TRY.toast(TRY.t("mb.ctaEmpty")); return; }
+    const emer = document.getElementById("mbResName").value.trim();
+    const date = document.getElementById("mbResDate").value;
+    const time = document.getElementById("mbResTime").value;
+    if(emer.length < 3){ TRY.toast(TRY.t("mb.errName")); document.getElementById("mbResName").focus(); return; }
+    if(!date || date < TRY.todayStr() || date > TRY.todayStr(60)){ TRY.toast(TRY.t("mb.errDate")); return; }
+    kitchenNote = document.getElementById("mbKitchen").value.trim();
+    persist();
+    const menuItems = sel.map(d=>({emer:d.emer, cmim:+d.cmim||0, kat:d.kat, src:d.src, foto:d.foto||""}));
+    const b = TRY.createBooking({
+      restId: rest.id, restEmer: rest.emer,
+      date: date, time: time, persona: persona,
+      emer: emer, telefon: "", email: "",
+      rasti: "", shenime: kitchenNote,
+      tavolina: [],
+      menu: { items: menuItems, kitchenNote: kitchenNote, editorial: !hasReal },
+      waDirect: true
+    });
+    const en = TRY.lang() === "en";
+    const fmt = v => (+v).toLocaleString("sq-AL");
+    const groups = orderGroups();
+    const menuLines = groups.map(g=>"• "+g.d.emer+" ×"+g.qty+" — "+fmt(g.d.cmim*g.qty)+" L").join("\n");
+    const total = menuItems.reduce((s,d)=>s+d.cmim,0)*persona;
+    const note = kitchenNote ? (en ? "\n📝 Note: "+kitchenNote : "\n📝 Shënim: "+kitchenNote) : "";
+    const msg = TRY.t("mb.waMsg", {
+      rest: rest.emer, code: b.code,
+      data: TRY.fmtDate(date), date: TRY.fmtDate(date),
+      ora: time, time: time,
+      persona: persona, emer: emer, name: emer,
+      menu: menuLines, total: fmt(total), note: note
+    });
+    const url = TRY.waLink(rest, msg);
+    closeOrder();
+    TRY.toast(TRY.t("mb.waSaved",{code:b.code}));
+    if(url) window.open(url, "_blank", "noopener");
+  }
+  document.getElementById("mbWaAll").addEventListener("click", waSendAll);
+  document.getElementById("mbResMinus").addEventListener("click", ()=>setPersona(persona-1));
+  document.getElementById("mbResPlus").addEventListener("click", ()=>setPersona(persona+1));
   document.getElementById("mbCta").addEventListener("click", startFiring);
   document.getElementById("mbBarCta").addEventListener("click", startFiring);
   document.getElementById("mbReset").addEventListener("click", ()=>{

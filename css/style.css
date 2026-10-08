@@ -694,6 +694,21 @@ html[lang="sq"] .desc-note{display:none}
 .mb-kn>span{display:block;font-size:.85rem;color:var(--muted);margin-bottom:.4rem}
 .mb-kn textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;color:#fdfbf7;padding:.7rem .8rem;font:inherit;font-size:.9rem;resize:vertical;box-sizing:border-box}
 .mb-kn textarea:focus{outline:none;border-color:var(--gold)}
-.mb-order-btns{display:flex;gap:.7rem;margin-top:1.15rem}
-.mb-order-btns .btn{flex:1}
+.mb-order-btns{display:flex;gap:.7rem;margin-top:1.15rem;flex-direction:column}
+.mb-order-btns .btn-block{width:100%}
+.mb-order-row{display:flex;gap:.7rem}
+.mb-order-row .btn{flex:1}
+.btn-wa{background:linear-gradient(135deg,#2bbf6a,#189a4c);color:#fff;border:1px solid rgba(255,255,255,.16);box-shadow:0 8px 24px rgba(37,211,102,.25)}
+.btn-wa:hover{filter:brightness(1.1)}
+/* detajet e rezervimit në ekranin e porosisë */
+.mb-res{margin:1.1rem 0 .3rem;padding:1rem;border:1px solid var(--line2);border-radius:14px;background:rgba(197,168,128,.05)}
+.mb-res h3{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.2rem;margin:0 0 .7rem;color:#ecd9b8}
+.mb-res-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.mb-res-grid label{display:block;font-size:.82rem;color:var(--muted);min-width:0}
+.mb-res-grid label>span{display:block;margin-bottom:.35rem}
+.mb-res-grid label.full{grid-column:1/-1}
+.mb-res-grid input,.mb-res-grid select{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;color:#fdfbf7;padding:.62rem .7rem;font:inherit;font-size:.9rem;box-sizing:border-box;min-width:0}
+.mb-res-grid input:focus,.mb-res-grid select:focus{outline:none;border-color:var(--gold)}
+.mb-res-grid select option{background:#16171b;color:#fdfbf7}
+.mb-res-grid .qstep{margin-top:.15rem}
 @media(prefers-reduced-motion:reduce){.mb-fire-ov .fl,.mb-fire-ov p,.mb-tdish.mb-shake{animation:none}.mb-order-ov,.mb-order-card{transition:none}}
