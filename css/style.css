@@ -482,3 +482,25 @@ html[lang="sq"] .desc-note{display:none}
   .brand{font-size:1.3rem}
   .hero-video{min-height:88vh}
 }
+
+/* ================= QA kirurgjikal 2026-10-08 — responsive perfeksionist ================= */
+/* 1. Grid items must shrink below min-content (mësim i njohur: .panel{min-width:0}) —
+      rregullon overflow-in horizontal 674px në restorant.html mobile (tab-et .tabs) */
+.detail-grid>*,.dmain,.booking,.nearby>*,.cities>*,.filters>*,.bk-card>*,
+.foot-grid>*,.stat-grid>*,.steps>*,.search-grid>*,.pikat>*,
+.dish-mini-grid>*,.photo-grid>*,.detail-list>*,.rcard{min-width:0}
+/* 2. Tab-et scroll-ohen brenda, s'e zgjerojnë faqen */
+.tabs{max-width:100%}
+/* 3. Planimetria e tavolinave: mos u fryj me pak tavolina — max-width + qendër */
+.floor svg{max-width:380px;margin:0 auto}
+/* 4. Rreshti share: wrap në mobile */
+.share-row{flex-wrap:wrap}
+/* 5. Përmbledhja e rezervimit: thyaj vargje të gjata */
+.bk-summary{overflow-wrap:anywhere}
+/* 6. Checkbox-i i kushteve: target më i madh, gold */
+#gKushtet{width:18px!important;height:18px;accent-color:#d4af37;flex:none}
+/* 7. Footer links: tap-target më komod në mobile */
+@media(max-width:720px){
+  .foot-grid a{padding:.42rem 0}
+  .bk-actions .btn{margin-bottom:.4rem}
+}
