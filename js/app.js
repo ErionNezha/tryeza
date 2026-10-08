@@ -8,6 +8,7 @@ const TRY = (() => {
     favs: "tryeza.favs.v1",
     sugg: "tryeza.suggestions.v1",
     dashRest: "tryeza.dashrest.v1",
+    newsletter: "tryeza.newsletter.v1",
   };
   const QYTETET = ["Tiranë", "Korçë", "Durrës", "Shkodër"];
   const DITET = ["E diel","E hënë","E martë","E mërkurë","E enjte","E premte","E shtunë"];
@@ -46,11 +47,11 @@ const TRY = (() => {
 
   /* ---------- brand mark ---------- */
   const markSVG = (sz=34) => `<svg class="mark" width="${sz}" height="${sz}" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-    <circle cx="20" cy="20" r="18.5" stroke="#d4af37" stroke-width="1.6"/>
-    <circle cx="20" cy="20" r="14.5" stroke="#d4af37" stroke-width="0.7" opacity="0.55"/>
-    <path d="M20 7 L24 20 L20 33 L16 20 Z" fill="#d4af37"/>
-    <path d="M7 20 L20 16 L33 20 L20 24 Z" fill="#d4af37" opacity="0.75"/>
-    <circle cx="20" cy="20" r="3" fill="#0a0e1a" stroke="#f0d47a" stroke-width="1"/></svg>`;
+    <circle cx="20" cy="20" r="18.5" stroke="#c5a880" stroke-width="1.6"/>
+    <circle cx="20" cy="20" r="14.5" stroke="#c5a880" stroke-width="0.7" opacity="0.55"/>
+    <path d="M20 7 L24 20 L20 33 L16 20 Z" fill="#c5a880"/>
+    <path d="M7 20 L20 16 L33 20 L20 24 Z" fill="#c5a880" opacity="0.75"/>
+    <circle cx="20" cy="20" r="3" fill="#0e0f12" stroke="#ecd9b8" stroke-width="1"/></svg>`;
 
   /* ---------- generative cover art ---------- */
   function coverSVG(seed, w=800, h=420){
@@ -236,6 +237,8 @@ const TRY = (() => {
               ${cityLinks}
             </div>
           </div>
+          <a href="index.html#si-funksionon" data-i18n="nav.how">Si Funksionon</a>
+          <a href="index.html#per-bizneset" data-i18n="nav.business">P\u00ebr Bizneset</a>
           <a href="rezervimet.html" data-i18n="nav.mybookings" class="${active==="rezervimet.html"?"active":""}">Rezervimet e mia</a>
           <a href="blog.html" data-i18n="nav.blog" class="${active==="blog.html"?"active":""}">Blog</a>
           <a href="faq.html" data-i18n="nav.faq" class="${active==="faq.html"?"active":""}">FAQ</a>
@@ -253,6 +256,8 @@ const TRY = (() => {
             <a href="index.html" data-i18n="nav.home">Kreu</a>
             <a href="restorante.html" data-i18n="nav.restaurants">Restorante</a>
             <div class="mmenu-cities">${cityLinks}</div>
+            <a href="index.html#si-funksionon" data-i18n="nav.how">Si Funksionon</a>
+            <a href="index.html#per-bizneset" data-i18n="nav.business">P\u00ebr Bizneset</a>
             <a href="rezervimet.html" data-i18n="nav.mybookings">Rezervimet e mia</a>
             <a href="blog.html" data-i18n="nav.blog">Blog</a>
             <a href="faq.html" data-i18n="nav.faq">FAQ</a>
@@ -296,12 +301,34 @@ const TRY = (() => {
             <p style="color:var(--muted);font-size:.9rem;max-width:320px;margin-top:.5rem" data-i18n="footer.tagline">Rezervo tavolin\u00ebn t\u00ebnde n\u00eb restorantet m\u00eb t\u00eb mira t\u00eb Shqip\u00ebris\u00eb \u2014 n\u00eb sekonda, pa telefonata, falas.</p></div>
           <div><h4 data-i18n="footer.discover">Zbulo</h4>${[["restorante.html","footer.allRest","T\u00eb gjitha restorantet"],["restorante.html?qytet=Tiran\u00eb",null,"Tiran\u00eb"],["restorante.html?qytet=Kor\u00e7\u00eb",null,"Kor\u00e7\u00eb"],["restorante.html?qytet=Durr\u00ebs",null,"Durr\u00ebs"],["restorante.html?qytet=Shkod\u00ebr",null,"Shkod\u00ebr"]].map(([u,k,fb])=>`<a href="${u}"${k?` data-i18n="${k}"`:""}>${fb}</a>`).join("")}</div>
           <div><h4 data-i18n="footer.account">Llogaria</h4><a href="rezervimet.html" data-i18n="footer.mybookings">Rezervimet e mia</a><a href="sugjero.html" data-i18n="footer.suggest">Sugjero restorant</a><a href="dashboard.html" data-i18n="footer.dashboard">Paneli i restorantit</a><a href="faq.html" data-i18n="footer.faq">Pyetje t\u00eb shpeshta</a></div>
-          <div><h4 data-i18n="footer.company">Kompania</h4><a href="blog.html" data-i18n="footer.blog">Blog</a><a href="kodi.html" data-i18n="footer.source">Kodi burimor</a><a href="kredite.html" data-i18n="footer.photos">Kredit\u00eb e fotove</a><a href="faq.html#kontakt" data-i18n="footer.contact">Kontakt</a></div>
+          <div><h4 data-i18n="footer.company">Kompania</h4><a href="blog.html" data-i18n="footer.blog">Blog</a><a href="sugjero.html?owner=1" data-i18n="footer.bizReg">Regjistro restorantin t\u00ebnd</a><a href="kodi.html" data-i18n="footer.source">Kodi burimor</a><a href="kredite.html" data-i18n="footer.photos">Kredit\u00eb e fotove</a><a href="faq.html#kontakt" data-i18n="footer.contact">Kontakt</a></div>
+          <div class="foot-news"><h4 data-i18n="nl.title">Oferta n\u00eb email</h4>
+            <p data-i18n="nl.sub">Merr ofertat m\u00eb t\u00eb mira t\u00eb restoranteve \u2014 1 email n\u00eb muaj, pa spam.</p>
+            <form class="nl-form" id="nlForm" novalidate>
+              <input type="email" id="nlEmail" data-i18n-ph="nl.ph" placeholder="Email-i yt" autocomplete="email">
+              <button class="btn btn-gold btn-sm" type="submit" data-i18n="nl.btn">Abonohu</button>
+            </form></div>
         </div>
         <div class="foot-bottom"><span data-i18n="footer.rights">\u00a9 2026 TRYEZA \u2014 T\u00eb gjitha t\u00eb drejtat e rezervuara.</span><span><span data-i18n="footer.createdBy">Krijuar nga</span> <b style="color:var(--gold-lt)">Erion Nezha</b></span></div>
       </div>`;
     }
     if(!$("#toast")){ const t=document.createElement("div"); t.id="toast"; document.body.appendChild(t); }
+    /* newsletter funksional */
+    const nlForm = $("#nlForm");
+    if(nlForm && !nlForm.dataset.bound){
+      nlForm.dataset.bound = "1";
+      nlForm.addEventListener("submit", e => {
+        e.preventDefault();
+        const inp = $("#nlEmail");
+        const em = (inp.value||"").trim().toLowerCase();
+        if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){ inp.classList.add("field-err"); toast(T("nl.err")); return; }
+        inp.classList.remove("field-err");
+        const arr = load(LS.newsletter, []);
+        if(arr.includes(em)){ toast(T("nl.dup")); return; }
+        arr.push(em); save(LS.newsletter, arr);
+        inp.value = ""; toast(T("nl.ok"));
+      });
+    }
     if(typeof I18N!=="undefined") I18N.apply(document);
     initFx();
   }
@@ -311,7 +338,7 @@ const TRY = (() => {
   function initFx(){
     if(fxDone) return; fxDone = true;
     const reduced = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const RV_SEL = "main section, .rcard, .step, .stat, .city-card, .post, .faq-item, .panel, .bk-card, .sugg, .credit-item, .pika, .dish-mini, .stat-grid .stat";
+    const RV_SEL = "main section, .rcard, .lux-card, .step, .stat, .city-card, .post, .faq-item, .panel, .bk-card, .sugg, .credit-item, .pika, .dish-mini, .stat-grid .stat";
     const io = ("IntersectionObserver" in window && !reduced) ? new IntersectionObserver(es => {
       es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
     }, {threshold:.08, rootMargin:"0px 0px -4% 0px"}) : null;

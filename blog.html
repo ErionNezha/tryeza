@@ -13,65 +13,56 @@
 .article-cover svg{width:100%;height:auto;display:block}
 </style>
 <style>
-#tryLoader{position:fixed;inset:0;z-index:2000}
-#tryLoader .ld-curtain{position:absolute;top:0;bottom:0;width:50.6%;background:#05080f;transition:transform .85s cubic-bezier(.72,0,.28,1)}
-#tryLoader .ld-curtain.left{left:0;border-right:1px solid rgba(212,175,55,.28)}
-#tryLoader .ld-curtain.right{right:0;border-left:1px solid rgba(212,175,55,.28)}
-#tryLoader .ld-curtain::before{content:"";position:absolute;inset:0;background:url("img/qilim.svg") center/520px repeat;opacity:0;animation:ldqilim 2s ease .35s forwards;-webkit-mask-image:radial-gradient(100% 100% at 50% 42%,#000 12%,transparent 58%);mask-image:radial-gradient(100% 100% at 50% 42%,#000 12%,transparent 58%)}
-@keyframes ldqilim{to{opacity:.04}}
-#tryLoader.curtain .ld-curtain.left{transform:translateX(-102%)}
-#tryLoader.curtain .ld-curtain.right{transform:translateX(102%)}
-#tryLoader .ld-stage{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;transition:opacity .4s ease,transform .4s ease}
-#tryLoader.curtain .ld-stage{opacity:0;transform:scale(1.07)}
-#tryLoader.done{pointer-events:none}
-#tryLoader .ld-inner{text-align:center;padding:0 1rem}
-#tryLoader .ld-mark{width:104px;height:104px;margin:0 auto 1rem;position:relative;overflow:hidden;border-radius:50%}
-#tryLoader .ld-mark svg{width:100%;height:100%;display:block}
-#tryLoader .ld-mark .draw{stroke-dasharray:140;stroke-dashoffset:140;animation:lddraw 1.05s cubic-bezier(.6,0,.3,1) forwards}
-#tryLoader .ld-mark .draw.d2{animation-delay:.14s}#tryLoader .ld-mark .draw.d3{animation-delay:.28s}
+#tryLoader{position:fixed;inset:0;z-index:2000;background:#0e0f12;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s}
+#tryLoader.done{opacity:0;visibility:hidden;pointer-events:none}
+#tryLoader .ld-inner{text-align:center;padding:0 1.5rem}
+#tryLoader .ld-cloche{width:148px;height:118px;margin:0 auto .9rem}
+#tryLoader .ld-cloche svg{width:100%;height:100%;overflow:visible}
+#tryLoader .draw{stroke-dasharray:430;stroke-dashoffset:430;animation:lddraw 1.05s ease forwards}
+#tryLoader .draw.d2{animation-delay:.16s}#tryLoader .draw.d3{animation-delay:.32s}#tryLoader .draw.d4{animation-delay:.48s}
 @keyframes lddraw{to{stroke-dashoffset:0}}
-#tryLoader .ld-mark::after{content:"";position:absolute;top:-25%;bottom:-25%;width:42%;left:-65%;background:linear-gradient(100deg,transparent,rgba(240,212,122,.55),transparent);transform:skewX(-18deg);animation:ldsweep 1.3s ease .95s forwards}
-@keyframes ldsweep{to{left:135%}}
-#tryLoader .ld-name{font-family:Georgia,'Times New Roman',serif;font-size:2rem;letter-spacing:.42em;padding-left:.42em;color:#f0d47a;opacity:0;animation:ldfadeup .8s ease .5s forwards}
-@keyframes ldfadeup{from{opacity:0;transform:translateY(10px);letter-spacing:.6em}to{opacity:1;transform:none}}
-#tryLoader .ld-tag{color:#7d86a1;font-size:.76rem;letter-spacing:.24em;text-transform:uppercase;margin-top:.55rem;min-height:1.3em}
-#tryLoader .ld-ch{display:inline-block;opacity:0;animation:ldch .45s ease forwards;animation-delay:calc(.75s + var(--i)*30ms)}
-@keyframes ldch{from{opacity:0;transform:translateY(8px);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
-#tryLoader .ld-bar{width:230px;max-width:62vw;height:2px;background:rgba(212,175,55,.16);margin:1.35rem auto .5rem;border-radius:2px;overflow:hidden}
-#tryLoader .ld-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#9c7c24,#f0d47a)}
-#tryLoader .ld-pct{font-size:.7rem;letter-spacing:.32em;padding-left:.32em;color:#7d86a1}
+#tryLoader .steam{animation:ldsteam 1.9s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+#tryLoader .steam.s2{animation-delay:.55s}
+@keyframes ldsteam{0%,100%{opacity:.15;transform:translateY(3px)}50%{opacity:.9;transform:translateY(-3px)}}
+#tryLoader .ld-name{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.9rem;letter-spacing:.42em;padding-left:.42em;color:#ecd9b8}
+#tryLoader .ld-tag{color:#a0a0a8;font-size:.82rem;letter-spacing:.14em;margin-top:.65rem;animation:ldpulse 1.7s ease-in-out infinite}
+@keyframes ldpulse{0%,100%{opacity:.5}50%{opacity:1}}
+#tryLoader .ld-bar{width:210px;max-width:60vw;height:2px;background:rgba(197,168,128,.18);margin:1.25rem auto 0;border-radius:2px;overflow:hidden}
+#tryLoader .ld-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a8895e,#ecd9b8)}
 @media (prefers-reduced-motion:reduce){
-#tryLoader .ld-mark .draw{animation:none;stroke-dashoffset:0}
-#tryLoader .ld-mark::after,#tryLoader .ld-curtain::before{display:none}
-#tryLoader .ld-name{animation:none;opacity:1}
-#tryLoader .ld-ch{animation:none;opacity:1}
-#tryLoader .ld-curtain{transition:opacity .3s}
-#tryLoader.curtain .ld-curtain{transform:none;opacity:0}
+#tryLoader .draw{animation:none;stroke-dashoffset:0}
+#tryLoader .steam,#tryLoader .ld-tag{animation:none;opacity:1}
 }
 </style></head>
-<body><div id="tryLoader" aria-hidden="true"><div class="ld-curtain left"></div><div class="ld-curtain right"></div><div class="ld-stage"><div class="ld-inner">
-<div class="ld-mark"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle class="draw" cx="20" cy="20" r="18" stroke="#d4af37" stroke-width="1.4"/><path class="draw d2" d="M20 8 L24 20 L20 32 L16 20 Z" stroke="#f0d47a" stroke-width="1.4"/><path class="draw d3" d="M8 20 L20 16 L32 20 L20 24 Z" stroke="#d4af37" stroke-width="1" opacity=".7"/></svg></div>
+<body><div id="tryLoader" aria-hidden="true"><div class="ld-inner">
+<div class="ld-cloche"><svg viewBox="0 0 120 96" fill="none" aria-hidden="true">
+<path class="steam s1" d="M44 32 q5 -7 0 -14 q-5 -7 0 -13" stroke="#c5a880" stroke-width="1.6" stroke-linecap="round"/>
+<path class="steam s2" d="M76 32 q-5 -7 0 -14 q5 -7 0 -13" stroke="#c5a880" stroke-width="1.6" stroke-linecap="round"/>
+<path class="draw" d="M22 72 A38 38 0 0 1 98 72" stroke="#c5a880" stroke-width="1.8" stroke-linecap="round"/>
+<line class="draw d2" x1="14" y1="72" x2="106" y2="72" stroke="#c5a880" stroke-width="1.8" stroke-linecap="round"/>
+<circle class="draw d3" cx="60" cy="28" r="4" stroke="#ecd9b8" stroke-width="1.6"/>
+<line class="draw d3" x1="60" y1="32" x2="60" y2="37" stroke="#ecd9b8" stroke-width="1.6"/>
+<ellipse class="draw d4" cx="60" cy="81" rx="50" ry="8" stroke="#a8895e" stroke-width="1.4"/>
+<g class="draw d4" stroke="#c5a880" stroke-width="1.5" stroke-linecap="round">
+<line x1="7" y1="52" x2="7" y2="68"/><line x1="3" y1="52" x2="3" y2="60"/><line x1="7" y1="52" x2="7" y2="60"/><line x1="11" y1="52" x2="11" y2="60"/><line x1="3" y1="60" x2="11" y2="60"/>
+</g>
+<g class="draw d4" stroke="#c5a880" stroke-width="1.5" stroke-linecap="round">
+<line x1="113" y1="52" x2="113" y2="68"/><path d="M113 52 L117 52 L115 40 Z" fill="#c5a880" stroke="none" opacity=".85"/>
+</g>
+</svg></div>
 <div class="ld-name">TRYEZA</div>
-<div class="ld-tag" data-i18n="loader.tag" data-ld-letters>Rezervo tavolinën tënde</div>
+<div class="ld-tag" data-i18n="loader.tag2">Po bëjmë gati tavolinën tënde...</div>
 <div class="ld-bar"><i id="ldFill"></i></div>
-<div class="ld-pct"><span id="ldPct">0</span>%</div>
-</div></div></div>
+</div></div>
 <script>(function(){var el=document.getElementById('tryLoader');if(!el)return;
 function kill(){if(el.parentNode)el.parentNode.removeChild(el)}
 if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){kill();return}
-var tag=el.querySelector('[data-ld-letters]');
-function split(){if(!tag)return;var t=tag.textContent;
-if(tag.dataset.txt===t&&tag.querySelector('.ld-ch'))return;
-tag.dataset.txt=t;tag.setAttribute('aria-label',t);tag.textContent='';
-Array.prototype.forEach.call(t,function(ch,i){var s=document.createElement('span');s.className='ld-ch';s.style.setProperty('--i',i);s.textContent=(ch===' '?'\u00a0':ch);tag.appendChild(s);});}
-split();
-var fill=document.getElementById('ldFill'),pct=document.getElementById('ldPct'),t0=performance.now(),DUR=1350;
-function tick(now){var p=Math.min(1,(now-t0)/DUR),e=1-Math.pow(1-p,3),v=Math.round(e*100);
-if(fill)fill.style.width=v+'%';if(pct)pct.textContent=v;if(p<1)requestAnimationFrame(tick);}
+var fill=document.getElementById('ldFill'),t0=performance.now(),DUR=1300;
+function tick(now){var p=Math.min(1,(now-t0)/DUR),e=1-Math.pow(1-p,3);
+if(fill)fill.style.width=Math.round(e*100)+'%';if(p<1)requestAnimationFrame(tick);}
 requestAnimationFrame(tick);
-var exited=false,t0b=Date.now(),MINT=1350;
-function exit(){if(exited)return;exited=true;split();
-el.classList.add('done');el.classList.add('curtain');setTimeout(kill,1000);}
+var exited=false,t0b=Date.now(),MINT=1400;
+function exit(){if(exited)return;exited=true;el.classList.add('done');setTimeout(kill,750);}
 function ready(){setTimeout(exit,Math.max(0,MINT-(Date.now()-t0b)));}
 if(document.readyState==='complete')ready();else{window.addEventListener('load',ready);setTimeout(ready,5000);}})();</script>
 <header class="site"></header>
