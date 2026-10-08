@@ -4,51 +4,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TRYEZA — Kodi burimor</title>
+<title data-i18n="pg.kodi">TRYEZA — Kodi burimor</title>
 <meta name="description" content="Kodi burimor i platformës TRYEZA — shfleto, kopjo dhe mëso si është ndërtuar.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+<style>
+#tryLoader{position:fixed;inset:0;z-index:2000;background:#05080f;display:flex;align-items:center;justify-content:center;transition:opacity .55s ease}
+#tryLoader.done{opacity:0;pointer-events:none}
+#tryLoader .ld-inner{text-align:center;padding:0 1rem}
+#tryLoader .ld-mark{width:84px;height:84px;margin:0 auto .9rem}
+#tryLoader .ld-name{font-family:Georgia,'Times New Roman',serif;font-size:1.85rem;letter-spacing:.34em;padding-left:.34em;color:#f0d47a}
+#tryLoader .ld-tag{color:#7d86a1;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;margin-top:.4rem}
+#tryLoader .ld-bar{width:210px;max-width:60vw;height:2px;background:rgba(212,175,55,.18);margin:1.3rem auto 0;border-radius:2px;overflow:hidden}
+#tryLoader .ld-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#9c7c24,#f0d47a);animation:ldfill 1.25s ease forwards}
+@keyframes ldfill{to{width:100%}}
+#tryLoader .ld-mark circle,#tryLoader .ld-mark path{stroke-dasharray:130;stroke-dashoffset:130;animation:lddraw 1.15s ease forwards}
+#tryLoader .ld-mark path:nth-of-type(2){animation-delay:.18s}
+@keyframes lddraw{to{stroke-dashoffset:0}}
+</style></head>
+<body><div id="tryLoader" aria-hidden="true"><div class="ld-inner">
+<svg class="ld-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="18" stroke="#d4af37" stroke-width="1.4"/><path d="M20 8 L24 20 L20 32 L16 20 Z" stroke="#f0d47a" stroke-width="1.4"/><path d="M8 20 L20 16 L32 20 L20 24 Z" stroke="#d4af37" stroke-width="1" opacity=".7"/></svg>
+<div class="ld-name">TRYEZA</div>
+<div class="ld-tag" data-i18n="loader.tag">Rezervo tavolinën tënde</div>
+<div class="ld-bar"><span></span></div>
+</div></div>
+<script>(function(){var el=document.getElementById('tryLoader');if(!el)return;var t0=Date.now();function done(){if(el.classList.contains('done'))return;var w=Math.max(0,1250-(Date.now()-t0));setTimeout(function(){el.classList.add('done');setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},650)},w)}if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){if(el.parentNode)el.parentNode.removeChild(el);return}if(document.readyState==='complete'){done()}else{window.addEventListener('load',done);setTimeout(done,4500)}})();</script>
 <header class="site"></header>
 <main class="wrap">
   <div class="page-head">
-    <span class="eyebrow">Transparencë</span>
-    <h1>Kodi burimor</h1>
-    <p>TRYEZA është ndërtuar hapur. Shfleto çdo file, kopjo copëza kodi dhe shiko si funksionon platforma — pa fshehtësi.</p>
+    <span class="eyebrow" data-i18n="kc.eyebrow">Transparencë</span>
+    <h1 data-i18n="kc.h1">Kodi burimor</h1>
+    <p data-i18n="kc.sub">TRYEZA është ndërtuar hapur. Shfleto çdo file, kopjo copëza kodi dhe shiko si funksionon platforma — pa fshehtësi.</p>
   </div>
   <section style="padding-top:.4rem">
     <div style="display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.6rem">
-      <button class="btn btn-gold btn-sm" id="showAll">Shfaq të gjitha</button>
-      <a class="btn btn-ghost btn-sm" href="https://github.com/erionnezha/tryeza" target="_blank" rel="noopener">↗ Hap në GitHub</a>
+      <button class="btn btn-gold btn-sm" id="showAll" data-i18n="kc.showAll">Shfaq të gjitha</button>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/erionnezha/tryeza" target="_blank" rel="noopener" data-i18n="kc.github">↗ Hap në GitHub</a>
     </div>
     <div id="fileList"></div>
-    <p class="hint" style="text-align:center;margin-top:1rem">Ngjyrosja e sintaksës bëhet me një highlighter të brendshëm JavaScript — pa libra të jashtëm.</p>
+    <p class="hint" style="text-align:center;margin-top:1rem" data-i18n="kc.note">Ngjyrosja e sintaksës bëhet me një highlighter të brendshëm JavaScript — pa libra të jashtëm.</p>
   </section>
 </main>
 <footer class="site"></footer>
 <script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 <script>
 "use strict";
 TRY.renderChrome("kodi.html");
 
 const FILES = [
-  ["index.html", "Faqja kryesore"],
-  ["restorante.html", "Lista e restoranteve"],
-  ["restorant.html", "Faqja e restorantit + rezervimi"],
-  ["rezervimet.html", "Rezervimet e mia"],
-  ["sugjero.html", "Sugjero restorant"],
-  ["dashboard.html", "Paneli i restorantit (demo)"],
-  ["blog.html", "Blogu"],
-  ["faq.html", "Pyetje të shpeshta"],
-  ["kodi.html", "Kjo faqe"],
-  ["css/style.css", "Stilet (design system)"],
-  ["js/app.js", "Motori i përbashkët"],
-  ["js/data.js", "Katalogu i restoranteve"]
+  ["index.html", TRY.t("kc.d1")],
+  ["restorante.html", TRY.t("kc.d2")],
+  ["restorant.html", TRY.t("kc.d3")],
+  ["rezervimet.html", TRY.t("kc.d4")],
+  ["sugjero.html", TRY.t("kc.d5")],
+  ["dashboard.html", TRY.t("kc.d6")],
+  ["blog.html", TRY.t("kc.d7")],
+  ["faq.html", TRY.t("kc.d8")],
+  ["kodi.html", TRY.t("kc.d9")],
+  ["css/style.css", TRY.t("kc.d10")],
+  ["js/app.js", TRY.t("kc.d11")],
+  ["js/data.js", TRY.t("kc.d12")]
 ];
 const cache = {};
 
@@ -84,16 +101,14 @@ function renderBody(file, body){
     body.innerHTML = "<pre>" + highlight(cache[f]) + "</pre>";
     return;
   }
-  body.innerHTML = '<p class="hint">Po ngarkohet…</p>';
+  body.innerHTML = `<p class="hint">${TRY.t("kc.loading")}</p>`;
   fetchFile(f).then(txt => {
     if(body.dataset.loaded === f) body.innerHTML = "<pre>" + highlight(txt) + "</pre>";
   }).catch(() => {
     if(body.dataset.loaded === f){
       body.innerHTML = `<div class="empty" style="border:none;padding:1.6rem">
         <div class="big">📂</div>
-        <p>Kodi i <b>${esc(f)}</b> s'u ngarkua dot — ka gjasa faqja po hapet si <i>file://</i> dhe shfletuesi e bllokon <i>fetch</i>-in lokal.<br>
-        Hapeni përmes një serveri lokal (<i> p.sh. <b>npx serve</b></i>) ose shikojeni në
-        <a href="https://github.com/erionnezha/tryeza" target="_blank" rel="noopener" style="color:var(--gold)">GitHub</a>.</p>
+        <p>${TRY.t("kc.loadFailT",{f:esc(f)}).replace("{link}",`<a href="https://github.com/erionnezha/tryeza" target="_blank" rel="noopener" style="color:var(--gold)">GitHub</a>`)}</p>
       </div>`;
     }
   });
@@ -105,11 +120,11 @@ list.innerHTML = FILES.map(([f, desc], i) => `
     <div class="code-head">
       <span><b>${esc(f)}</b> <span style="color:var(--muted2)">— ${esc(desc)}</span></span>
       <span style="display:flex;gap:.4rem">
-        <button data-show="${i}">Shfaq</button>
-        <button data-copy="${i}">Kopjo</button>
+        <button data-show="${i}">${TRY.t("kc.show")}</button>
+        <button data-copy="${i}">${TRY.t("kc.copy")}</button>
       </span>
     </div>
-    <div class="code-body" data-body="${i}"><p class="hint">Kliko “Shfaq” për të ngarkuar kodin e këtij file-i.</p></div>
+    <div class="code-body" data-body="${i}"><p class="hint">${TRY.t("kc.clickShow")}</p></div>
   </div>`).join("");
 
 list.addEventListener("click", async e => {
@@ -119,7 +134,7 @@ list.addEventListener("click", async e => {
     const i = +sh.dataset.show, f = FILES[i][0];
     const body = list.querySelector(`[data-body="${i}"]`);
     body.dataset.loaded = f;
-    sh.textContent = "Rifresko";
+    sh.textContent = TRY.t("kc.refresh");
     renderBody({ f }, body);
   } else if(cp){
     const i = +cp.dataset.copy, f = FILES[i][0];
@@ -131,9 +146,9 @@ list.addEventListener("click", async e => {
         ta.value = txt; document.body.appendChild(ta); ta.select();
         document.execCommand("copy"); ta.remove();
       }
-      TRY.toast(`<b>${esc(f)}</b> u kopjua`);
+      TRY.toast(`<b>${esc(f)}</b> ${TRY.t("kc.copied")}`);
     } catch {
-      TRY.toast("S'u kopjua dot — file-i s'u ngarkua");
+      TRY.toast(TRY.t("kc.copyFail"));
     }
   }
 });
@@ -144,9 +159,9 @@ TRY.$("#showAll").addEventListener("click", () => {
     body.dataset.loaded = f;
     renderBody({ f }, body);
     const sh = list.querySelector(`button[data-show="${i}"]`);
-    if(sh) sh.textContent = "Rifresko";
+    if(sh) sh.textContent = TRY.t("kc.refresh");
   });
-  TRY.toast("Po ngarkohen të gjitha file-t…");
+  TRY.toast(TRY.t("kc.showAllToast"));
 });
 </script>
 </body>

@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <!-- Created by Erion Nezha — © 2026 All rights reserved -->
 <html lang="sq"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TRYEZA — Restorantet</title>
+<title data-i18n="pg.restorante">TRYEZA — Restorantet</title>
 <meta name="description" content="Shfleto të gjitha restorantet partnere të TRYEZA-s në Tiranë, Korçë, Durrës dhe Shkodër. Filtro sipas kuzhinës, çmimit dhe vlerësimit, dhe shiko disponueshmërinë në kohë reale.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 8 L24 20 L20 32 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <style>
 .slotbadge{position:absolute;top:.65rem;left:50%;transform:translateX(-50%);z-index:3;
@@ -15,57 +13,76 @@
 .slotctx{display:inline-block;margin-bottom:1rem;font-size:.88rem;color:var(--muted);
   border:1px solid var(--line2);border-radius:999px;padding:.45rem 1.1rem;background:rgba(212,175,55,.06)}
 .slotctx b{color:var(--gold-lt)}
+</style><style>
+#tryLoader{position:fixed;inset:0;z-index:2000;background:#05080f;display:flex;align-items:center;justify-content:center;transition:opacity .55s ease}
+#tryLoader.done{opacity:0;pointer-events:none}
+#tryLoader .ld-inner{text-align:center;padding:0 1rem}
+#tryLoader .ld-mark{width:84px;height:84px;margin:0 auto .9rem}
+#tryLoader .ld-name{font-family:Georgia,'Times New Roman',serif;font-size:1.85rem;letter-spacing:.34em;padding-left:.34em;color:#f0d47a}
+#tryLoader .ld-tag{color:#7d86a1;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;margin-top:.4rem}
+#tryLoader .ld-bar{width:210px;max-width:60vw;height:2px;background:rgba(212,175,55,.18);margin:1.3rem auto 0;border-radius:2px;overflow:hidden}
+#tryLoader .ld-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#9c7c24,#f0d47a);animation:ldfill 1.25s ease forwards}
+@keyframes ldfill{to{width:100%}}
+#tryLoader .ld-mark circle,#tryLoader .ld-mark path{stroke-dasharray:130;stroke-dashoffset:130;animation:lddraw 1.15s ease forwards}
+#tryLoader .ld-mark path:nth-of-type(2){animation-delay:.18s}
+@keyframes lddraw{to{stroke-dashoffset:0}}
 </style></head>
-<body><header class="site"></header><main>
+<body><div id="tryLoader" aria-hidden="true"><div class="ld-inner">
+<svg class="ld-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="18" stroke="#d4af37" stroke-width="1.4"/><path d="M20 8 L24 20 L20 32 L16 20 Z" stroke="#f0d47a" stroke-width="1.4"/><path d="M8 20 L20 16 L32 20 L20 24 Z" stroke="#d4af37" stroke-width="1" opacity=".7"/></svg>
+<div class="ld-name">TRYEZA</div>
+<div class="ld-tag" data-i18n="loader.tag">Rezervo tavolinën tënde</div>
+<div class="ld-bar"><span></span></div>
+</div></div>
+<script>(function(){var el=document.getElementById('tryLoader');if(!el)return;var t0=Date.now();function done(){if(el.classList.contains('done'))return;var w=Math.max(0,1250-(Date.now()-t0));setTimeout(function(){el.classList.add('done');setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},650)},w)}if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){if(el.parentNode)el.parentNode.removeChild(el);return}if(document.readyState==='complete'){done()}else{window.addEventListener('load',done);setTimeout(done,4500)}})();</script><header class="site"></header><main>
 <div class="wrap">
   <div class="page-head">
-    <span class="eyebrow">Shfleto</span>
-    <h1>Restorantet</h1>
-    <p>Gjej vendin perfekt për darkën tënde — filtro sipas qytetit, kuzhinës, çmimit dhe vlerësimit.</p>
+    <span class="eyebrow" data-i18n="lst.eyebrow">Shfleto</span>
+    <h1 data-i18n="lst.h1">Restorantet</h1>
+    <p data-i18n="lst.sub">Gjej vendin perfekt për darkën tënde — filtro sipas qytetit, kuzhinës, çmimit dhe vlerësimit.</p>
   </div>
 
   <form class="filters" id="filters" onsubmit="return false">
     <div>
-      <label for="fltQ">Kërko</label>
-      <input type="search" id="fltQ" placeholder="Emër, lagje, kuzhinë…" autocomplete="off">
+      <label for="fltQ" data-i18n="flt.search">Kërko</label>
+      <input type="search" id="fltQ" data-i18n-ph="flt.searchPh" placeholder="Emër, lagje, kuzhinë…" autocomplete="off">
     </div>
     <div>
-      <label for="fltQytet">Qyteti</label>
+      <label for="fltQytet" data-i18n="flt.city">Qyteti</label>
       <select id="fltQytet"></select>
     </div>
     <div>
-      <label for="fltKuzhine">Kuzhina</label>
+      <label for="fltKuzhine" data-i18n="flt.cuisine">Kuzhina</label>
       <select id="fltKuzhine"></select>
     </div>
     <div>
-      <label for="fltCmim">Çmimi</label>
+      <label for="fltCmim" data-i18n="flt.price">Çmimi</label>
       <select id="fltCmim">
-        <option value="">Të gjitha</option>
-        <option value="1">€ — Ekonomik</option>
-        <option value="2">€€ — Mesatar</option>
-        <option value="3">€€€ — Premium</option>
+        <option value="" data-i18n="flt.all">Të gjitha</option>
+        <option value="1" data-i18n="flt.p1">€ — Ekonomik</option>
+        <option value="2" data-i18n="flt.p2">€€ — Mesatar</option>
+        <option value="3" data-i18n="flt.p3">€€€ — Premium</option>
       </select>
     </div>
     <div>
-      <label for="fltRating">Vlerësimi</label>
+      <label for="fltRating" data-i18n="flt.rating">Vlerësimi</label>
       <select id="fltRating">
-        <option value="">Të gjitha</option>
-        <option value="3.5">3.5+ yje</option>
-        <option value="4">4.0+ yje</option>
-        <option value="4.5">4.5+ yje</option>
+        <option value="" data-i18n="flt.all">Të gjitha</option>
+        <option value="3.5" data-i18n="flt.r35">3.5+ yje</option>
+        <option value="4" data-i18n="flt.r4">4.0+ yje</option>
+        <option value="4.5" data-i18n="flt.r45">4.5+ yje</option>
       </select>
     </div>
     <div>
-      <label for="fltRendit">Renditja</label>
+      <label for="fltRendit" data-i18n="flt.sort">Renditja</label>
       <select id="fltRendit">
-        <option value="rek">E rekomanduar</option>
-        <option value="rating">Vlerësimi</option>
-        <option value="cmim-asc">Çmimi: rritës</option>
-        <option value="cmim-desc">Çmimi: zbritës</option>
+        <option value="rek" data-i18n="flt.sRek">E rekomanduar</option>
+        <option value="rating" data-i18n="flt.sRating">Vlerësimi</option>
+        <option value="cmim-asc" data-i18n="flt.sAsc">Çmimi: rritës</option>
+        <option value="cmim-desc" data-i18n="flt.sDesc">Çmimi: zbritës</option>
       </select>
     </div>
     <div style="display:flex;align-items:flex-end">
-      <button type="button" class="btn btn-ghost btn-sm" id="btnClear" style="width:100%">Pastro filtrat</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="btnClear" style="width:100%" data-i18n="flt.clear">Pastro filtrat</button>
     </div>
   </form>
 
@@ -74,12 +91,13 @@
   <div class="grid-cards" id="grid"></div>
   <div class="empty" id="emptyState" hidden>
     <div class="big">🍽️</div>
-    <p><strong style="color:var(--text)">Nuk u gjet asnjë restorant</strong> me këto filtra.<br>Provo të heqësh disa filtra për më shumë rezultate.</p>
-    <div style="margin-top:1rem"><button class="btn btn-gold btn-sm" id="btnClear2" type="button">Pastro filtrat</button></div>
+    <p><strong style="color:var(--text)" data-i18n="lst.emptyT">Nuk u gjet asnjë restorant</strong> <span data-i18n="lst.emptyD">me këto filtra.<br>Provo të heqësh disa filtra për më shumë rezultate.</span></p>
+    <div style="margin-top:1rem"><button class="btn btn-gold btn-sm" id="btnClear2" type="button" data-i18n="lst.emptyCta">Pastro filtrat</button></div>
   </div>
 </div>
 </main><footer class="site"></footer>
 <script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 <script>
 TRY.renderChrome('restorante.html');
@@ -110,10 +128,10 @@ TRY.renderChrome('restorante.html');
         fltCmim = TRY.$("#fltCmim"), fltRating = TRY.$("#fltRating"), fltRendit = TRY.$("#fltRendit");
 
   fltQ.value = state.q;
-  fltQytet.innerHTML = `<option value="">Të gjitha qytetet</option>` +
+  fltQytet.innerHTML = `<option value="">${TRY.t("flt.allCities")}</option>` +
     TRY.QYTETET.map(q => `<option value="${TRY.esc(q)}"${q===state.qytet?" selected":""}>${TRY.esc(q)}</option>`).join("");
   const kuzhinat = [...new Set(R.flatMap(r => r.kuzhina || []))].sort((a,b)=>a.localeCompare(b,"sq"));
-  fltKuzhine.innerHTML = `<option value="">Të gjitha kuzhinat</option>` +
+  fltKuzhine.innerHTML = `<option value="">${TRY.t("flt.allCuisines")}</option>` +
     kuzhinat.map(k => `<option value="${TRY.esc(k)}"${k===state.kuzhine?" selected":""}>${TRY.esc(k)}</option>`).join("");
   fltCmim.value = state.cmim;
   fltRating.value = state.minrating ? String(state.minrating) : "";
@@ -122,7 +140,7 @@ TRY.renderChrome('restorante.html');
   /* ---- Konteksti i disponueshmërisë ---- */
   const slotCtx = TRY.$("#slotCtx");
   if(hasSlot){
-    slotCtx.innerHTML = `<span class="slotctx">Disponueshmëria për <b>${TRY.esc(TRY.fmtDate(state.data))}</b> · <b>${TRY.esc(state.ora)}</b> · <b>${state.persona} persona</b></span>`;
+    slotCtx.innerHTML = `<span class="slotctx">${TRY.t("lst.slotFor")} <b>${TRY.esc(TRY.fmtDate(state.data))}</b> · <b>${TRY.esc(state.ora)}</b> · <b>${state.persona} ${TRY.t("lst.persons")}</b></span>`;
   } else {
     slotCtx.innerHTML = "";
   }
@@ -131,8 +149,8 @@ TRY.renderChrome('restorante.html');
     if(!hasSlot) return "";
     const s = TRY.slotInfo(r, state.data, state.ora, state.persona);
     return s.free
-      ? `<span class="slotbadge ok">✓ I lirë · ${TRY.esc(state.ora)}</span>`
-      : `<span class="slotbadge busy">I zënë</span>`;
+      ? `<span class="slotbadge ok">${TRY.t("lst.badgeFree")} ${TRY.esc(state.ora)}</span>`
+      : `<span class="slotbadge busy">${TRY.t("lst.badgeBusy")}</span>`;
   }
 
   /* ---- Filtrim + renditje + render ---- */
@@ -163,8 +181,8 @@ TRY.renderChrome('restorante.html');
     TRY.bindFavs(grid);
     grid.hidden = !list.length;
     empty.hidden = !!list.length;
-    TRY.$("#resultCount").textContent =
-      list.length === 1 ? "1 restorant u gjet" : list.length + " restorante u gjetën";
+    TRY.$("#resultCount").innerHTML =
+      list.length === 1 ? TRY.t("lst.res1") : TRY.t("lst.resN",{n:list.length});
   }
 
   function syncURL(){

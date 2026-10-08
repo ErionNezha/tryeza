@@ -4,30 +4,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TRYEZA — Rezervimet e mia</title>
+<title data-i18n="pg.rezervimet">TRYEZA — Rezervimet e mia</title>
 <meta name="description" content="Gjej, modifiko ose anulo rezervimet e tua në TRYEZA me kodin TRZ, numrin e telefonit ose emrin.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+<style>
+#tryLoader{position:fixed;inset:0;z-index:2000;background:#05080f;display:flex;align-items:center;justify-content:center;transition:opacity .55s ease}
+#tryLoader.done{opacity:0;pointer-events:none}
+#tryLoader .ld-inner{text-align:center;padding:0 1rem}
+#tryLoader .ld-mark{width:84px;height:84px;margin:0 auto .9rem}
+#tryLoader .ld-name{font-family:Georgia,'Times New Roman',serif;font-size:1.85rem;letter-spacing:.34em;padding-left:.34em;color:#f0d47a}
+#tryLoader .ld-tag{color:#7d86a1;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;margin-top:.4rem}
+#tryLoader .ld-bar{width:210px;max-width:60vw;height:2px;background:rgba(212,175,55,.18);margin:1.3rem auto 0;border-radius:2px;overflow:hidden}
+#tryLoader .ld-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#9c7c24,#f0d47a);animation:ldfill 1.25s ease forwards}
+@keyframes ldfill{to{width:100%}}
+#tryLoader .ld-mark circle,#tryLoader .ld-mark path{stroke-dasharray:130;stroke-dashoffset:130;animation:lddraw 1.15s ease forwards}
+#tryLoader .ld-mark path:nth-of-type(2){animation-delay:.18s}
+@keyframes lddraw{to{stroke-dashoffset:0}}
+</style></head>
+<body><div id="tryLoader" aria-hidden="true"><div class="ld-inner">
+<svg class="ld-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="18" stroke="#d4af37" stroke-width="1.4"/><path d="M20 8 L24 20 L20 32 L16 20 Z" stroke="#f0d47a" stroke-width="1.4"/><path d="M8 20 L20 16 L32 20 L20 24 Z" stroke="#d4af37" stroke-width="1" opacity=".7"/></svg>
+<div class="ld-name">TRYEZA</div>
+<div class="ld-tag" data-i18n="loader.tag">Rezervo tavolinën tënde</div>
+<div class="ld-bar"><span></span></div>
+</div></div>
+<script>(function(){var el=document.getElementById('tryLoader');if(!el)return;var t0=Date.now();function done(){if(el.classList.contains('done'))return;var w=Math.max(0,1250-(Date.now()-t0));setTimeout(function(){el.classList.add('done');setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},650)},w)}if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){if(el.parentNode)el.parentNode.removeChild(el);return}if(document.readyState==='complete'){done()}else{window.addEventListener('load',done);setTimeout(done,4500)}})();</script>
 <header class="site"></header>
 <main class="wrap">
   <div class="page-head">
-    <span class="eyebrow">Llogaria jote</span>
-    <h1>Rezervimet e mia</h1>
-    <p>Gjej rezervimin me kodin <b>TRZ-…</b> që more pas rezervimit, me numrin e telefonit ose me emrin tënd.</p>
+    <span class="eyebrow" data-i18n="my.eyebrow">Llogaria jote</span>
+    <h1 data-i18n="my.h1">Rezervimet e mia</h1>
+    <p data-i18n="my.sub">Gjej rezervimin me kodin <b>TRZ-…</b> që more pas rezervimit, me numrin e telefonit ose me emrin tënd.</p>
   </div>
   <section style="padding-top:.4rem">
     <form class="form-card" id="searchForm" autocomplete="off">
       <div class="mrow">
-        <label for="q">Kodi i rezervimit, telefoni ose emri</label>
-        <input id="q" placeholder="p.sh. TRZ-A8K2M4  ose  069 123 4567  ose  emri yt">
+        <label for="q" data-i18n="my.searchLabel">Kodi i rezervimit, telefoni ose emri</label>
+        <input id="q" data-i18n-ph="my.searchPh" placeholder="p.sh. TRZ-A8K2M4  ose  069 123 4567  ose  emri yt">
       </div>
-      <button class="btn btn-gold" type="submit" style="width:100%">Kërko rezervimin</button>
-      <p class="hint">Kërkimi i fundit mbahet mend në këtë shfletues.</p>
+      <button class="btn btn-gold" type="submit" style="width:100%" data-i18n="my.searchCta">Kërko rezervimin</button>
+      <p class="hint" data-i18n="my.searchHint">Kërkimi i fundit mbahet mend në këtë shfletues.</p>
     </form>
     <div class="divider"></div>
     <div id="results" class="tbl-list" aria-live="polite"></div>
@@ -35,34 +51,35 @@
 </main>
 <footer class="site"></footer>
 
-<div class="modal-bg" id="mEdit">
+<div class="modal-bg" id="mEdit" role="dialog" aria-modal="true" data-i18n-aria="my.editT" aria-label="Modifiko rezervimin">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Modifiko rezervimin">
-    <h2>Modifiko rezervimin</h2>
+    <h2 data-i18n="my.editT">Modifiko rezervimin</h2>
     <p class="hint" id="editInfo" style="margin-bottom:1rem"></p>
     <div class="row2">
-      <div class="mrow"><label for="editDate">Data e re</label><input type="date" id="editDate"></div>
-      <div class="mrow"><label for="editTime">Ora e re</label><select id="editTime"></select></div>
+      <div class="mrow"><label for="editDate" data-i18n="my.editDate">Data e re</label><input type="date" id="editDate"></div>
+      <div class="mrow"><label for="editTime" data-i18n="my.editTime">Ora e re</label><select id="editTime"></select></div>
     </div>
     <div class="hint" id="editAvail" style="margin-top:.4rem"></div>
     <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.2rem">
-      <button class="btn btn-dark btn-sm" data-close>Mbyll</button>
-      <button class="btn btn-gold btn-sm" id="editSave">Ruaj ndryshimet</button>
+      <button class="btn btn-dark btn-sm" data-close data-i18n="my.close">Mbyll</button>
+      <button class="btn btn-gold btn-sm" id="editSave" data-i18n="my.save">Ruaj ndryshimet</button>
     </div>
   </div>
 </div>
 
-<div class="modal-bg" id="mCancel">
+<div class="modal-bg" id="mCancel" role="dialog" aria-modal="true" data-i18n-aria="my.cancelT" aria-label="Anulo rezervimin">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Anulo rezervimin">
-    <h2>Anulo rezervimin</h2>
+    <h2 data-i18n="my.cancelT">Anulo rezervimin</h2>
     <p id="cancelInfo" style="color:var(--muted);margin-bottom:1.2rem"></p>
     <div style="display:flex;gap:.6rem;justify-content:flex-end">
-      <button class="btn btn-dark btn-sm" data-close>Mbaje rezervimin</button>
-      <button class="btn btn-gold btn-sm" id="cancelYes">Po, anuloje</button>
+      <button class="btn btn-dark btn-sm" data-close data-i18n="my.keep">Mbaje rezervimin</button>
+      <button class="btn btn-gold btn-sm" id="cancelYes" data-i18n="my.yesCancel">Po, anuloje</button>
     </div>
   </div>
 </div>
 
 <script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 <script>
 "use strict";
@@ -77,20 +94,23 @@ function zonaEmer(r, zid){
   return z ? z.emer : zid;
 }
 function statusPill(st){
-  if(st === "anuluar") return '<span class="status-pill st-cancel">ANULUAR</span>';
-  if(st === "no-show") return '<span class="status-pill st-noshow">NO-SHOW</span>';
-  return '<span class="status-pill st-ok">AKTIVE</span>';
+  if(st === "anuluar") return `<span class="status-pill st-cancel">${TRY.t("my.stCancelled")}</span>`;
+  if(st === "no-show") return `<span class="status-pill st-noshow">${TRY.t("my.stNoshow")}</span>`;
+  return `<span class="status-pill st-ok">${TRY.t("my.stActive")}</span>`;
 }
 
 function cardHTML(b){
   const r = TRY.restById(b.restId);
   const tblTxt = (b.tavolina && b.tavolina.length) ? b.tavolina.join(", ") : "—";
-  const det = `${TRY.fmtDate(b.date)} · ora ${TRY.esc(b.time)} · ${b.persona || "—"} persona · ${TRY.esc(zonaEmer(r, b.zonaId))} · Tavolina: ${TRY.esc(tblTxt)}`;
+  const ppl = (b.persona == 1) ? TRY.t("bk.sumPerson") : TRY.t("bk.sumPersons");
+  const det = `${TRY.fmtDate(b.date)} · ${TRY.t("my.atTime")} ${TRY.esc(b.time)} · ${b.persona || "—"} ${ppl} · ${TRY.esc(zonaEmer(r, b.zonaId))} · ${TRY.t("my.tblTxt")} ${TRY.esc(tblTxt)}`;
   const actions = b.status === "aktive"
     ? `<div class="bk-actions">
-        <button class="btn btn-ghost btn-sm" data-act="edit" data-code="${TRY.esc(b.code)}">Modifiko</button>
-        <button class="btn btn-ghost btn-sm" data-act="ics" data-code="${TRY.esc(b.code)}">Ftesa .ics</button>
-        <button class="btn btn-dark btn-sm" data-act="cancel" data-code="${TRY.esc(b.code)}">Anulo</button>
+        <button class="btn btn-ghost btn-sm" data-act="edit" data-code="${TRY.esc(b.code)}">${TRY.t("my.modify")}</button>
+        <button class="btn btn-ghost btn-sm" data-act="ics" data-code="${TRY.esc(b.code)}">${TRY.t("my.ics")}</button>
+        <button class="btn btn-ghost btn-sm" data-act="share" data-code="${TRY.esc(b.code)}">🔗 ${TRY.t("share.title")}</button>
+        <button class="btn btn-ghost btn-sm" data-act="sharecopy" data-code="${TRY.esc(b.code)}">${TRY.t("share.copy")}</button>
+        <button class="btn btn-dark btn-sm" data-act="cancel" data-code="${TRY.esc(b.code)}">${TRY.t("my.cancel")}</button>
       </div>` : "";
   return `<article class="bk-card">
     <div>
@@ -107,7 +127,7 @@ function doSearch(q){
   const box = $("#results");
   q = String(q || "").trim();
   if(!q){
-    box.innerHTML = `<div class="empty"><div class="big">🔍</div><p>Shkruaj kodin e rezervimit (TRZ-XXXXXX), numrin e telefonit ose emrin për të gjetur rezervimet e tua.</p></div>`;
+    box.innerHTML = `<div class="empty"><div class="big">🔍</div><p>${TRY.t("my.emptySearch")}</p></div>`;
     return;
   }
   const qd = digits(q), qu = q.toUpperCase(), ql = q.toLowerCase();
@@ -118,11 +138,11 @@ function doSearch(q){
     return false;
   });
   if(!hits.length){
-    box.innerHTML = `<div class="empty"><div class="big">🙁</div><p>S'u gjet asnjë rezervim për «${TRY.esc(q)}». Kontrollo kodin, ose <a href="faq.html#kontakt" style="color:var(--gold)">na kontakto</a> — ta gjejmë bashkë.</p></div>`;
+    box.innerHTML = `<div class="empty"><div class="big">🙁</div><p>${TRY.t("my.noResult",{q:TRY.esc(q)}).replace("{link}",`<a href="faq.html#kontakt" style="color:var(--gold)">${TRY.t("my.contactUs")}</a>`)}</p></div>`;
     return;
   }
   hits.sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
-  box.innerHTML = `<p class="result-count">U gjetën <b>${hits.length}</b> rezervim${hits.length === 1 ? "" : "e"}.</p>` + hits.map(cardHTML).join("");
+  box.innerHTML = `<p class="result-count">${hits.length === 1 ? TRY.t("my.found1") : TRY.t("my.foundN",{n:hits.length})}</p>` + hits.map(cardHTML).join("");
 }
 
 /* ---------- modify ---------- */
@@ -133,8 +153,8 @@ function checkEditAvail(){
   const si = TRY.slotInfo(r, $("#editDate").value, $("#editTime").value, editing.persona || 2, editing.zonaId);
   const ok = !!si.free;
   $("#editAvail").innerHTML = ok
-    ? `<span style="color:var(--green)">✓ Ka vend të lirë për ${editing.persona || 2} persona në këtë orar.</span>`
-    : `<span style="color:var(--red)">✕ S'ka vend të lirë në këtë orar. Zgjidh datë ose orë tjetër.</span>`;
+    ? `<span style="color:var(--green)">${TRY.t("my.availOk",{n:editing.persona || 2})}</span>`
+    : `<span style="color:var(--red)">${TRY.t("my.availNo")}</span>`;
   $("#editSave").disabled = !ok;
   return ok;
 }
@@ -143,7 +163,7 @@ function openEdit(code){
   if(!b) return;
   editing = b;
   const r = TRY.restById(b.restId);
-  $("#editInfo").innerHTML = `<b>${TRY.esc((b.emer || b.name) || "")}</b> · ${TRY.esc(r ? r.emer : "")} · aktualisht <b>${TRY.fmtDate(b.date)}</b>, ora <b>${TRY.esc(b.time)}</b>`;
+  $("#editInfo").innerHTML = `<b>${TRY.esc((b.emer || b.name) || "")}</b> · ${TRY.esc(r ? r.emer : "")} · ${TRY.t("my.nowAt")} <b>${TRY.fmtDate(b.date)}</b>, ${TRY.t("my.atTime")} <b>${TRY.esc(b.time)}</b>`;
   const d = $("#editDate");
   d.min = TRY.todayStr();
   d.value = (b.date >= TRY.todayStr()) ? b.date : TRY.todayStr();
@@ -164,7 +184,7 @@ $("#editSave").addEventListener("click", () => {
     tavolina: free.length ? [free[0].id] : (editing.tavolina || [])
   });
   $("#mEdit").classList.remove("open");
-  TRY.toast("Rezervimi u <b>përditësua</b> me sukses");
+  TRY.toast(TRY.t("my.updated"));
   doSearch($("#q").value);
 });
 
@@ -174,14 +194,14 @@ function openCancel(code){
   const b = TRY.bookings().find(x => x.code === code);
   cancelling = code;
   $("#cancelInfo").innerHTML = b
-    ? `Je i sigurt që do ta anulosh rezervimin <b>${TRY.esc(code)}</b> (${TRY.esc((b.emer || b.name) || "")}, ${TRY.fmtDate(b.date)} ora ${TRY.esc(b.time)})? Ky veprim s'mund të zhbëhet.`
-    : `Je i sigurt që do ta anulosh rezervimin <b>${TRY.esc(code)}</b>?`;
+    ? TRY.t("my.cancelSure",{code:TRY.esc(code),emer:TRY.esc((b.emer || b.name) || ""),data:TRY.fmtDate(b.date),ora:TRY.esc(b.time)})
+    : TRY.t("my.cancelSureShort",{code:TRY.esc(code)});
   $("#mCancel").classList.add("open");
 }
 $("#cancelYes").addEventListener("click", () => {
   TRY.updateBooking(cancelling, { status: "anuluar" });
   $("#mCancel").classList.remove("open");
-  TRY.toast("Rezervimi u <b>anullua</b>");
+  TRY.toast(TRY.t("my.cancelled"));
   doSearch($("#q").value);
 });
 
@@ -206,7 +226,7 @@ function downloadICS(b){
   a.download = b.code + ".ics";
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  TRY.toast("Ftesa <b>.ics</b> u shkarkua — shtoje në kalendarin tënd");
+  TRY.toast(TRY.t("my.icsDone"));
 }
 
 /* ---------- events ---------- */
@@ -217,6 +237,8 @@ $("#results").addEventListener("click", e => {
   if(act === "edit") openEdit(code);
   else if(act === "cancel") openCancel(code);
   else if(act === "ics"){ const bk = TRY.bookings().find(x => x.code === code); if(bk) downloadICS(bk); }
+  else if(act === "share"){ const bk = TRY.bookings().find(x => x.code === code); if(bk) window.open(TRY.shareWhats(bk), "_blank", "noopener"); }
+  else if(act === "sharecopy"){ const bk = TRY.bookings().find(x => x.code === code); if(bk) TRY.copyShare(bk); }
 });
 $$(".modal-bg").forEach(bg => {
   bg.addEventListener("click", e => { if(e.target === bg) bg.classList.remove("open"); });

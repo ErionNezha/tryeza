@@ -4,60 +4,77 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TRYEZA — Sugjero restorant</title>
+<title data-i18n="pg.sugjero">TRYEZA — Sugjero restorant</title>
 <meta name="description" content="Sugjero restorantin tënd të preferuar në TRYEZA dhe voto për sugjerimet e të tjerëve.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+<style>
+#tryLoader{position:fixed;inset:0;z-index:2000;background:#05080f;display:flex;align-items:center;justify-content:center;transition:opacity .55s ease}
+#tryLoader.done{opacity:0;pointer-events:none}
+#tryLoader .ld-inner{text-align:center;padding:0 1rem}
+#tryLoader .ld-mark{width:84px;height:84px;margin:0 auto .9rem}
+#tryLoader .ld-name{font-family:Georgia,'Times New Roman',serif;font-size:1.85rem;letter-spacing:.34em;padding-left:.34em;color:#f0d47a}
+#tryLoader .ld-tag{color:#7d86a1;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;margin-top:.4rem}
+#tryLoader .ld-bar{width:210px;max-width:60vw;height:2px;background:rgba(212,175,55,.18);margin:1.3rem auto 0;border-radius:2px;overflow:hidden}
+#tryLoader .ld-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#9c7c24,#f0d47a);animation:ldfill 1.25s ease forwards}
+@keyframes ldfill{to{width:100%}}
+#tryLoader .ld-mark circle,#tryLoader .ld-mark path{stroke-dasharray:130;stroke-dashoffset:130;animation:lddraw 1.15s ease forwards}
+#tryLoader .ld-mark path:nth-of-type(2){animation-delay:.18s}
+@keyframes lddraw{to{stroke-dashoffset:0}}
+</style></head>
+<body><div id="tryLoader" aria-hidden="true"><div class="ld-inner">
+<svg class="ld-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="18" stroke="#d4af37" stroke-width="1.4"/><path d="M20 8 L24 20 L20 32 L16 20 Z" stroke="#f0d47a" stroke-width="1.4"/><path d="M8 20 L20 16 L32 20 L20 24 Z" stroke="#d4af37" stroke-width="1" opacity=".7"/></svg>
+<div class="ld-name">TRYEZA</div>
+<div class="ld-tag" data-i18n="loader.tag">Rezervo tavolinën tënde</div>
+<div class="ld-bar"><span></span></div>
+</div></div>
+<script>(function(){var el=document.getElementById('tryLoader');if(!el)return;var t0=Date.now();function done(){if(el.classList.contains('done'))return;var w=Math.max(0,1250-(Date.now()-t0));setTimeout(function(){el.classList.add('done');setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},650)},w)}if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){if(el.parentNode)el.parentNode.removeChild(el);return}if(document.readyState==='complete'){done()}else{window.addEventListener('load',done);setTimeout(done,4500)}})();</script>
 <header class="site"></header>
 <main class="wrap">
   <div class="page-head">
-    <span class="eyebrow">Bashkësia</span>
-    <h1>Sugjero restorant</h1>
-    <p>E di një vend fantastik që s'është ende në TRYEZA? Sugjeroje — sugjerimet me më shumë vota shqyrtohen me prioritet nga ekipi ynë.</p>
+    <span class="eyebrow" data-i18n="sg.eyebrow">Bashkësia</span>
+    <h1 data-i18n="sg.h1">Sugjero restorant</h1>
+    <p data-i18n="sg.sub">E di një vend fantastik që s’është ende në TRYEZA? Sugjeroje — sugjerimet me më shumë vota shqyrtohen me prioritet nga ekipi ynë.</p>
   </div>
   <section style="padding-top:.4rem">
     <form class="form-card" id="suggForm" autocomplete="off" novalidate>
       <div class="mrow">
-        <label for="fEmer">Emri i restorantit *</label>
-        <input id="fEmer" placeholder="p.sh. Hani i Pazarit">
+        <label for="fEmer" data-i18n="sg.fName">Emri i restorantit *</label>
+        <input id="fEmer" data-i18n-ph="sg.fNamePh" placeholder="p.sh. Hani i Pazarit">
       </div>
       <div class="mrow">
-        <label for="fQytet">Qyteti *</label>
-        <select id="fQytet"><option value="">— Zgjidh qytetin —</option></select>
+        <label for="fQytet" data-i18n="sg.fCity">Qyteti *</label>
+        <select id="fQytet"><option value="" data-i18n="sg.fCitySel">— Zgjidh qytetin —</option></select>
       </div>
       <div class="mrow">
-        <label for="fKuzhina">Kuzhina</label>
-        <input id="fKuzhina" placeholder="p.sh. Tradicionale, Peshk, Italiane…">
+        <label for="fKuzhina" data-i18n="sg.fCuisine">Kuzhina</label>
+        <input id="fKuzhina" data-i18n-ph="sg.fCuisinePh" placeholder="p.sh. Tradicionale, Peshk, Italiane…">
       </div>
       <div class="mrow">
-        <label for="fArsye">Pse e sugjeron? *</label>
-        <textarea id="fArsye" rows="4" placeholder="Na trego çfarë të pëlqen aty: gatimi, ambienti, shërbimi…"></textarea>
+        <label for="fArsye" data-i18n="sg.fWhy">Pse e sugjeron? *</label>
+        <textarea id="fArsye" rows="4" data-i18n-ph="sg.fWhyPh" placeholder="Na trego çfarë të pëlqen aty: gatimi, ambienti, shërbimi…"></textarea>
       </div>
       <div class="mrow">
-        <label for="fEmri">Emri yt</label>
-        <input id="fEmri" placeholder="Emri yt (opsional)">
+        <label for="fEmri" data-i18n="sg.fYourName">Emri yt</label>
+        <input id="fEmri" data-i18n-ph="sg.fYourNamePh" placeholder="Emri yt (opsional)">
       </div>
       <div class="mrow">
-        <label for="fEmail">Email</label>
-        <input id="fEmail" type="email" placeholder="ti@email.com (opsional, për të të njoftuar)">
+        <label for="fEmail" data-i18n="sg.fEmail">Email</label>
+        <input id="fEmail" type="email" data-i18n-ph="sg.fEmailPh" placeholder="ti@email.com (opsional, për të të njoftuar)">
       </div>
-      <button class="btn btn-gold" type="submit" style="width:100%">Dërgo sugjerimin</button>
-      <p class="hint">* Fusha të detyrueshme. Sugjerimi ruhet dhe shfaqet menjëherë më poshtë.</p>
+      <button class="btn btn-gold" type="submit" style="width:100%" data-i18n="sg.submit">Dërgo sugjerimin</button>
+      <p class="hint" data-i18n="sg.required">* Fusha të detyrueshme. Sugjerimi ruhet dhe shfaqet menjëherë më poshtë.</p>
     </form>
 
     <div class="divider"></div>
-    <h2 class="sec-title" style="text-align:center">Sugjerimet e bashkësisë</h2>
-    <p class="sec-sub" style="text-align:center;margin-left:auto;margin-right:auto">Voto për vendet që do t'i shohësh në TRYEZA — një votë për shfletues.</p>
+    <h2 class="sec-title" style="text-align:center" data-i18n="sg.listT">Sugjerimet e bashkësisë</h2>
+    <p class="sec-sub" style="text-align:center;margin-left:auto;margin-right:auto" data-i18n="sg.listSub">Voto për vendet që do t’i shohësh në TRYEZA — një votë për shfletues.</p>
     <div id="suggList" style="max-width:760px;margin:0 auto"></div>
   </section>
 </main>
 <footer class="site"></footer>
 <script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 <script>
 "use strict";
@@ -91,7 +108,7 @@ TRY.QYTETET.forEach(q => {
 function renderList(){
   const box = $("#suggList");
   if(!list.length){
-    box.innerHTML = `<div class="empty"><div class="big">🍽️</div><p>Ende s'ka sugjerime. Bëhu i pari!</p></div>`;
+    box.innerHTML = `<div class="empty"><div class="big">🍽️</div><p>${TRY.t("sg.empty")}</p></div>`;
     return;
   }
   const sorted = [...list].sort((a, b) => (b.votes || 0) - (a.votes || 0));
@@ -100,12 +117,12 @@ function renderList(){
     return `<div class="sugg">
       <div>
         <b>${TRY.esc(s.emer)}</b>
-        <small>${TRY.esc(s.qytet)}${s.kuzhina ? " · " + TRY.esc(s.kuzhina) : ""}${s.emerDerg ? " · sugjeruar nga " + TRY.esc(s.emerDerg) : ""}</small>
+        <small>${TRY.esc(s.qytet)}${s.kuzhina ? " · " + TRY.esc(s.kuzhina) : ""}${s.emerDerg ? " · " + TRY.t("sg.by") + " " + TRY.esc(s.emerDerg) : ""}</small>
         <small style="margin-top:.35rem;display:block;color:var(--muted2)">“${TRY.esc(s.arsye)}”</small>
       </div>
       <div class="votes">
-        <span title="Vota gjithsej"><b>${s.votes || 0}</b></span>
-        <button data-vote="${TRY.esc(s.id)}"${hasVoted ? " disabled" : ""}>${hasVoted ? "✓ Votove" : "▲ Voto"}</button>
+        <span title="${TRY.t("sg.votesT")}"><b>${s.votes || 0}</b></span>
+        <button data-vote="${TRY.esc(s.id)}"${hasVoted ? " disabled" : ""}>${hasVoted ? TRY.t("sg.voted") : TRY.t("sg.vote")}</button>
       </div>
     </div>`;
   }).join("");
@@ -121,7 +138,7 @@ $("#suggList").addEventListener("click", e => {
   TRY.save(TRY.LS.sugg, list);
   TRY.save(LS_VOTED, voted);
   renderList();
-  TRY.toast("Faleminderit! Vota jote u regjistrua.");
+  TRY.toast(TRY.t("sg.thanksVote"));
 });
 
 $("#suggForm").addEventListener("submit", e => {
@@ -140,7 +157,7 @@ $("#suggForm").addEventListener("submit", e => {
   const emailBad = email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   $("#fEmail").classList.toggle("field-err", !!emailBad);
   if(emailBad) ok = false;
-  if(!ok){ TRY.toast("Plotëso fushat e detyrueshme <b>*</b>"); return; }
+  if(!ok){ TRY.toast(TRY.t("sg.fillReq")); return; }
   list.unshift({
     id: TRY.uid(), emer, qytet, kuzhina, arsye, emerDerg, email,
     votes: 0, createdAt: TRY.todayStr()
@@ -148,7 +165,7 @@ $("#suggForm").addEventListener("submit", e => {
   TRY.save(TRY.LS.sugg, list);
   e.target.reset();
   renderList();
-  TRY.toast(`Sugjerimi për <b>${TRY.esc(emer)}</b> u dërgua. Faleminderit!`);
+  TRY.toast(TRY.t("sg.sent",{emer:TRY.esc(emer)}));
   $("#suggList").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 

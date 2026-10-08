@@ -4,82 +4,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TRYEZA — Pyetje të shpeshta</title>
+<title data-i18n="pg.faq">TRYEZA — Pyetje të shpeshta</title>
 <meta name="description" content="Pyetjet më të shpeshta për TRYEZA: si funksionon rezervimi, anulimet, kodet, vonesat dhe kontakti.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <style>
 .contact-card{background:var(--card);border:1px solid var(--line2);border-radius:20px;padding:1.8rem;max-width:640px;margin:0 auto;text-align:center}
 .contact-card a.big-link{display:inline-block;font-size:1.15rem;color:var(--gold-lt);margin:.4rem .8rem;font-weight:600}
 .contact-card a.big-link:hover{color:var(--gold)}
 </style>
-</head>
-<body>
+<style>
+#tryLoader{position:fixed;inset:0;z-index:2000;background:#05080f;display:flex;align-items:center;justify-content:center;transition:opacity .55s ease}
+#tryLoader.done{opacity:0;pointer-events:none}
+#tryLoader .ld-inner{text-align:center;padding:0 1rem}
+#tryLoader .ld-mark{width:84px;height:84px;margin:0 auto .9rem}
+#tryLoader .ld-name{font-family:Georgia,'Times New Roman',serif;font-size:1.85rem;letter-spacing:.34em;padding-left:.34em;color:#f0d47a}
+#tryLoader .ld-tag{color:#7d86a1;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;margin-top:.4rem}
+#tryLoader .ld-bar{width:210px;max-width:60vw;height:2px;background:rgba(212,175,55,.18);margin:1.3rem auto 0;border-radius:2px;overflow:hidden}
+#tryLoader .ld-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#9c7c24,#f0d47a);animation:ldfill 1.25s ease forwards}
+@keyframes ldfill{to{width:100%}}
+#tryLoader .ld-mark circle,#tryLoader .ld-mark path{stroke-dasharray:130;stroke-dashoffset:130;animation:lddraw 1.15s ease forwards}
+#tryLoader .ld-mark path:nth-of-type(2){animation-delay:.18s}
+@keyframes lddraw{to{stroke-dashoffset:0}}
+</style></head>
+<body><div id="tryLoader" aria-hidden="true"><div class="ld-inner">
+<svg class="ld-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="18" stroke="#d4af37" stroke-width="1.4"/><path d="M20 8 L24 20 L20 32 L16 20 Z" stroke="#f0d47a" stroke-width="1.4"/><path d="M8 20 L20 16 L32 20 L20 24 Z" stroke="#d4af37" stroke-width="1" opacity=".7"/></svg>
+<div class="ld-name">TRYEZA</div>
+<div class="ld-tag" data-i18n="loader.tag">Rezervo tavolinën tënde</div>
+<div class="ld-bar"><span></span></div>
+</div></div>
+<script>(function(){var el=document.getElementById('tryLoader');if(!el)return;var t0=Date.now();function done(){if(el.classList.contains('done'))return;var w=Math.max(0,1250-(Date.now()-t0));setTimeout(function(){el.classList.add('done');setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},650)},w)}if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){if(el.parentNode)el.parentNode.removeChild(el);return}if(document.readyState==='complete'){done()}else{window.addEventListener('load',done);setTimeout(done,4500)}})();</script>
 <header class="site"></header>
 <main class="wrap">
   <div class="page-head">
-    <span class="eyebrow">Ndihmë</span>
-    <h1>Pyetje të shpeshta</h1>
-    <p>Gjithçka që duhet të dish për rezervimet në TRYEZA — shkurt e qartë.</p>
+    <span class="eyebrow" data-i18n="fq.eyebrow">Ndihmë</span>
+    <h1 data-i18n="fq.h1">Pyetje të shpeshta</h1>
+    <p data-i18n="fq.sub">Gjithçka që duhet të dish për rezervimet në TRYEZA — shkurt e qartë.</p>
   </div>
   <section style="padding-top:.4rem;max-width:780px;margin:0 auto">
     <div class="faq-item">
-      <button class="faq-q">Si funksionon TRYEZA? <span class="pm">+</span></button>
-      <div class="faq-a"><p>Zgjedh qytetin dhe restorantin, cakto datën, orën dhe numrin e personave, plotëso emrin e telefonin — dhe merr menjëherë kodin tënd të rezervimit (TRZ-…). Pa telefonata, pa pritje, pa pagesë. Restoranti e sheh rezervimin tënd në panelin e vet në kohë reale.</p></div>
+      <button class="faq-q"><span data-i18n="fq.q1">Si funksionon TRYEZA?</span> <span class="pm">+</span></button>
+      <div class="faq-a"><p data-i18n="fq.a1">Zgjedh qytetin dhe restorantin, cakto datën, orën dhe numrin e personave, plotëso emrin e telefonin — dhe merr menjëherë kodin tënd të rezervimit (TRZ-…). Pa telefonata, pa pritje, pa pagesë. Restoranti e sheh rezervimin tënd në panelin e vet në kohë reale.</p></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">A paguaj për rezervimin? <span class="pm">+</span></button>
-      <div class="faq-a"><p>Jo. Rezervimi përmes TRYEZA-s është plotësisht falas për mysafirët — paguan vetëm faturën tënde në restorant, si zakonisht. Disa restorante, për grupe shumë të mëdha ose data festive, mund të kërkojnë paradhënie: kjo shënohet qartë para se të konfirmosh.</p></div>
+      <button class="faq-q"><span data-i18n="fq.q2">A paguaj për rezervimin?</span> <span class="pm">+</span></button>
+      <div class="faq-a"><p data-i18n="fq.a2">Jo. Rezervimi përmes TRYEZA-s është plotësisht falas për mysafirët — paguan vetëm faturën tënde në restorant, si zakonisht. Disa restorante, për grupe shumë të mëdha ose data festive, mund të kërkojnë paradhënie: kjo shënohet qartë para se të konfirmosh.</p></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">Si e anuloj ose modifikoj rezervimin? <span class="pm">+</span></button>
-      <div class="faq-a"><p>Shko te faqja “Rezervimet e mia”, gjeje rezervimin me kodin TRZ, telefonin ose emrin, dhe shtyp “Modifiko” ose “Anulo”. Modifikimi kontrollon automatikisht nëse ka vend në orarin e ri. Anulimi është i lirë deri në 3 orë para orarit të rezervimit — pas kësaj, telefono restorantin direkt.</p></div>
+      <button class="faq-q"><span data-i18n="fq.q3">Si e anuloj ose modifikoj rezervimin?</span> <span class="pm">+</span></button>
+      <div class="faq-a"><p data-i18n="fq.a3">Shko te faqja “Rezervimet e mia”, gjeje rezervimin me kodin TRZ, telefonin ose emrin, dhe shtyp “Modifiko” ose “Anulo”. Modifikimi kontrollon automatikisht nëse ka vend në orarin e ri. Anulimi është i lirë deri në 3 orë para orarit të rezervimit — pas kësaj, telefono restorantin direkt.</p></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">E humba kodin e rezervimit — çfarë bëj? <span class="pm">+</span></button>
-      <div class="faq-a"><p>S'ka problem. Te “Rezervimet e mia” mund të kërkosh edhe me numrin e telefonit që përdore gjatë rezervimit, ose me emrin. Nëse s'e gjen ashtu, na shkruaj në <a href="mailto:pershendetje@tryeza.al" style="color:var(--gold)">pershendetje@tryeza.al</a> me emrin dhe datën — ta gjejmë bashkë.</p></div>
+      <button class="faq-q"><span data-i18n="fq.q4">E humba kodin e rezervimit — çfarë bëj?</span> <span class="pm">+</span></button>
+      <div class="faq-a"><p data-i18n="fq.a4">S'ka problem. Te “Rezervimet e mia” mund të kërkosh edhe me numrin e telefonit që përdore gjatë rezervimit, ose me emrin. Nëse s'e gjen ashtu, na shkruaj në <a href="mailto:pershendetje@tryeza.al" style="color:var(--gold)">pershendetje@tryeza.al</a> me emrin dhe datën — ta gjejmë bashkë.</p></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">Po nëse vonohem? <span class="pm">+</span></button>
-      <div class="faq-a"><p>Restorantet e mbajnë tavolinën deri në 15 minuta pas orarit të rezervimit. Nëse vonohesh më shumë, telefono restorantin (numrin e gjen në faqen e tij) — shumica e mbajnë me kënaqësi nëse lajmëron. Nëse s'paraqitesh fare pa lajmëruar, rezervimi shënohet si “no-show”.</p></div>
+      <button class="faq-q"><span data-i18n="fq.q5">Po nëse vonohem?</span> <span class="pm">+</span></button>
+      <div class="faq-a"><p data-i18n="fq.a5">Restorantet e mbajnë tavolinën deri në 15 minuta pas orarit të rezervimit. Nëse vonohesh më shumë, telefono restorantin (numrin e gjen në faqen e tij) — shumica e mbajnë me kënaqësi nëse lajmëron. Nëse s'paraqitesh fare pa lajmëruar, rezervimi shënohet si “no-show”.</p></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">Dua të rezervoj për grup të madh (10+ persona)? <span class="pm">+</span></button>
-      <div class="faq-a"><p>Për grupe mbi 8 persona, përdor fushën e shënimeve te rezervimi dhe shkruaj numrin e saktë — restoranti do të të konfirmojë me telefon nëse i duhet të bashkojë tavolina. Për evente (dasma, ditëlindje, darka kompanie), kontakto restorantin direkt: shumë prej tyre kanë menu grupi me çmime speciale.</p></div>
+      <button class="faq-q"><span data-i18n="fq.q6">Dua të rezervoj për grup të madh (10+ persona)?</span> <span class="pm">+</span></button>
+      <div class="faq-a"><p data-i18n="fq.a6">Për grupe mbi 8 persona, përdor fushën e shënimeve te rezervimi dhe shkruaj numrin e saktë — restoranti do të të konfirmojë me telefon nëse i duhet të bashkojë tavolina. Për evente (dasma, ditëlindje, darka kompanie), kontakto restorantin direkt: shumë prej tyre kanë menu grupi me çmime speciale.</p></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">A lejohen kafshët shtëpiake? <span class="pm">+</span></button>
-      <div class="faq-a"><p>Varet nga restoranti. Shumica i mirëpresin qentë e vegjël në tarracë, por jo në sallën e brendshme — për arsye higjiene. Shënoje në fushën e shënimeve gjatë rezervimit (“vij me qen të vogël”) që stafi të të caktojë tavolinën e duhur dhe të mos kesh surpriza në derë.</p></div>
+      <button class="faq-q"><span data-i18n="fq.q7">A lejohen kafshët shtëpiake?</span> <span class="pm">+</span></button>
+      <div class="faq-a"><p data-i18n="fq.a7">Varet nga restoranti. Shumica i mirëpresin qentë e vegjël në tarracë, por jo në sallën e brendshme — për arsye higjiene. Shënoje në fushën e shënimeve gjatë rezervimit (“vij me qen të vogël”) që stafi të të caktojë tavolinën e duhur dhe të mos kesh surpriza në derë.</p></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">A mund të vij me fëmijë? <span class="pm">+</span></button>
-      <div class="faq-a"><p>Patjetër — shumica e restoranteve në TRYEZA janë miqësore me familjet dhe kanë karrige për fëmijë. Shëno numrin e fëmijëve te shënimet që të përgatitet tavolina siç duhet. Për darka vonë (pas orës 21:00), disa restorante elegante preferojnë ambient të qetë — pyet paraprakisht.</p></div>
+      <button class="faq-q"><span data-i18n="fq.q8">A mund të vij me fëmijë?</span> <span class="pm">+</span></button>
+      <div class="faq-a"><p data-i18n="fq.a8">Patjetër — shumica e restoranteve në TRYEZA janë miqësore me familjet dhe kanë karrige për fëmijë. Shëno numrin e fëmijëve te shënimet që të përgatitet tavolina siç duhet. Për darka vonë (pas orës 21:00), disa restorante elegante preferojnë ambient të qetë — pyet paraprakisht.</p></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">Ka dress code? <span class="pm">+</span></button>
-      <div class="faq-a"><p>Çdo restorant e tregon dress code-in në faqen e vet (p.sh. “smart casual”). Rregulli i përgjithshëm: veshje e pastër dhe e rregullt mjafton kudo; për restorantet elegante shmang shapkat e plazhit dhe veshjet sportive. Kur dyshon, një këmishë apo një fustan i thjeshtë s'të zhgënjen kurrë.</p></div>
+      <button class="faq-q"><span data-i18n="fq.q9">Ka dress code?</span> <span class="pm">+</span></button>
+      <div class="faq-a"><p data-i18n="fq.a9">Çdo restorant e tregon dress code-in në faqen e vet (p.sh. “smart casual”). Rregulli i përgjithshëm: veshje e pastër dhe e rregullt mjafton kudo; për restorantet elegante shmang shapkat e plazhit dhe veshjet sportive. Kur dyshon, një këmishë apo një fustan i thjeshtë s'të zhgënjen kurrë.</p></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q">Si ju kontaktoj për diçka tjetër? <span class="pm">+</span></button>
-      <div class="faq-a"><p>Na shkruaj në email ose na telefono — përgjigjemi brenda një dite pune. Je pronar restoranti dhe do të listohesh në TRYEZA? Na shkruaj me subjektin “Restorant i ri”.</p></div>
+      <button class="faq-q"><span data-i18n="fq.q10">Si ju kontaktoj për diçka tjetër?</span> <span class="pm">+</span></button>
+      <div class="faq-a"><p data-i18n="fq.a10">Na shkruaj në email ose na telefono — përgjigjemi brenda një dite pune. Je pronar restoranti dhe do të listohesh në TRYEZA? Na shkruaj me subjektin “Restorant i ri”.</p></div>
     </div>
 
     <div class="divider"></div>
     <div class="contact-card" id="kontakt">
-      <span class="eyebrow">Kontakt</span>
-      <h2 style="margin-bottom:.6rem">Fol me ne</h2>
-      <p style="color:var(--muted);margin-bottom:1rem">Për rezervime, sugjerime apo bashkëpunime:</p>
+      <span class="eyebrow" data-i18n="fq.cEyebrow">Kontakt</span>
+      <h2 style="margin-bottom:.6rem" data-i18n="fq.cTitle">Fol me ne</h2>
+      <p style="color:var(--muted);margin-bottom:1rem" data-i18n="fq.cSub">Për rezervime, sugjerime apo bashkëpunime:</p>
       <a class="big-link" href="mailto:pershendetje@tryeza.al">✉️ pershendetje@tryeza.al</a><br>
       <a class="big-link" href="tel:+35542223344">📞 +355 4 222 3344</a>
-      <p class="hint" style="margin-top:1rem">E hënë – e premte, 09:00 – 18:00</p>
+      <p class="hint" style="margin-top:1rem" data-i18n="fq.hours">E hënë – e premte, 09:00 – 18:00</p>
     </div>
   </section>
 </main>
 <footer class="site"></footer>
 <script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 <script>
 "use strict";

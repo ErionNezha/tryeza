@@ -4,30 +4,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TRYEZA — Blog</title>
+<title data-i18n="pg.blog">TRYEZA — Blog</title>
 <meta name="description" content="Blogu i TRYEZA-s: guida, etiketa tryeze, qytete shijesh dhe sekrete kuzhine nga Shqipëria.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <style>
 .article-cover{border-radius:16px;overflow:hidden;border:1px solid var(--line);margin:1.2rem 0}
 .article-cover svg{width:100%;height:auto;display:block}
 </style>
-</head>
-<body>
+<style>
+#tryLoader{position:fixed;inset:0;z-index:2000;background:#05080f;display:flex;align-items:center;justify-content:center;transition:opacity .55s ease}
+#tryLoader.done{opacity:0;pointer-events:none}
+#tryLoader .ld-inner{text-align:center;padding:0 1rem}
+#tryLoader .ld-mark{width:84px;height:84px;margin:0 auto .9rem}
+#tryLoader .ld-name{font-family:Georgia,'Times New Roman',serif;font-size:1.85rem;letter-spacing:.34em;padding-left:.34em;color:#f0d47a}
+#tryLoader .ld-tag{color:#7d86a1;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;margin-top:.4rem}
+#tryLoader .ld-bar{width:210px;max-width:60vw;height:2px;background:rgba(212,175,55,.18);margin:1.3rem auto 0;border-radius:2px;overflow:hidden}
+#tryLoader .ld-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#9c7c24,#f0d47a);animation:ldfill 1.25s ease forwards}
+@keyframes ldfill{to{width:100%}}
+#tryLoader .ld-mark circle,#tryLoader .ld-mark path{stroke-dasharray:130;stroke-dashoffset:130;animation:lddraw 1.15s ease forwards}
+#tryLoader .ld-mark path:nth-of-type(2){animation-delay:.18s}
+@keyframes lddraw{to{stroke-dashoffset:0}}
+</style></head>
+<body><div id="tryLoader" aria-hidden="true"><div class="ld-inner">
+<svg class="ld-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="18" stroke="#d4af37" stroke-width="1.4"/><path d="M20 8 L24 20 L20 32 L16 20 Z" stroke="#f0d47a" stroke-width="1.4"/><path d="M8 20 L20 16 L32 20 L20 24 Z" stroke="#d4af37" stroke-width="1" opacity=".7"/></svg>
+<div class="ld-name">TRYEZA</div>
+<div class="ld-tag" data-i18n="loader.tag">Rezervo tavolinën tënde</div>
+<div class="ld-bar"><span></span></div>
+</div></div>
+<script>(function(){var el=document.getElementById('tryLoader');if(!el)return;var t0=Date.now();function done(){if(el.classList.contains('done'))return;var w=Math.max(0,1250-(Date.now()-t0));setTimeout(function(){el.classList.add('done');setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},650)},w)}if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){if(el.parentNode)el.parentNode.removeChild(el);return}if(document.readyState==='complete'){done()}else{window.addEventListener('load',done);setTimeout(done,4500)}})();</script>
 <header class="site"></header>
 <main class="wrap" id="blogMain">
   <div class="page-head">
-    <span class="eyebrow">Blogu</span>
-    <h1>Histori nga tryeza</h1>
-    <p>Guida, etiketa, qytete shijesh dhe sekrete kuzhine — shkruar me dashuri për tryezën shqiptare.</p>
+    <span class="eyebrow" data-i18n="bl.eyebrow">Blogu</span>
+    <h1 data-i18n="bl.h1">Histori nga tryeza</h1>
+    <p data-i18n="bl.sub">Guida, etiketa, qytete shijesh dhe sekrete kuzhine — shkruar me dashuri për tryezën shqiptare.</p>
   </div>
   <section style="padding-top:.4rem"><div class="blog-grid" id="blogGrid"></div></section>
 </main>
 <footer class="site"></footer>
 <script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 <script>
 "use strict";
@@ -118,17 +135,21 @@ const POSTS = [
 const main = $("#blogMain");
 const slug = new URLSearchParams(location.search).get("p");
 const post = POSTS.find(p => p.slug === slug);
+const PT = (typeof I18N !== "undefined" && I18N.getLang() === "en" && I18N.POST_T) ? I18N.POST_T : null;
+const pTitle = p => (PT && PT[p.slug]) ? PT[p.slug].t : p.titull;
+const pExc = p => (PT && PT[p.slug]) ? PT[p.slug].e : p.excerpt;
 
 if(post){
-  document.title = "TRYEZA — " + post.titull;
+  document.title = "TRYEZA — " + pTitle(post);
   main.innerHTML = `
-    <a class="back-link" href="blog.html">← Kthehu te blogu</a>
+    <a class="back-link" href="blog.html">${TRY.t("bl.back")}</a>
     <article class="article">
-      <span class="eyebrow">Blog</span>
-      <h1>${TRY.esc(post.titull)}</h1>
-      <span class="when" style="font-size:.85rem;color:var(--muted2)">${TRY.fmtDate(post.data)} · TRYEZA</span>
+      <span class="eyebrow" data-i18n="bl.eyebrow">Blog</span>
+      <h1>${TRY.esc(pTitle(post))}</h1>
+      <span class="when" style="font-size:.85rem;color:var(--muted2)">${TRY.fmtDate(post.data)} · ${TRY.t("bl.byTryeza")}</span>
       <div class="article-cover">${TRY.coverSVG(post.coverSeed, 900, 380)}</div>
       <p class="lead">${TRY.esc(post.lead)}</p>
+      <span class="desc-note">${TRY.t("bl.albanianOnly")}</span>
       <p>${TRY.esc(post.p1)}</p>
       <h2>${TRY.esc(post.h2a)}</h2>
       <p>${TRY.esc(post.p2)}</p>
@@ -138,8 +159,8 @@ if(post){
       <p>${TRY.esc(post.p5)}</p>
       <div class="divider"></div>
       <div class="share-row">
-        <button id="copyLink">🔗 Kopjo linkun</button>
-        <a class="btn btn-ghost btn-sm" href="restorante.html" style="text-decoration:none">Gjej restorant →</a>
+        <button id="copyLink">${TRY.t("bl.copy")}</button>
+        <a class="btn btn-ghost btn-sm" href="restorante.html" style="text-decoration:none">${TRY.t("bl.findRest")}</a>
       </div>
     </article>`;
   $("#copyLink").addEventListener("click", async () => {
@@ -150,17 +171,17 @@ if(post){
       ta.value = url; document.body.appendChild(ta); ta.select();
       document.execCommand("copy"); ta.remove();
     }
-    TRY.toast("Linku u <b>kopjua</b>");
+    TRY.toast(TRY.t("bl.linkCopied"));
   });
 } else {
   $("#blogGrid").innerHTML = POSTS.map(p => `
     <article class="post">
-      <div class="cover"><a href="blog.html?p=${p.slug}" aria-label="${TRY.esc(p.titull)}">${TRY.coverSVG(p.coverSeed, 600, 300)}</a></div>
+      <div class="cover"><a href="blog.html?p=${p.slug}" aria-label="${TRY.esc(pTitle(p))}">${TRY.coverSVG(p.coverSeed, 600, 300)}</a></div>
       <div class="body">
         <span class="when">${TRY.fmtDate(p.data)}</span>
-        <h3><a href="blog.html?p=${p.slug}">${TRY.esc(p.titull)}</a></h3>
-        <p>${TRY.esc(p.excerpt)}</p>
-        <a class="btn btn-ghost btn-sm" style="margin-top:.8rem" href="blog.html?p=${p.slug}">Lexo artikullin</a>
+        <h3><a href="blog.html?p=${p.slug}">${TRY.esc(pTitle(p))}</a></h3>
+        <p>${TRY.esc(pExc(p))}</p>
+        <a class="btn btn-ghost btn-sm" style="margin-top:.8rem" href="blog.html?p=${p.slug}">${TRY.t("bl.read")}</a>
       </div>
     </article>`).join("");
 }

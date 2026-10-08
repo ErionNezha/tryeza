@@ -12,6 +12,9 @@ const TRY = (() => {
   const QYTETET = ["Tiranë", "Korçë", "Durrës", "Shkodër"];
   const DITET = ["E diel","E hënë","E martë","E mërkurë","E enjte","E premte","E shtunë"];
   const MUAJT = ["janar","shkurt","mars","prill","maj","qershor","korrik","gusht","shtator","tetor","nëntor","dhjetor"];
+  const DITET_EN = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const MUAJT_EN = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const T = (k, v) => (typeof I18N !== "undefined" ? I18N.t(k, v) : k);
   const SLOTS = ["11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00",
                  "18:30","19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30"];
 
@@ -25,7 +28,10 @@ const TRY = (() => {
   const hashStr = s => { let h = 2166136261; for (let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619);} return h>>>0; };
   const rng = seed => () => { seed|=0; seed=seed+0x6D2B79F5|0; let t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; };
   const todayStr = (off=0) => { const d=new Date(); d.setDate(d.getDate()+off); return d.toISOString().slice(0,10); };
-  const fmtDate = ds => { const [y,m,d]=ds.split("-").map(Number); const dt=new Date(y,m-1,d); return `${DITET[dt.getDay()]}, ${d} ${MUAJT[m-1]} ${y}`; };
+  const fmtDate = ds => { const [y,m,d]=ds.split("-").map(Number); const dt=new Date(y,m-1,d);
+    const en = (typeof I18N!=="undefined" && I18N.getLang()==="en");
+    const D = en?DITET_EN:DITET, M = en?MUAJT_EN:MUAJT;
+    return `${D[dt.getDay()]}, ${d} ${M[m-1]} ${y}`; };
   const cmimTxt = n => "€".repeat(n);
   const genCode = () => "TRZ-" + Array.from({length:6},()=>"ABCDEFGHJKMNPQRSTUVWXYZ23456789"[Math.floor(Math.random()*31)]).join("");
 
@@ -88,8 +94,8 @@ const TRY = (() => {
   /* ---------- stars ---------- */
   function stars(r, n=0){
     if(r==null || !(r>0)){
-      return `<span class="stars" title="Pa vlerësime ende"><span class="off">★★★★★</span></span>` +
-        (n?` <span style="color:var(--muted2);font-size:.82rem">(${n})</span>`:`<span style="color:var(--muted2);font-size:.82rem"> · pa vlerësime</span>`);
+      return `<span class="stars" title="${T("card.noRating")}"><span class="off">★★★★★</span></span>` +
+        (n?` <span style="color:var(--muted2);font-size:.82rem">(${n})</span>`:`<span style="color:var(--muted2);font-size:.82rem"> · ${T("card.noRating")}</span>`);
     }
     const full = Math.round(r*2)/2;
     let s = "";
@@ -135,8 +141,8 @@ const TRY = (() => {
   const isFav = id => favs().includes(id);
   const toggleFav = id => {
     let f = favs(); const i = f.indexOf(id);
-    if(i>=0){ f.splice(i,1); toast("U hoq nga të preferuarat"); }
-    else { f.push(id); toast("<b>♥</b> U shtua te të preferuarat"); }
+    if(i>=0){ f.splice(i,1); toast(T("toast.favRemove")); }
+    else { f.push(id); toast(T("toast.favAdd")); }
     save(LS.favs, f); return f.includes(id);
   };
 
@@ -185,53 +191,216 @@ const TRY = (() => {
     if(i<0) return null; Object.assign(all[i], patch); save(LS.bookings, all); return all[i];
   }
 
-  /* ---------- chrome ---------- */
-  const NAV = [
-    ["index.html","Kreu"],["restorante.html","Restorante"],["rezervimet.html","Rezervimet e mia"],
-    ["blog.html","Blog"],["faq.html","FAQ"],["kodi.html","Kodi burimor"],
-  ];
+  /* ---------- share booking with friends ---------- */
+  function shareText(b){
+    const r = restById(b.restId);
+    const restName = (r && r.emer) || b.restEmer || "";
+    const ppl = (b.persona == 1) ? T("bk.sumPerson") : T("bk.sumPersons");
+    const tbl = (b.tavolina && b.tavolina.length) ? T("bk.tableLbl") + " " + b.tavolina[0] : "";
+    let base = "";
+    try { const u = new URL(location.href); base = u.origin + u.pathname.replace(/[^/]*$/, ""); }
+    catch(e){}
+    const url = base + "restorant.html?id=" + encodeURIComponent(b.restId || "");
+    return T("share.text", { rest: restName, data: fmtDate(b.date), ora: b.time,
+      persona: b.persona, ppl, zona: b.zonaEmer || "", tbl, code: b.code, url });
+  }
+  function shareWhats(b){ return "https://wa.me/?text=" + encodeURIComponent(shareText(b)); }
+  async function copyShare(b){
+    const txt = shareText(b);
+    try { await navigator.clipboard.writeText(txt); }
+    catch(e){
+      const ta = document.createElement("textarea");
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch(_){}
+      ta.remove();
+    }
+    toast(T("share.copied"));
+  }
+
+  /* ---------- chrome: glass nav + dropdown + lang + mobile menu ---------- */
   function renderChrome(active){
-    document.title = document.title.includes("TRYEZA") ? document.title : document.title + " — TRYEZA";
+    document.title = document.title.includes("TRYEZA") ? document.title : document.title + " \u2014 TRYEZA";
     const h = $("header.site");
     if(h){
+      const isRest = (active==="restorante.html"||active==="restorant.html") ? "active" : "";
+      const cityLinks = QYTETET.map(q=>`<a href="restorante.html?qytet=${encodeURIComponent(q)}">${esc(q)}</a>`).join("");
       h.innerHTML = `<div class="wrap nav">
-        <a class="brand" href="index.html" aria-label="TRYEZA — kreu">${markSVG()}TRYEZA</a>
-        <nav class="nav-links" id="navLinks">${NAV.map(([f,l])=>`<a href="${f}" class="${f===active?"active":""}">${l}</a>`).join("")}</nav>
+        <a class="brand" href="index.html" aria-label="TRYEZA">${markSVG()}<span>TRYEZA</span></a>
+        <nav class="nav-links" id="navLinks" aria-label="Main">
+          <a href="index.html" data-i18n="nav.home" class="${active==="index.html"?"active":""}">Kreu</a>
+          <div class="nav-drop">
+            <button class="drop-btn ${isRest}" aria-haspopup="true" aria-expanded="false"><span data-i18n="nav.restaurants">Restorante</span><span class="caret">\u25be</span></button>
+            <div class="drop-menu" role="menu">
+              <a href="restorante.html" data-i18n="nav.allRest" role="menuitem">T\u00eb gjitha restorantet</a>
+              <span class="drop-sep" data-i18n="nav.cities">Qytetet</span>
+              ${cityLinks}
+            </div>
+          </div>
+          <a href="rezervimet.html" data-i18n="nav.mybookings" class="${active==="rezervimet.html"?"active":""}">Rezervimet e mia</a>
+          <a href="blog.html" data-i18n="nav.blog" class="${active==="blog.html"?"active":""}">Blog</a>
+          <a href="faq.html" data-i18n="nav.faq" class="${active==="faq.html"?"active":""}">FAQ</a>
+        </nav>
         <div class="nav-right">
-          <a class="btn btn-gold btn-sm" href="sugjero.html">＋ Sugjero restorant</a>
-          <button class="burger" id="burger" aria-label="Menuja">☰</button>
-        </div></div>`;
-      $("#burger").addEventListener("click",()=>$("#navLinks").classList.toggle("open"));
-      $$("#navLinks a").forEach(a=>a.addEventListener("click",()=>$("#navLinks").classList.remove("open")));
+          <button class="lang-toggle" id="langToggle" data-i18n-aria="lang.toggle" aria-label="Ndrysho gjuh\u00ebn"><span class="l-sq">SQ</span><span class="l-sep">|</span><span class="l-en">EN</span></button>
+          <a class="btn btn-gold btn-sm nav-cta" href="restorante.html" data-i18n="nav.bookNow">Rezervo tani</a>
+          <button class="burger" id="burger" data-i18n-aria="nav.menu" aria-label="Menuja">\u2630</button>
+        </div></div>
+      `;
+      const menuHTML = `
+        <div class="mmenu" id="mmenu" aria-hidden="true">
+          <button class="mmenu-x" id="mmenuX" aria-label="\u2715">\u2715</button>
+          <nav>
+            <a href="index.html" data-i18n="nav.home">Kreu</a>
+            <a href="restorante.html" data-i18n="nav.restaurants">Restorante</a>
+            <div class="mmenu-cities">${cityLinks}</div>
+            <a href="rezervimet.html" data-i18n="nav.mybookings">Rezervimet e mia</a>
+            <a href="blog.html" data-i18n="nav.blog">Blog</a>
+            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <a href="sugjero.html" data-i18n="nav.suggest">Sugjero restorant</a>
+          </nav>
+          <div class="mmenu-foot">
+            <button class="lang-toggle" data-i18n-aria="lang.toggle" aria-label="Language"><span class="l-sq">SQ</span><span class="l-sep">|</span><span class="l-en">EN</span></button>
+            <a class="btn btn-gold" href="restorante.html" data-i18n="nav.bookNow">Rezervo tani</a>
+          </div>
+        </div>`;
+      h.insertAdjacentHTML("afterend", menuHTML);
+      const dropBtn = $(".nav-drop .drop-btn", h);
+      if(dropBtn){
+        dropBtn.addEventListener("click", e => {
+          e.stopPropagation();
+          const d = dropBtn.parentElement, open = d.classList.toggle("open");
+          dropBtn.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+        document.addEventListener("click", () => {
+          const d = $(".nav-drop", h);
+          if(d){ d.classList.remove("open"); dropBtn.setAttribute("aria-expanded","false"); }
+        });
+      }
+      const mm = $("#mmenu");
+      const closeMm = () => { mm.classList.remove("open"); mm.setAttribute("aria-hidden","true"); document.body.style.overflow=""; };
+      $("#burger", h).addEventListener("click", () => {
+        mm.classList.add("open"); mm.setAttribute("aria-hidden","false"); document.body.style.overflow="hidden";
+      });
+      $("#mmenuX").addEventListener("click", closeMm);
+      $$("#mmenu a").forEach(a => a.addEventListener("click", closeMm));
+      document.addEventListener("keydown", e => { if(e.key==="Escape") closeMm(); });
+      $$(".lang-toggle").forEach(b => b.addEventListener("click", () => { if(typeof I18N!=="undefined") I18N.toggle(); }));
+      const onScroll = () => h.classList.toggle("scrolled", window.scrollY > 24);
+      window.addEventListener("scroll", onScroll, {passive:true}); onScroll();
     }
     const f = $("footer.site");
     if(f){
-      f.innerHTML = `<div class="wrap">
+      f.innerHTML = `<div class="qilim-top" aria-hidden="true"></div><div class="wrap">
         <div class="foot-grid">
           <div><div class="foot-brand">TRYEZA</div>
-            <p style="color:var(--muted);font-size:.9rem;max-width:320px;margin-top:.5rem">Rezervo tavolinën tënde në restorantet më të mira të Shqipërisë — në sekonda, pa telefonata, falas.</p></div>
-          <div><h4>Zbulo</h4>${[["restorante.html","Të gjitha restorantet"],["restorante.html?qytet=Tiranë","Tiranë"],["restorante.html?qytet=Korçë","Korçë"],["restorante.html?qytet=Durrës","Durrës"],["restorante.html?qytet=Shkodër","Shkodër"]].map(([u,l])=>`<a href="${u}">${l}</a>`).join("")}</div>
-          <div><h4>Llogaria</h4><a href="rezervimet.html">Rezervimet e mia</a><a href="sugjero.html">Sugjero restorant</a><a href="dashboard.html">Paneli i restorantit</a><a href="faq.html">Pyetje të shpeshta</a></div>
-          <div><h4>Kompania</h4><a href="blog.html">Blog</a><a href="kodi.html">Kodi burimor</a><a href="kredite.html">Kreditë e fotove</a><a href="faq.html#kontakt">Kontakt</a></div>
+            <p style="color:var(--muted);font-size:.9rem;max-width:320px;margin-top:.5rem" data-i18n="footer.tagline">Rezervo tavolin\u00ebn t\u00ebnde n\u00eb restorantet m\u00eb t\u00eb mira t\u00eb Shqip\u00ebris\u00eb \u2014 n\u00eb sekonda, pa telefonata, falas.</p></div>
+          <div><h4 data-i18n="footer.discover">Zbulo</h4>${[["restorante.html","footer.allRest","T\u00eb gjitha restorantet"],["restorante.html?qytet=Tiran\u00eb",null,"Tiran\u00eb"],["restorante.html?qytet=Kor\u00e7\u00eb",null,"Kor\u00e7\u00eb"],["restorante.html?qytet=Durr\u00ebs",null,"Durr\u00ebs"],["restorante.html?qytet=Shkod\u00ebr",null,"Shkod\u00ebr"]].map(([u,k,fb])=>`<a href="${u}"${k?` data-i18n="${k}"`:""}>${fb}</a>`).join("")}</div>
+          <div><h4 data-i18n="footer.account">Llogaria</h4><a href="rezervimet.html" data-i18n="footer.mybookings">Rezervimet e mia</a><a href="sugjero.html" data-i18n="footer.suggest">Sugjero restorant</a><a href="dashboard.html" data-i18n="footer.dashboard">Paneli i restorantit</a><a href="faq.html" data-i18n="footer.faq">Pyetje t\u00eb shpeshta</a></div>
+          <div><h4 data-i18n="footer.company">Kompania</h4><a href="blog.html" data-i18n="footer.blog">Blog</a><a href="kodi.html" data-i18n="footer.source">Kodi burimor</a><a href="kredite.html" data-i18n="footer.photos">Kredit\u00eb e fotove</a><a href="faq.html#kontakt" data-i18n="footer.contact">Kontakt</a></div>
         </div>
-        <div class="foot-bottom"><span>© 2026 TRYEZA — Të gjitha të drejtat e rezervuara.</span><span>Krijuar nga <b style="color:var(--gold-lt)">Erion Nezha</b></span></div>
+        <div class="foot-bottom"><span data-i18n="footer.rights">\u00a9 2026 TRYEZA \u2014 T\u00eb gjitha t\u00eb drejtat e rezervuara.</span><span><span data-i18n="footer.createdBy">Krijuar nga</span> <b style="color:var(--gold-lt)">Erion Nezha</b></span></div>
       </div>`;
     }
     if(!$("#toast")){ const t=document.createElement("div"); t.id="toast"; document.body.appendChild(t); }
+    if(typeof I18N!=="undefined") I18N.apply(document);
+    initFx();
+  }
+
+  /* ---------- ultra fx: reveal, counters, parallax, cursor ---------- */
+  let fxDone = false;
+  function initFx(){
+    if(fxDone) return; fxDone = true;
+    const reduced = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const RV_SEL = "main section, .rcard, .step, .stat, .city-card, .post, .faq-item, .panel, .bk-card, .sugg, .credit-item, .pika, .dish-mini, .stat-grid .stat";
+    const io = ("IntersectionObserver" in window && !reduced) ? new IntersectionObserver(es => {
+      es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, {threshold:.08, rootMargin:"0px 0px -4% 0px"}) : null;
+    const prep = root => {
+      const els = [];
+      if(root.matches && root.matches(RV_SEL)) els.push(root);
+      root.querySelectorAll && els.push(...root.querySelectorAll(RV_SEL));
+      els.forEach((el,i) => {
+        if(el.dataset.rv || el.closest("#tryLoader")) return;
+        el.dataset.rv = "1"; el.classList.add("rv");
+        el.style.transitionDelay = Math.min(i,5)*60 + "ms";
+        if(io) io.observe(el); else el.classList.add("in");
+      });
+    };
+    prep(document.body);
+    if("MutationObserver" in window && io){
+      new MutationObserver(muts => {
+        for(const m of muts) for(const n of m.addedNodes) if(n.nodeType===1) prep(n);
+      }).observe(document.body, {childList:true, subtree:true});
+    } else {
+      document.querySelectorAll(".rv").forEach(el => el.classList.add("in"));
+    }
+    /* animated counters */
+    const cio = ("IntersectionObserver" in window) ? new IntersectionObserver(es => {
+      es.forEach(e => {
+        if(!e.isIntersecting) return; cio.unobserve(e.target);
+        const el = e.target, target = parseInt(el.dataset.count||"0",10);
+        if(reduced || !(target>0)){ el.textContent = target; return; }
+        const t0 = performance.now(), dur = 1500;
+        const tick = now => {
+          const p = Math.min(1,(now-t0)/dur), ez = 1-Math.pow(1-p,3);
+          el.textContent = Math.round(target*ez);
+          if(p<1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }, {threshold:.4}) : null;
+    document.querySelectorAll("[data-count]").forEach(el => { if(cio) cio.observe(el); else el.textContent = el.dataset.count; });
+    /* hero parallax */
+    const heroInner = document.querySelector(".hero-inner"), heroMedia = document.querySelector(".hero-media");
+    if((heroInner||heroMedia) && !reduced){
+      let ticking = false;
+      window.addEventListener("scroll", () => {
+        if(ticking) return; ticking = true;
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          if(y < window.innerHeight*1.2){
+            if(heroInner) heroInner.style.transform = `translateY(${y*.22}px)`;
+            if(heroMedia) heroMedia.style.transform = `translateY(${y*.1}px)`;
+          }
+          ticking = false;
+        });
+      }, {passive:true});
+    }
+    /* gold cursor follower (fine pointers only) */
+    if(window.matchMedia && matchMedia("(pointer:fine)").matches && !reduced){
+      const dot = document.createElement("div"); dot.className = "cursor-dot"; dot.setAttribute("aria-hidden","true");
+      const ring = document.createElement("div"); ring.className = "cursor-ring"; ring.setAttribute("aria-hidden","true");
+      document.body.append(dot, ring);
+      let mx=innerWidth/2, my=innerHeight/2, rx=mx, ry=my, shown=false;
+      addEventListener("mousemove", e => {
+        mx=e.clientX; my=e.clientY;
+        if(!shown){ shown=true; dot.style.opacity=1; ring.style.opacity=1; }
+        dot.style.transform = `translate(${mx}px,${my}px)`;
+      }, {passive:true});
+      (function loop(){
+        rx += (mx-rx)*.16; ry += (my-ry)*.16;
+        ring.style.transform = `translate(${rx}px,${ry}px)`;
+        requestAnimationFrame(loop);
+      })();
+      document.addEventListener("mouseleave", () => { dot.style.opacity=0; ring.style.opacity=0; shown=false; });
+      const sel = "a,button,.tbl,input,select,textarea,.slot";
+      document.addEventListener("mouseover", e => { if(e.target.closest(sel)) ring.classList.add("big"); });
+      document.addEventListener("mouseout", e => { if(e.target.closest(sel)) ring.classList.remove("big"); });
+    }
   }
 
   function cardHTML(r){
     const {r:rt, n} = liveRating(r.id);
     const fav = isFav(r.id) ? "on" : "";
     return `<article class="rcard" data-id="${r.id}">
-      <button class="fav ${fav}" data-fav="${r.id}" aria-label="Shto te të preferuarat">♥</button>
+      <button class="fav ${fav}" data-fav="${r.id}" aria-label="${T("card.favAria")}">♥</button>
       <span class="citychip">${esc(r.qytet)}</span>
       <a class="cover" href="restorant.html?id=${r.id}" aria-label="${esc(r.emer)}">${coverFor(r)}</a>
       <div class="body">
         <h3><a href="restorant.html?id=${r.id}">${esc(r.emer)}</a></h3>
         <div class="meta">${stars(rt,n)}<span class="price">${cmimTxt(r.cmim)}</span><span>· ${esc(r.lagje)}</span></div>
         <div class="tags">${(r.kuzhina||[]).slice(0,3).map(k=>`<span class="tag">${esc(k)}</span>`).join("")}</div>
-        <div style="margin-top:auto;padding-top:.6rem"><a class="btn btn-ghost btn-sm" style="width:100%" href="restorant.html?id=${r.id}#rezervo">Gjej orarin e lirë</a></div>
+        <div style="margin-top:auto;padding-top:.6rem"><a class="btn btn-ghost btn-sm" style="width:100%" href="restorant.html?id=${r.id}#rezervo">${T("card.find")}</a></div>
       </div></article>`;
   }
   function bindFavs(root=document){
@@ -245,6 +414,8 @@ const TRY = (() => {
   return { LS, QYTETET, DITET, MUAJT, SLOTS, $, $$, esc, load, save, uid, todayStr, fmtDate,
     cmimTxt, genCode, toast, markSVG, coverSVG, coverFor, waLink, citySVG, stars, restById, getReviews,
     liveRating, favs, isFav, toggleFav, suitableTables, slotInfo, freeTablesList,
-    bookings, createBooking, findBooking, updateBooking, renderChrome, cardHTML, bindFavs, trackPage };
+    bookings, createBooking, findBooking, updateBooking, renderChrome, cardHTML, bindFavs, trackPage,
+    shareText, shareWhats, copyShare,
+    t: T, lang: () => (typeof I18N!=="undefined" ? I18N.getLang() : "sq") };
 })();
 window.TRY = TRY;

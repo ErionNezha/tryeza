@@ -4,12 +4,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TRYEZA — Paneli i restorantit</title>
+<title data-i18n="pg.dashboard">TRYEZA — Paneli i restorantit</title>
 <meta name="description" content="Panel demonstrues për restorantet: statistika rezervimesh, grafik orarësh dhe menaxhim tavolinash.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <style>
 .dash-note{border:1px dashed var(--line2);border-radius:12px;padding:.9rem 1.1rem;color:var(--muted);font-size:.9rem;background:rgba(212,175,55,.05);margin-bottom:1.4rem}
@@ -17,58 +14,78 @@
 .dash-tools{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
 .chart-wrap{overflow-x:auto}
 </style>
-</head>
-<body>
+<style>
+#tryLoader{position:fixed;inset:0;z-index:2000;background:#05080f;display:flex;align-items:center;justify-content:center;transition:opacity .55s ease}
+#tryLoader.done{opacity:0;pointer-events:none}
+#tryLoader .ld-inner{text-align:center;padding:0 1rem}
+#tryLoader .ld-mark{width:84px;height:84px;margin:0 auto .9rem}
+#tryLoader .ld-name{font-family:Georgia,'Times New Roman',serif;font-size:1.85rem;letter-spacing:.34em;padding-left:.34em;color:#f0d47a}
+#tryLoader .ld-tag{color:#7d86a1;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;margin-top:.4rem}
+#tryLoader .ld-bar{width:210px;max-width:60vw;height:2px;background:rgba(212,175,55,.18);margin:1.3rem auto 0;border-radius:2px;overflow:hidden}
+#tryLoader .ld-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#9c7c24,#f0d47a);animation:ldfill 1.25s ease forwards}
+@keyframes ldfill{to{width:100%}}
+#tryLoader .ld-mark circle,#tryLoader .ld-mark path{stroke-dasharray:130;stroke-dashoffset:130;animation:lddraw 1.15s ease forwards}
+#tryLoader .ld-mark path:nth-of-type(2){animation-delay:.18s}
+@keyframes lddraw{to{stroke-dashoffset:0}}
+</style></head>
+<body><div id="tryLoader" aria-hidden="true"><div class="ld-inner">
+<svg class="ld-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="18" stroke="#d4af37" stroke-width="1.4"/><path d="M20 8 L24 20 L20 32 L16 20 Z" stroke="#f0d47a" stroke-width="1.4"/><path d="M8 20 L20 16 L32 20 L20 24 Z" stroke="#d4af37" stroke-width="1" opacity=".7"/></svg>
+<div class="ld-name">TRYEZA</div>
+<div class="ld-tag" data-i18n="loader.tag">Rezervo tavolinën tënde</div>
+<div class="ld-bar"><span></span></div>
+</div></div>
+<script>(function(){var el=document.getElementById('tryLoader');if(!el)return;var t0=Date.now();function done(){if(el.classList.contains('done'))return;var w=Math.max(0,1250-(Date.now()-t0));setTimeout(function(){el.classList.add('done');setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},650)},w)}if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){if(el.parentNode)el.parentNode.removeChild(el);return}if(document.readyState==='complete'){done()}else{window.addEventListener('load',done);setTimeout(done,4500)}})();</script>
 <header class="site"></header>
 <main class="wrap">
   <div class="page-head">
-    <span class="eyebrow">Për bizneset</span>
-    <h1>Paneli i restorantit <span style="color:var(--gold)">(demo)</span></h1>
-    <p>Shiko rezervimet, statistikat dhe gjendjen e tavolinave — në kohë reale.</p>
+    <span class="eyebrow" data-i18n="db.eyebrow">Për bizneset</span>
+    <h1><span data-i18n="db.h1">Paneli i restorantit</span> <span style="color:var(--gold)" data-i18n="db.demoTag">(demo)</span></h1>
+    <p data-i18n="db.sub">Shiko rezervimet, statistikat dhe gjendjen e tavolinave — në kohë reale.</p>
   </div>
   <section style="padding-top:.4rem">
-    <div class="dash-note">
+    <div class="dash-note" data-i18n="db.note">
       ℹ️ <b>Ky është një panel demonstrues.</b> Të gjitha të dhënat ruhen vetëm në shfletuesin tënd
       (<i>localStorage</i>) — asgjë nuk dërgohet në server. Përdor butonin <b>“Gjenero të dhëna demo”</b>
       për të parë panelin në veprim.
     </div>
 
     <div class="panel">
-      <label for="dashRest">Zgjidh restorantin</label>
+      <label for="dashRest" data-i18n="db.choose">Zgjidh restorantin</label>
       <select id="dashRest" style="max-width:420px"></select>
     </div>
 
     <div class="stat-grid">
-      <div class="stat"><b id="stSot">0</b><span>Rezervime sot (aktive)</span></div>
-      <div class="stat"><b id="stPersona">0</b><span>Persona sonte</span></div>
-      <div class="stat"><b id="stZene">0</b><span>Tavolina të zëna (ora 20:00)</span></div>
-      <div class="stat"><b id="stNoshow">0</b><span>No-show gjithsej</span></div>
+      <div class="stat"><b id="stSot">0</b><span data-i18n="db.stToday">Rezervime sot (aktive)</span></div>
+      <div class="stat"><b id="stPersona">0</b><span data-i18n="db.stTonight">Persona sonte</span></div>
+      <div class="stat"><b id="stZene">0</b><span data-i18n="db.stTables">Tavolina të zëna (ora 20:00)</span></div>
+      <div class="stat"><b id="stNoshow">0</b><span data-i18n="db.stNoshow">No-show gjithsej</span></div>
     </div>
 
     <div class="panel">
-      <h3>Rezervime për orë — sot</h3>
+      <h3 data-i18n="db.chartT">Rezervime për orë — sot</h3>
       <div class="chart-wrap"><canvas id="chart" width="880" height="260" style="width:100%;height:auto;display:block;min-width:560px"></canvas></div>
-      <p class="hint">Shtyllat tregojnë rezervimet reale të sotme plus fluksin tipik të orarit (pseudo-të dhëna).</p>
+      <p class="hint" data-i18n="db.chartHint">Shtyllat tregojnë rezervimet reale të sotme plus fluksin tipik të orarit (pseudo-të dhëna).</p>
     </div>
 
     <div class="panel">
-      <h3>Rezervimet e ardhshme</h3>
+      <h3 data-i18n="db.tblT">Rezervimet e ardhshme</h3>
       <div style="overflow-x:auto">
       <table class="dtable">
-        <thead><tr><th>Emri</th><th>Tel</th><th>Data</th><th>Ora</th><th>Persona</th><th>Tavolina</th><th>Statusi</th><th>Veprime</th></tr></thead>
+        <thead><tr><th data-i18n="db.thName">Emri</th><th data-i18n="db.thTel">Tel</th><th data-i18n="db.thDate">Data</th><th data-i18n="db.thTime">Ora</th><th data-i18n="db.thPersons">Persona</th><th data-i18n="db.thTable">Tavolina</th><th data-i18n="db.thStatus">Statusi</th><th data-i18n="db.thActions">Veprime</th></tr></thead>
         <tbody id="bkRows"></tbody>
       </table>
       </div>
       <div class="dash-tools">
-        <button class="btn btn-gold btn-sm" id="genDemo">＋ Gjenero të dhëna demo</button>
-        <button class="btn btn-ghost btn-sm" id="dlCsv">⬇ Shkarko CSV</button>
-        <button class="btn btn-dark btn-sm" id="clearDemo">Pastro demo</button>
+        <button class="btn btn-gold btn-sm" id="genDemo" data-i18n="db.gen">＋ Gjenero të dhëna demo</button>
+        <button class="btn btn-ghost btn-sm" id="dlCsv" data-i18n="db.csv">⬇ Shkarko CSV</button>
+        <button class="btn btn-dark btn-sm" id="clearDemo" data-i18n="db.clear">Pastro demo</button>
       </div>
     </div>
   </section>
 </main>
 <footer class="site"></footer>
 <script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 <script>
 "use strict";
@@ -77,7 +94,7 @@ const $ = TRY.$;
 const NAMES = ["Arben Hoxha","Mimoza Krasniqi","Gerti Leka","Anisa Basha","Petrit Gjoni","Jonida Marku",
   "Erion Dervishi","Klevisa Rama","Sokol Berisha","Mirela Kola","Dritan Shehu","Alma Prifti",
   "Blerina Meta","Fatos Kola","Jonida Aliu","Pëllumb Deda"];
-const STATUS_TXT = { "aktive": "AKTIVE", "anuluar": "ANULUAR", "no-show": "NO-SHOW" };
+const STATUS_TXT = { "aktive": TRY.t("db.stActive"), "anuluar": TRY.t("db.stCancelled"), "no-show": TRY.t("db.stNoshow") };
 const STATUS_CLS = { "aktive": "st-ok", "anuluar": "st-cancel", "no-show": "st-noshow" };
 
 function phash(s){ let h = 2166136261; for(let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
@@ -153,17 +170,17 @@ function renderTable(all, today){
     .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
   const tb = $("#bkRows");
   if(!rows.length){
-    tb.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:1.6rem">S'ka rezervime të ardhshme. Gjenero të dhëna demo për ta parë tabelën në veprim.</td></tr>`;
+    tb.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:1.6rem">${TRY.t("db.noRows")}</td></tr>`;
     return;
   }
   tb.innerHTML = rows.map(b => {
     const st = b.status || "aktive";
     const acts = st === "aktive"
-      ? `<button class="btn btn-ghost btn-sm" data-act="noshow" data-code="${TRY.esc(b.code)}">No-show</button>
-         <button class="btn btn-dark btn-sm" data-act="anulo" data-code="${TRY.esc(b.code)}">Anulo</button>`
-      : `<span style="color:var(--muted2);font-size:.8rem">—</span>`;
+      ? `<button class="btn btn-ghost btn-sm" data-act="noshow" data-code="${TRY.esc(b.code)}">${TRY.t("db.noshow")}</button>
+         <button class="btn btn-dark btn-sm" data-act="anulo" data-code="${TRY.esc(b.code)}">${TRY.t("db.anulo")}</button>`
+      : `<span style="color:var(--muted2);font-size:.8rem">${TRY.t("db.dash")}</span>`;
     return `<tr>
-      <td><b>${TRY.esc(b.emer || b.name || "—")}</b>${b.demo ? ' <span class="tag">demo</span>' : ""}</td>
+      <td><b>${TRY.esc(b.emer || b.name || "—")}</b>${b.demo ? ' <span class="tag">${TRY.t("db.demo")}</span>' : ""}</td>
       <td>${TRY.esc(b.telefon || b.phone || "—")}</td>
       <td>${TRY.fmtDate(b.date)}</td>
       <td>${TRY.esc(b.time)}</td>
@@ -179,7 +196,7 @@ $("#bkRows").addEventListener("click", e => {
   const btn = e.target.closest("button[data-act]");
   if(!btn) return;
   TRY.updateBooking(btn.dataset.code, { status: btn.dataset.act === "noshow" ? "no-show" : "anuluar" });
-  TRY.toast(btn.dataset.act === "noshow" ? "U shënua si <b>no-show</b>" : "Rezervimi u <b>anullua</b>");
+  TRY.toast(btn.dataset.act === "noshow" ? TRY.t("db.tNoshow") : TRY.t("db.tAnulo"));
   render();
 });
 
@@ -208,7 +225,7 @@ $("#genDemo").addEventListener("click", () => {
     }
   }
   TRY.save(TRY.LS.bookings, all);
-  TRY.toast(`U gjeneruan <b>${added}</b> rezervime demo për ${TRY.esc(r.emer)}`);
+  TRY.toast(TRY.t("db.tGen",{n:added,emer:TRY.esc(r.emer)}));
   render();
 });
 
@@ -216,7 +233,7 @@ $("#clearDemo").addEventListener("click", () => {
   const kept = TRY.bookings().filter(b => !(b.restId === curId && b.demo));
   const n = TRY.bookings().length - kept.length;
   TRY.save(TRY.LS.bookings, kept);
-  TRY.toast(n ? `U pastruan <b>${n}</b> rezervime demo` : "S'ka rezervime demo për të pastruar");
+  TRY.toast(n ? TRY.t("db.tClear",{n}) : TRY.t("db.tClearEmpty"));
   render();
 });
 
@@ -226,12 +243,12 @@ const csvEsc = v => {
 };
 $("#dlCsv").addEventListener("click", () => {
   const r = cur(), all = bks();
-  if(!all.length){ TRY.toast("S'ka rezervime për të eksportuar"); return; }
-  const head = ["Emri", "Telefoni", "Data", "Ora", "Persona", "Tavolina", "Zona", "Statusi", "Kodi", "Demo"];
+  if(!all.length){ TRY.toast(TRY.t("db.tCsvEmpty")); return; }
+  const head = [TRY.t("db.thName"), TRY.t("db.thTel"), TRY.t("db.thDate"), TRY.t("db.thTime"), TRY.t("db.thPersons"), TRY.t("db.thTable"), TRY.t("db.thZone"), TRY.t("db.thStatus"), TRY.t("db.thCode"), TRY.t("db.thDemo")];
   const lines = [head.join(";")];
   all.forEach(b => lines.push([
     (b.emer || b.name), (b.telefon || b.phone), b.date, b.time, b.persona,
-    (b.tavolina || []).join(" "), b.zonaId || "", b.status, b.code, b.demo ? "po" : "jo"
+    (b.tavolina || []).join(" "), b.zonaId || "", b.status, b.code, b.demo ? TRY.t("db.yes") : TRY.t("db.no")
   ].map(csvEsc).join(";")));
   const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
   const a = document.createElement("a");
@@ -239,7 +256,7 @@ $("#dlCsv").addEventListener("click", () => {
   a.download = "rezervime-" + r.id + "-" + TRY.todayStr() + ".csv";
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  TRY.toast(`CSV u shkarkua (<b>${all.length}</b> rreshta)`);
+  TRY.toast(TRY.t("db.tCsv",{n:all.length}));
 });
 
 render();
