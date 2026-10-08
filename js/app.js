@@ -192,6 +192,25 @@ const TRY = (() => {
     if(i<0) return null; Object.assign(all[i], patch); save(LS.bookings, all); return all[i];
   }
 
+  /* ---------- menu builder: shared helpers ---------- */
+  const MB_LS = "tryeza.menuBuilder.v1";
+  function menuDraft(){
+    try { return load(MB_LS, null); } catch(e){ return null; }
+  }
+  function menuTotal(m){
+    return (m && m.items) ? m.items.reduce((s,i)=>s+(+i.cmim||0),0) : 0;
+  }
+  function menuLine(b){
+    const m = b && b.menu;
+    if(!m || !m.items || !m.items.length) return "";
+    return T("mb.inSummary", { n: m.items.length, total: menuTotal(m) });
+  }
+  function menuWaLine(b){
+    const m = b && b.menu;
+    if(!m || !m.items || !m.items.length) return "";
+    return T("mb.waMenu", { items: m.items.map(i=>i.emer).join(", "), total: menuTotal(m) });
+  }
+
   /* ---------- share booking with friends ---------- */
   function shareText(b){
     const r = restById(b.restId);
@@ -202,8 +221,12 @@ const TRY = (() => {
     try { const u = new URL(location.href); base = u.origin + u.pathname.replace(/[^/]*$/, ""); }
     catch(e){}
     const url = base + "restorant.html?id=" + encodeURIComponent(b.restId || "");
-    return T("share.text", { rest: restName, data: fmtDate(b.date), ora: b.time,
+    const txt = T("share.text", { rest: restName, data: fmtDate(b.date), ora: b.time,
       persona: b.persona, ppl, zona: b.zonaEmer || "", tbl, code: b.code, url });
+    const ml = (b.menu && b.menu.items && b.menu.items.length)
+      ? T("mb.shareMenu", { items: b.menu.items.map(i=>i.emer).join(", "), total: menuTotal(b.menu) })
+      : "";
+    return ml ? txt + "\n" + ml : txt;
   }
   function shareWhats(b){ return "https://wa.me/?text=" + encodeURIComponent(shareText(b)); }
   async function copyShare(b){
@@ -442,7 +465,7 @@ const TRY = (() => {
     cmimTxt, genCode, toast, markSVG, coverSVG, coverFor, waLink, citySVG, stars, restById, getReviews,
     liveRating, favs, isFav, toggleFav, suitableTables, slotInfo, freeTablesList,
     bookings, createBooking, findBooking, updateBooking, renderChrome, cardHTML, bindFavs, trackPage,
-    shareText, shareWhats, copyShare,
+    shareText, shareWhats, copyShare, menuDraft, menuTotal, menuLine, menuWaLine, MB_LS,
     t: T, lang: () => (typeof I18N!=="undefined" ? I18N.getLang() : "sq") };
 })();
 window.TRY = TRY;

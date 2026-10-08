@@ -185,6 +185,7 @@ function buildPage() {
         <button id="btnCopyLink">${TRY.t("det.shareCopy")}</button>
         <button id="btnShareX">${TRY.t("det.shareX")}</button>
         <button id="btnShareFb">${TRY.t("det.shareFb")}</button>
+        <a class="btn btn-gold btn-sm" id="btnMenuBuilder" href="menu-builder.html?id=${TRY.esc(rest.id)}" title="${TRY.t("mb.builderHint")}" style="text-decoration:none">${TRY.t("mb.builderBtn")}</a>
       </div>
     </div></div>
   </div>
@@ -500,12 +501,19 @@ function buildPage() {
       }).join("") + `</svg>`;
   }
 
+  function menuDraftForRest(){
+    const d = TRY.menuDraft();
+    return (d && d.restId === rest.id && d.items && d.items.length) ? d : null;
+  }
+
   function renderSummary() {
     const tbl = S.tavolina ? TRY.t("bk.tableLbl") + " " + S.tavolina : TRY.t("bk.noTable");
     const ppl = S.persona === 1 ? TRY.t("bk.sumPerson") : TRY.t("bk.sumPersons");
+    const md = menuDraftForRest();
+    const menuHtml = md ? `<br/><span class="mb-sum-line">${TRY.esc(TRY.menuLine({menu: md}))}</span>` : "";
     document.getElementById("bkSummary").innerHTML =
       `<b>${S.persona}</b> ${ppl} · ${TRY.fmtDate(S.date)} · ` +
-      `<b>${S.time || "—"}</b> · ${TRY.esc(zonaEmer())} · <b>${TRY.esc(tbl)}</b>`;
+      `<b>${S.time || "—"}</b> · ${TRY.esc(zonaEmer())} · <b>${TRY.esc(tbl)}</b>${menuHtml}`;
   }
 
   const validTel = tel => {
@@ -536,7 +544,8 @@ function buildPage() {
       tavolina: [S.tavolina],
       emer, telefon: tel, email,
       rasti: document.getElementById("gRasti").value,
-      shenime: document.getElementById("gShenime").value.trim()
+      shenime: document.getElementById("gShenime").value.trim(),
+      menu: menuDraftForRest()
     });
     showConfirmation(b);
     TRY.toast(TRY.t("bk.toastDone"));
@@ -549,7 +558,7 @@ function buildPage() {
     let kontaktBox = "";
     if (rest.telefon && rDigits) {
       const waPpl = b.persona === 1 ? TRY.t("bk.sumPerson") : TRY.t("bk.sumPersons");
-      const waMsg = `${TRY.t("bk.waHello")} ${rest.emer}! ${TRY.t("bk.waNew")} — ${b.emer}, ${TRY.fmtDate(b.date)}, ${b.time}, ${b.persona} ${waPpl}, ${b.zonaEmer} – ${TRY.t("bk.tableLbl")} ${b.tavolina[0]}, ${b.code}.${b.shenime ? " " + TRY.t("bk.waNotes") + " " + b.shenime : ""}`;
+      const waMsg = `${TRY.t("bk.waHello")} ${rest.emer}! ${TRY.t("bk.waNew")} — ${b.emer}, ${TRY.fmtDate(b.date)}, ${b.time}, ${b.persona} ${waPpl}, ${b.zonaEmer} – ${TRY.t("bk.tableLbl")} ${b.tavolina[0]}, ${b.code}.${b.shenime ? " " + TRY.t("bk.waNotes") + " " + b.shenime : ""}${TRY.menuWaLine(b) ? " " + TRY.menuWaLine(b) : ""}`;
       const waUrl = `https://wa.me/${rDigits}?text=${encodeURIComponent(waMsg)}`;
       kontaktBox = `<div class="kontakt-box" style="text-align:center;margin-top:1rem">
         <div style="font-weight:700;margin-bottom:.2rem">${TRY.t("bk.waTitle")}</div>

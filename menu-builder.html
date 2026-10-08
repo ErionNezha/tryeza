@@ -1,0 +1,339 @@
+<!-- Created by Erion Nezha — © 2026 All rights reserved -->
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="mb.title">TRYEZA — Krijo menunë e darkës</title>
+<meta name="description" content="Krijo menunë e darkës tënde: zgjidh pjatat dhe shiko çmimin live për çdo person.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+<style>
+#tryLoader{position:fixed;inset:0;z-index:2000;background:#0e0f12;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s}
+#tryLoader.done{opacity:0;visibility:hidden;pointer-events:none}
+#tryLoader .ld-inner{text-align:center;padding:0 1.5rem}
+#tryLoader .ld-cloche{width:148px;height:118px;margin:0 auto .9rem}
+#tryLoader .ld-cloche svg{width:100%;height:100%;overflow:visible}
+#tryLoader .draw{stroke-dasharray:430;stroke-dashoffset:430;animation:lddraw 1.05s ease forwards}
+#tryLoader .draw.d2{animation-delay:.16s}#tryLoader .draw.d3{animation-delay:.32s}#tryLoader .draw.d4{animation-delay:.48s}
+@keyframes lddraw{to{stroke-dashoffset:0}}
+#tryLoader .steam{animation:ldsteam 1.9s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+#tryLoader .steam.s2{animation-delay:.55s}
+@keyframes ldsteam{0%,100%{opacity:.15;transform:translateY(3px)}50%{opacity:.9;transform:translateY(-3px)}}
+#tryLoader .ld-name{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.9rem;letter-spacing:.42em;padding-left:.42em;color:#ecd9b8}
+#tryLoader .ld-tag{color:#a0a0a8;font-size:.82rem;letter-spacing:.14em;margin-top:.65rem;animation:ldpulse 1.7s ease-in-out infinite}
+@keyframes ldpulse{0%,100%{opacity:.5}50%{opacity:1}}
+#tryLoader .ld-bar{width:210px;max-width:60vw;height:2px;background:rgba(197,168,128,.18);margin:1.25rem auto 0;border-radius:2px;overflow:hidden}
+#tryLoader .ld-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a8895e,#ecd9b8)}
+@media (prefers-reduced-motion:reduce){
+#tryLoader .draw{animation:none;stroke-dashoffset:0}
+#tryLoader .steam,#tryLoader .ld-tag{animation:none;opacity:1}
+}
+</style></head>
+<body><div id="tryLoader" aria-hidden="true"><div class="ld-inner">
+<div class="ld-cloche"><svg viewBox="0 0 120 96" fill="none" aria-hidden="true">
+<path class="steam s1" d="M44 32 q5 -7 0 -14 q-5 -7 0 -13" stroke="#c5a880" stroke-width="1.6" stroke-linecap="round"/>
+<path class="steam s2" d="M76 32 q-5 -7 0 -14 q5 -7 0 -13" stroke="#c5a880" stroke-width="1.6" stroke-linecap="round"/>
+<path class="draw" d="M22 72 A38 38 0 0 1 98 72" stroke="#c5a880" stroke-width="1.8" stroke-linecap="round"/>
+<line class="draw d2" x1="14" y1="72" x2="106" y2="72" stroke="#c5a880" stroke-width="1.8" stroke-linecap="round"/>
+<circle class="draw d3" cx="60" cy="28" r="4" stroke="#ecd9b8" stroke-width="1.6"/>
+<line class="draw d3" x1="60" y1="32" x2="60" y2="37" stroke="#ecd9b8" stroke-width="1.6"/>
+<ellipse class="draw d4" cx="60" cy="81" rx="50" ry="8" stroke="#a8895e" stroke-width="1.4"/>
+<g class="draw d4" stroke="#c5a880" stroke-width="1.5" stroke-linecap="round">
+<line x1="7" y1="52" x2="7" y2="68"/><line x1="3" y1="52" x2="3" y2="60"/><line x1="7" y1="52" x2="7" y2="60"/><line x1="11" y1="52" x2="11" y2="60"/><line x1="3" y1="60" x2="11" y2="60"/>
+</g>
+<g class="draw d4" stroke="#c5a880" stroke-width="1.5" stroke-linecap="round">
+<line x1="113" y1="52" x2="113" y2="68"/><path d="M113 52 L117 52 L115 40 Z" fill="#c5a880" stroke="none" opacity=".85"/>
+</g>
+</svg></div>
+<div class="ld-name">TRYEZA</div>
+<div class="ld-tag" data-i18n="loader.tag2">Po bëjmë gati tavolinën tënde...</div>
+<div class="ld-bar"><i id="ldFill"></i></div>
+</div></div>
+<script>(function(){var el=document.getElementById('tryLoader');if(!el)return;
+function kill(){if(el.parentNode)el.parentNode.removeChild(el)}
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){kill();return}
+var fill=document.getElementById('ldFill'),t0=performance.now(),DUR=1300;
+function tick(now){var p=Math.min(1,(now-t0)/DUR),e=1-Math.pow(1-p,3);
+if(fill)fill.style.width=Math.round(e*100)+'%';if(p<1)requestAnimationFrame(tick);}
+requestAnimationFrame(tick);
+var exited=false,t0b=Date.now(),MINT=1400;
+function exit(){if(exited)return;exited=true;el.classList.add('done');setTimeout(kill,750);}
+function ready(){setTimeout(exit,Math.max(0,MINT-(Date.now()-t0b)));}
+if(document.readyState==='complete')ready();else{window.addEventListener('load',ready);setTimeout(ready,5000);}})();</script>
+<header class="site"></header>
+<main class="wrap" id="mbMain">
+  <div class="page-head">
+    <p><a href="#" id="mbBack" class="back-link" style="color:var(--gold-lt);text-decoration:none">← <span data-i18n="mb.back">Kthehu te restoranti</span></a></p>
+    <span class="eyebrow" data-i18n="mb.eyebrow">Planifiko darkën</span>
+    <h1 data-i18n="mb.title">Krijo menunë e darkës</h1>
+    <p data-i18n="mb.sub">Zgjidh pjatat për darkën tënde — çmimi llogaritet live, për çdo person.</p>
+  </div>
+  <div class="mb-layout">
+    <div class="mb-dishes" id="mbDishes">
+      <div class="mb-guests">
+        <span class="g-label" data-i18n="mb.guests">Persona</span>
+        <div class="mb-stepper">
+          <button id="gMinus" aria-label="−">−</button><b id="gNum">2</b><button id="gPlus" aria-label="+">+</button>
+        </div>
+      </div>
+      <div id="mbCats"></div>
+    </div>
+    <aside class="mb-preview">
+      <div class="mb-card">
+        <h2 data-i18n="mb.previewT">Menuja jote</h2>
+        <div class="mb-rest" id="mbRestName"></div>
+        <div class="mb-tablewrap" id="mbTableWrap" aria-hidden="true">
+          <svg id="mbTable" viewBox="0 0 200 200" role="img" aria-label="Tavolina">
+            <circle cx="100" cy="100" r="94" fill="none" stroke="#c5a880" stroke-width="1.6" opacity=".55"/>
+            <circle cx="100" cy="100" r="78" fill="none" stroke="#c5a880" stroke-width="1" opacity=".3" stroke-dasharray="4 7"/>
+            <circle cx="100" cy="100" r="58" fill="rgba(197,168,128,.05)" stroke="#c5a880" stroke-width="1" opacity=".35"/>
+            <circle cx="100" cy="100" r="34" fill="none" stroke="#ecd9b8" stroke-width="1.2" opacity=".5"/>
+            <g id="mbTableDishes"></g>
+          </svg>
+        </div>
+        <div class="mb-list" id="mbList"></div>
+        <div class="mb-totals">
+          <div class="row"><span data-i18n="mb.perPerson">për person</span><span id="mbPerP">0 L</span></div>
+          <div class="row grand"><span id="mbTotalLbl">Totali</span><b id="mbTotal">0 L</b></div>
+        </div>
+        <button class="btn btn-gold" id="mbCta" disabled></button>
+        <button class="btn btn-ghost btn-sm" id="mbReset" data-i18n="mb.reset">Fillo nga e para</button>
+      </div>
+    </aside>
+  </div>
+</main>
+<div class="mb-stickybar" id="mbBar">
+  <div class="tt"><small data-i18n="mb.total">Totali</small><b id="mbBarTotal">0 L</b></div>
+  <button class="btn btn-gold btn-sm" id="mbBarCta"></button>
+</div>
+<footer class="site"></footer>
+<div id="toast"></div>
+<script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+<script>
+"use strict";
+/* ===== Menu Builder — single-screen configurator me animacion "fluturon në tavolinë" ===== */
+const params = new URLSearchParams(location.search);
+const rest = params.get("id") ? TRY.restById(params.get("id")) : null;
+TRY.renderChrome("menu-builder.html");
+const $ = TRY.$;
+
+const CATS = ["ane","kryesore","embelsire","pije"];
+const CAT_KEY = {ane:"mb.catAne",kryesore:"mb.catKryesore",embelsire:"mb.catEmbelsire",pije:"mb.catPije"};
+const CAT_EMOJI = {ane:"\u{1F957}",kryesore:"\u{1F356}",embelsire:"\u{1F370}",pije:"\u{1F377}"};
+
+/* Sugjerime editoriale — pjata tipike shqiptare me çmime tipike (etiketohen qartë) */
+const ED = {
+  ane:[
+    {emer:"Sallatë fshati",cmim:350},{emer:"Djathë i bardhë me ullinj",cmim:400},
+    {emer:"Byrek me spinaq",cmim:300},{emer:"Speca të mbushur",cmim:450}
+  ],
+  kryesore:[
+    {emer:"Tavë kosi",cmim:850},{emer:"Qofte shtëpie",cmim:700},
+    {emer:"Peshk i ditës në zgarë",cmim:1200},{emer:"Biftek viçi",cmim:1400}
+  ],
+  embelsire:[
+    {emer:"Bakllava",cmim:350},{emer:"Trileçe",cmim:400},{emer:"Akullore artizanale",cmim:300}
+  ],
+  pije:[
+    {emer:"Verë e kuqe (gotë)",cmim:400},{emer:"Raki rrushi",cmim:250},
+    {emer:"Ujë mineral",cmim:150},{emer:"Lëng portokalli i freskët",cmim:250}
+  ]
+};
+
+function classify(dishes){
+  const out = {ane:[],kryesore:[],embelsire:[],pije:[]};
+  (dishes||[]).forEach(d=>{
+    const n = " "+String(d.emer||"").toLowerCase()+" ";
+    let c = "ane";
+    if(/(bakllav|trileç|tres leches|akullor|sheqerpare|tort|kek|tiramisu|pana cotta|profiterol|krem karamel)/.test(n)) c="embelsire";
+    else if(/(verë(?!s)|rakia?|birr|ujë mineral|lëng|kafe|koktej|gotë|shishe|pije)/.test(n)) c="pije";
+    else if(/(tavë|mish|peshk|biftek|zgare|steak|fileto|kombinim|mix|oktapod|levrek|salmon)/.test(n)
+            && !/(sallat|carpaccio|tartar|pitja|pite|petulla|bukë|kungull|fërges|djath|byrek)/.test(n)) c="kryesore";
+    out[c].push({emer:d.emer, cmim:+d.cmim||0, kat:c, src:"real"});
+  });
+  return out;
+}
+
+const REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+if(!rest){
+  document.title = TRY.t("pg.notFound");
+  document.getElementById("mbMain").innerHTML = '<div class="empty" style="margin:3rem 0"><div class="big">🍽️</div>'
+    + '<h2>'+TRY.t("det.notFoundT")+'</h2><p>'+TRY.t("det.notFoundD")+'</p>'
+    + '<p style="margin-top:1.2rem"><a class="btn btn-gold" href="restorante.html">'+TRY.t("det.backToRest")+'</a></p></div>';
+  document.getElementById("mbBar").style.display = "none";
+}else{
+  document.title = TRY.t("mb.title")+" — "+rest.emer+" — TRYEZA";
+  document.getElementById("mbBack").href = "restorant.html?id="+encodeURIComponent(rest.id);
+  document.getElementById("mbRestName").textContent = rest.emer+" · "+rest.qytet;
+
+  const real = classify(rest.menu||[]);
+  const hasReal = (rest.menu||[]).length>0;
+
+  let sel = [];
+  let persona = 2;
+  const qp = parseInt(params.get("persona"),10);
+  const saved = TRY.menuDraft();
+  if(saved && saved.restId===rest.id){
+    sel = (saved.items||[]).filter(x=>x && x.emer);
+    if(saved.persona>=1 && saved.persona<=20) persona = saved.persona;
+  }else if(qp>=1 && qp<=20){ persona = qp; }
+
+  const key = d => d.kat+"|"+d.emer;
+  const isSel = d => sel.some(s=>key(s)===key(d));
+  function persist(){
+    TRY.save(TRY.MB_LS, {restId:rest.id, items:sel, persona:persona, editorial:!hasReal, savedAt:new Date().toISOString()});
+  }
+
+  /* ---------- animacioni "fluturon në tavolinë" (WAAPI) ---------- */
+  function flyTarget(){
+    const t = document.getElementById("mbTableWrap");
+    if(!t) return null;
+    const r = t.getBoundingClientRect();
+    const inView = r.bottom>0 && r.top<window.innerHeight;
+    if(inView) return t;
+    const bar = document.getElementById("mbBar");
+    return (bar && getComputedStyle(bar).display!=="none") ? bar : t;
+  }
+  function flyToTable(fromEl, dish, done){
+    const target = flyTarget();
+    if(REDUCED || !target || !fromEl){ done(); return; }
+    const r1 = fromEl.getBoundingClientRect();
+    const r2 = target.getBoundingClientRect();
+    const fly = document.createElement("div");
+    fly.className = "mb-fly";
+    fly.textContent = CAT_EMOJI[dish.kat] || "🍽️";
+    fly.setAttribute("aria-hidden","true");
+    document.body.appendChild(fly);
+    const x1 = r1.left+r1.width/2, y1 = r1.top+r1.height/2;
+    const x2 = r2.left+r2.width/2, y2 = r2.top+r2.height/2;
+    const dx = x2-x1, dy = y2-y1;
+    const lift = -Math.min(170, Math.abs(dy)*0.45+70);
+    fly.style.left = x1+"px"; fly.style.top = y1+"px";
+    let anim;
+    try{
+      anim = fly.animate([
+        { transform:"translate(-50%,-50%) scale(1) rotate(0deg)", opacity:1 },
+        { transform:"translate(calc(-50% + "+(dx*0.5)+"px), calc(-50% + "+(dy*0.5+lift)+"px)) scale(.8) rotate(14deg)", opacity:1, offset:.55 },
+        { transform:"translate(calc(-50% + "+dx+"px), calc(-50% + "+dy+"px)) scale(.45) rotate(0deg)", opacity:.85 }
+      ], { duration:680, easing:"cubic-bezier(.22,.8,.3,1)" });
+    }catch(e){ fly.remove(); done(); return; }
+    anim.onfinish = ()=>{ fly.remove(); done(); };
+  }
+  function pulseTotal(){
+    if(REDUCED) return;
+    ["mbTotal","mbBarTotal"].forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.classList.remove("mb-pulse"); void el.offsetWidth; el.classList.add("mb-pulse");
+    });
+    const tw = document.getElementById("mbTableWrap");
+    if(tw){ tw.classList.remove("mb-land"); void tw.offsetWidth; tw.classList.add("mb-land"); }
+  }
+
+  function commitAdd(dish){
+    sel.push(dish);
+    persist(); renderCats(); renderPreview(); pulseTotal();
+    TRY.toast(TRY.t("mb.addedT",{emer:dish.emer}));
+  }
+
+  function renderCats(){
+    const box = document.getElementById("mbCats");
+    box.innerHTML = CATS.map(c=>{
+      const realD = real[c];
+      const list = realD.length ? realD : ED[c].map(e=>({emer:e.emer,cmim:e.cmim,kat:c,src:"ed"}));
+      const edOnly = !realD.length;
+      const tag = realD.length
+        ? '<span class="ed-tag" style="background:rgba(62,207,142,.12);border-color:rgba(62,207,142,.35);color:#7fe0ae">'+TRY.t("mb.realMenu")+'</span>'
+        : '<span class="ed-tag">'+TRY.t("mb.editorial")+'</span>';
+      const note = '<div class="mb-src">'+tag+(edOnly ? " "+TRY.esc(TRY.t("mb.editorialNote")) : "")+'</div>';
+      return '<section class="mb-cat"><h2>'+TRY.t(CAT_KEY[c])+'</h2>'+note
+        + '<div class="mb-grid">'+list.map(d=>{
+          const on = isSel(d);
+          return '<div class="mb-dish'+(on?" sel":"")+'">'
+            + '<div class="nm"><b>'+TRY.esc(d.emer)+'</b><span>'+(d.cmim? d.cmim+" L":"—")+'</span></div>'
+            + '<button class="mb-add'+(on?" on":"")+'" data-k="'+TRY.esc(d.kat)+'" data-e="'+TRY.esc(d.emer)+'" data-c="'+d.cmim+'" data-s="'+d.src+'"'
+            + ' aria-label="'+TRY.esc(TRY.t(on?"mb.added":"mb.add"))+'" aria-pressed="'+on+'">'+(on?"✓":"+")
+            + '</button></div>';
+        }).join("")+'</div></section>';
+    }).join("");
+    box.querySelectorAll(".mb-add").forEach(b=>b.addEventListener("click",()=>{
+      const d = {emer:b.dataset.e, cmim:+b.dataset.c||0, kat:b.dataset.k, src:b.dataset.s};
+      const i = sel.findIndex(s=>key(s)===key(d));
+      if(i>=0){
+        sel.splice(i,1); persist(); renderCats(); renderPreview();
+        TRY.toast(TRY.t("mb.removedT",{emer:d.emer}));
+      }else{
+        flyToTable(b, d, ()=>commitAdd(d));
+      }
+    }));
+  }
+
+  function renderTableDishes(){
+    const g = document.getElementById("mbTableDishes");
+    if(!g) return;
+    const n = sel.length;
+    g.innerHTML = sel.map((d,i)=>{
+      const a = n===1 ? -Math.PI/2 : -Math.PI/2 + i*(Math.PI*2/n);
+      const x = 100+56*Math.cos(a), y = 100+56*Math.sin(a);
+      return '<text x="'+x.toFixed(1)+'" y="'+(y+7).toFixed(1)+'" text-anchor="middle" font-size="19" class="mb-dish-emoji">'
+        + (CAT_EMOJI[d.kat]||"🍽️") + '<title>'+TRY.esc(d.emer)+'</title></text>';
+    }).join("");
+  }
+
+  function renderPreview(){
+    const list = document.getElementById("mbList");
+    const perP = sel.reduce((s,d)=>s+(+d.cmim||0),0);
+    const tot = perP*persona;
+    const fmt = v => v.toLocaleString("sq-AL")+" L";
+    if(!sel.length){
+      list.innerHTML = '<div class="mb-empty">'+TRY.t("mb.empty")+'</div>';
+    }else{
+      list.innerHTML = CATS.filter(c=>sel.some(d=>d.kat===c)).map(c=>
+        '<span class="cat-lbl">'+TRY.t(CAT_KEY[c])+'</span>' +
+        sel.filter(d=>d.kat===c).map(d=>
+          '<div class="mb-item"><span>'+TRY.esc(d.emer)+'</span>'
+          + '<span><span class="pr">'+d.cmim+' L</span> <button class="rm" data-k="'+TRY.esc(d.kat)+'" data-e="'+TRY.esc(d.emer)+'" aria-label="'+TRY.esc(TRY.t("mb.remove"))+'">×</button></span></div>'
+        ).join("")
+      ).join("");
+      list.querySelectorAll(".rm").forEach(b=>b.addEventListener("click",()=>{
+        const i = sel.findIndex(s=>s.kat===b.dataset.k && s.emer===b.dataset.e);
+        if(i>=0){ const rm = sel.splice(i,1)[0]; TRY.toast(TRY.t("mb.removedT",{emer:rm.emer})); }
+        persist(); renderCats(); renderPreview();
+      }));
+    }
+    renderTableDishes();
+    document.getElementById("mbPerP").textContent = fmt(perP);
+    document.getElementById("mbTotalLbl").textContent = TRY.t("mb.totalFor",{n:persona});
+    document.getElementById("mbTotal").textContent = fmt(tot);
+    document.getElementById("mbBarTotal").textContent = fmt(tot);
+    const cta = document.getElementById("mbCta"), bar = document.getElementById("mbBarCta");
+    cta.innerHTML = sel.length ? TRY.t("mb.cta",{total:tot.toLocaleString("sq-AL")}) : TRY.t("mb.ctaEmpty");
+    cta.disabled = !sel.length;
+    bar.innerHTML = sel.length ? TRY.t("mb.cta",{total:tot.toLocaleString("sq-AL")}) : "+";
+    document.getElementById("gNum").textContent = persona;
+  }
+
+  function goBooking(){
+    if(!sel.length){ TRY.toast(TRY.t("mb.ctaEmpty")); return; }
+    persist();
+    TRY.toast(TRY.t("mb.savedT"));
+    setTimeout(()=>{ location.href = "restorant.html?id="+encodeURIComponent(rest.id); }, 450);
+  }
+  document.getElementById("mbCta").addEventListener("click", goBooking);
+  document.getElementById("mbBarCta").addEventListener("click", goBooking);
+  document.getElementById("mbReset").addEventListener("click", ()=>{
+    sel = []; persist(); renderCats(); renderPreview(); TRY.toast(TRY.t("mb.resetDone"));
+  });
+  document.getElementById("gMinus").addEventListener("click", ()=>{ if(persona>1){persona--; persist(); renderPreview();} });
+  document.getElementById("gPlus").addEventListener("click", ()=>{ if(persona<20){persona++; persist(); renderPreview();} });
+
+  renderCats(); renderPreview();
+  persist();
+}
+</script>
+</body>
+</html>

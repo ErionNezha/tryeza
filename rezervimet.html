@@ -136,6 +136,7 @@ function cardHTML(b){
   const tblTxt = (b.tavolina && b.tavolina.length) ? b.tavolina.join(", ") : "—";
   const ppl = (b.persona == 1) ? TRY.t("bk.sumPerson") : TRY.t("bk.sumPersons");
   const det = `${TRY.fmtDate(b.date)} · ${TRY.t("my.atTime")} ${TRY.esc(b.time)} · ${b.persona || "—"} ${ppl} · ${TRY.esc(zonaEmer(r, b.zonaId))} · ${TRY.t("my.tblTxt")} ${TRY.esc(tblTxt)}`;
+  const menuHtml = TRY.menuLine(b) ? `<div class="d mb-card-line">${TRY.esc(TRY.menuLine(b))}</div>` : "";
   const actions = b.status === "aktive"
     ? `<div class="bk-actions">
         <button class="btn btn-ghost btn-sm" data-act="edit" data-code="${TRY.esc(b.code)}">${TRY.t("my.modify")}</button>
@@ -149,6 +150,7 @@ function cardHTML(b){
       <div class="t">${TRY.esc(r ? r.emer : "Restorant")}</div>
       <div class="d">${TRY.esc((b.emer || b.name) || "")}${(b.telefon || b.phone) ? " · " + TRY.esc(b.telefon || b.phone) : ""}</div>
       <div class="d">${det}</div>
+      ${menuHtml}
       <span class="bk-code">${TRY.esc(b.code)}</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:.7rem;align-items:flex-end">${statusPill(b.status)}${actions}</div>
