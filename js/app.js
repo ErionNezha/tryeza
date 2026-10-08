@@ -208,7 +208,9 @@ const TRY = (() => {
   function menuWaLine(b){
     const m = b && b.menu;
     if(!m || !m.items || !m.items.length) return "";
-    return T("mb.waMenu", { items: m.items.map(i=>i.emer).join(", "), total: menuTotal(m) });
+    let s = T("mb.waMenu", { items: m.items.map(i=>i.emer).join(", "), total: menuTotal(m) });
+    if(m.kitchenNote) s += " " + T("mb.waKitchen", { note: m.kitchenNote });
+    return s;
   }
 
   /* ---------- share booking with friends ---------- */

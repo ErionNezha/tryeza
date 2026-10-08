@@ -92,6 +92,7 @@ if(document.readyState==='complete')ready();else{window.addEventListener('load',
             <g id="mbTableDishes"></g>
           </svg>
         </div>
+        <p class="mb-hint" id="mbHint"></p>
         <div class="mb-list" id="mbList"></div>
         <div class="mb-totals">
           <div class="row"><span data-i18n="mb.perPerson">për person</span><span id="mbPerP">0 L</span></div>
@@ -108,13 +109,30 @@ if(document.readyState==='complete')ready();else{window.addEventListener('load',
   <button class="btn btn-gold btn-sm" id="mbBarCta"></button>
 </div>
 <footer class="site"></footer>
+<div class="mb-order-ov" id="mbOrderOv" aria-hidden="true">
+  <div class="mb-order-card" role="dialog" aria-modal="true" aria-labelledby="mbOrderT">
+    <h2 id="mbOrderT" data-i18n="mb.orderTitle">Porosia jote</h2>
+    <div id="mbOrderLines"></div>
+    <label class="mb-kn"><span data-i18n="mb.kitchenNote">Shënim për kuzhinën</span>
+      <textarea id="mbKitchen" rows="2" data-i18n-ph="mb.kitchenNotePh" placeholder="p.sh. pa gluten, pak kripë, alergji..."></textarea>
+    </label>
+    <div class="mb-totals">
+      <div class="row"><span data-i18n="mb.perPerson">për person</span><span id="mbOrderPerP">0 L</span></div>
+      <div class="row grand"><span id="mbOrderTotalLbl">Totali</span><b id="mbOrderTotal">0 L</b></div>
+    </div>
+    <div class="mb-order-btns">
+      <button class="btn btn-ghost" id="mbOrderBack" data-i18n="mb.orderBack">Kthehu</button>
+      <button class="btn btn-gold" id="mbOrderGo"></button>
+    </div>
+  </div>
+</div>
 <div id="toast"></div>
 <script src="js/data.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 <script>
 "use strict";
-/* ===== Menu Builder — single-screen configurator me animacion "fluturon në tavolinë" ===== */
+/* ===== Menu Builder v2 — foto reale + drag&drop + hold-to-remove + firing + order screen ===== */
 const params = new URLSearchParams(location.search);
 const rest = params.get("id") ? TRY.restById(params.get("id")) : null;
 TRY.renderChrome("menu-builder.html");
@@ -127,19 +145,27 @@ const CAT_EMOJI = {ane:"\u{1F957}",kryesore:"\u{1F356}",embelsire:"\u{1F370}",pi
 /* Sugjerime editoriale — pjata tipike shqiptare me çmime tipike (etiketohen qartë) */
 const ED = {
   ane:[
-    {emer:"Sallatë fshati",cmim:350},{emer:"Djathë i bardhë me ullinj",cmim:400},
-    {emer:"Byrek me spinaq",cmim:300},{emer:"Speca të mbushur",cmim:450}
+    {emer:"Sallatë fshati",cmim:350,foto:"img/pjata/ed-sallate-fshati.jpg"},
+    {emer:"Djathë i bardhë me ullinj",cmim:400,foto:"img/pjata/ed-djathe-ullinj.jpg"},
+    {emer:"Byrek me spinaq",cmim:300,foto:"img/pjata/ed-byrek-spinaq.jpg"},
+    {emer:"Speca të mbushur",cmim:450,foto:"img/pjata/ed-speca-mbushur.jpg"}
   ],
   kryesore:[
-    {emer:"Tavë kosi",cmim:850},{emer:"Qofte shtëpie",cmim:700},
-    {emer:"Peshk i ditës në zgarë",cmim:1200},{emer:"Biftek viçi",cmim:1400}
+    {emer:"Tavë kosi",cmim:850,foto:"img/pjata/fi-tave-kosi.jpg"},
+    {emer:"Qofte shtëpie",cmim:700,foto:"img/pjata/ed-qofte.jpg"},
+    {emer:"Peshk i ditës në zgarë",cmim:1200,foto:"img/pjata/ed-peshk-zgare.jpg"},
+    {emer:"Biftek viçi",cmim:1400,foto:"img/pjata/ed-biftek.jpg"}
   ],
   embelsire:[
-    {emer:"Bakllava",cmim:350},{emer:"Trileçe",cmim:400},{emer:"Akullore artizanale",cmim:300}
+    {emer:"Bakllava",cmim:350,foto:"img/pjata/ed-bakllava.jpg"},
+    {emer:"Trileçe",cmim:400,foto:"img/pjata/ed-trilece.jpg"},
+    {emer:"Akullore artizanale",cmim:300,foto:"img/pjata/ed-akullore.jpg"}
   ],
   pije:[
-    {emer:"Verë e kuqe (gotë)",cmim:400},{emer:"Raki rrushi",cmim:250},
-    {emer:"Ujë mineral",cmim:150},{emer:"Lëng portokalli i freskët",cmim:250}
+    {emer:"Verë e kuqe (gotë)",cmim:400,foto:"img/pjata/ed-vere.jpg"},
+    {emer:"Raki rrushi",cmim:250},
+    {emer:"Ujë mineral",cmim:150},
+    {emer:"Lëng portokalli i freskët",cmim:250,foto:"img/pjata/ed-leng-portokalli.jpg"}
   ]
 };
 
@@ -152,12 +178,18 @@ function classify(dishes){
     else if(/(verë(?!s)|rakia?|birr|ujë mineral|lëng|kafe|koktej|gotë|shishe|pije)/.test(n)) c="pije";
     else if(/(tavë|mish|peshk|biftek|zgare|steak|fileto|kombinim|mix|oktapod|levrek|salmon)/.test(n)
             && !/(sallat|carpaccio|tartar|pitja|pite|petulla|bukë|kungull|fërges|djath|byrek)/.test(n)) c="kryesore";
-    out[c].push({emer:d.emer, cmim:+d.cmim||0, kat:c, src:"real"});
+    out[c].push({emer:d.emer, cmim:+d.cmim||0, kat:c, src:"real", foto:d.foto||""});
   });
   return out;
 }
 
 const REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function thumbHTML(d){
+  return d.foto
+    ? '<img class="mb-thumb" src="'+TRY.esc(d.foto)+'" alt="" loading="lazy" draggable="false">'
+    : '<span class="mb-efb">'+(CAT_EMOJI[d.kat]||"🍽️")+'</span>';
+}
 
 if(!rest){
   document.title = TRY.t("pg.notFound");
@@ -175,17 +207,22 @@ if(!rest){
 
   let sel = [];
   let persona = 2;
+  let kitchenNote = "";
   const qp = parseInt(params.get("persona"),10);
   const saved = TRY.menuDraft();
   if(saved && saved.restId===rest.id){
     sel = (saved.items||[]).filter(x=>x && x.emer);
     if(saved.persona>=1 && saved.persona<=20) persona = saved.persona;
+    kitchenNote = saved.kitchenNote || "";
   }else if(qp>=1 && qp<=20){ persona = qp; }
 
   const key = d => d.kat+"|"+d.emer;
   const isSel = d => sel.some(s=>key(s)===key(d));
   function persist(){
-    TRY.save(TRY.MB_LS, {restId:rest.id, items:sel, persona:persona, editorial:!hasReal, savedAt:new Date().toISOString()});
+    TRY.save(TRY.MB_LS, {restId:rest.id, items:sel, persona:persona, kitchenNote:kitchenNote, editorial:!hasReal, savedAt:new Date().toISOString()});
+  }
+  function readDish(card){
+    return {emer:card.dataset.e, cmim:+card.dataset.c||0, kat:card.dataset.k, src:card.dataset.s, foto:card.dataset.f||""};
   }
 
   /* ---------- animacioni "fluturon në tavolinë" (WAAPI) ---------- */
@@ -205,7 +242,9 @@ if(!rest){
     const r2 = target.getBoundingClientRect();
     const fly = document.createElement("div");
     fly.className = "mb-fly";
-    fly.textContent = CAT_EMOJI[dish.kat] || "🍽️";
+    fly.innerHTML = dish.foto
+      ? '<img src="'+TRY.esc(dish.foto)+'" alt="">'
+      : (CAT_EMOJI[dish.kat] || "🍽️");
     fly.setAttribute("aria-hidden","true");
     document.body.appendChild(fly);
     const x1 = r1.left+r1.width/2, y1 = r1.top+r1.height/2;
@@ -234,17 +273,113 @@ if(!rest){
     if(tw){ tw.classList.remove("mb-land"); void tw.offsetWidth; tw.classList.add("mb-land"); }
   }
 
-  function commitAdd(dish){
+  function commitAdd(dish, fromEl){
     sel.push(dish);
     persist(); renderCats(); renderPreview(); pulseTotal();
     TRY.toast(TRY.t("mb.addedT",{emer:dish.emer}));
+  }
+  function toggleDish(dish, fromEl){
+    const i = sel.findIndex(s=>key(s)===key(dish));
+    if(i>=0){
+      const rm = sel.splice(i,1)[0];
+      persist(); renderCats(); renderPreview();
+      TRY.toast(TRY.t("mb.removedT",{emer:rm.emer}));
+    }else{
+      flyToTable(fromEl||null, dish, ()=>commitAdd(dish));
+    }
+  }
+
+  /* ---------- drag & drop mbi tavolinë (Pointer Events: mouse + touch) ---------- */
+  function bindDrag(card){
+    const dish = readDish(card);
+    let st = null, ghost = null;
+    function cleanup(){
+      if(st && st.holdT){ clearTimeout(st.holdT); }
+      if(ghost){ ghost.remove(); ghost = null; }
+      card.classList.remove("dragging");
+      st = null;
+    }
+    function moveGhost(e){
+      if(ghost){ ghost.style.left = e.clientX+"px"; ghost.style.top = e.clientY+"px"; }
+    }
+    function beginDrag(e){
+      if(!st || st.dragging) return;
+      st.dragging = true;
+      card.classList.add("dragging");
+      try{ card.setPointerCapture(st.id); }catch(_){}
+      ghost = document.createElement("div");
+      ghost.className = "mb-drag-ghost";
+      ghost.innerHTML = dish.foto
+        ? '<img src="'+TRY.esc(dish.foto)+'" alt="">'
+        : '<span class="ge">'+(CAT_EMOJI[dish.kat]||"🍽️")+'</span>';
+      document.body.appendChild(ghost);
+      moveGhost(e);
+    }
+    card.addEventListener("pointerdown", e=>{
+      if(e.target.closest(".mb-add")) return;
+      st = {id:e.pointerId, x0:e.clientX, y0:e.clientY, dragging:false, holdT:0};
+      if(e.pointerType==="touch"){
+        st.holdT = setTimeout(()=>{ if(st && !st.dragging) beginDrag(e); }, 260);
+      }
+    });
+    card.addEventListener("pointermove", e=>{
+      if(!st || e.pointerId!==st.id) return;
+      const moved = Math.hypot(e.clientX-st.x0, e.clientY-st.y0);
+      if(!st.dragging){
+        if(e.pointerType!=="touch" && moved>9){ beginDrag(e); }
+        else if(e.pointerType==="touch" && moved>12){ cleanup(); }
+        return;
+      }
+      moveGhost(e);
+    });
+    function finish(e){
+      if(!st || e.pointerId!==st.id) return;
+      if(e.target.closest && e.target.closest(".mb-add")){ cleanup(); return; }
+      const wasDragging = st.dragging;
+      const moved = Math.hypot(e.clientX-st.x0, e.clientY-st.y0);
+      const g = ghost;
+      cleanup();
+      if(wasDragging){
+        const el = document.elementFromPoint(e.clientX, e.clientY);
+        const tw = el && el.closest ? el.closest("#mbTableWrap") : null;
+        if(tw){ toggleDish(dish, card); }
+      }else if(moved<10){
+        toggleDish(dish, card);
+      }
+    }
+    card.addEventListener("pointerup", finish);
+    card.addEventListener("pointercancel", ()=>cleanup());
+  }
+
+  /* ---------- hold-to-remove mbi tavolinë ---------- */
+  function bindHoldRemove(scope){
+    scope.querySelectorAll(".mb-tdish").forEach(el=>{
+      let t = null;
+      const cancel = ()=>{ if(t){ clearTimeout(t); t=null; } el.classList.remove("mb-shake"); };
+      el.addEventListener("pointerdown", e=>{
+        e.preventDefault();
+        el.classList.add("mb-shake");
+        t = setTimeout(()=>{
+          t = null; el.classList.remove("mb-shake");
+          const i = +el.getAttribute("data-i");
+          if(i>=0 && i<sel.length){
+            const rm = sel.splice(i,1)[0];
+            persist(); renderCats(); renderPreview();
+            TRY.toast(TRY.t("mb.removedT",{emer:rm.emer}));
+          }
+        }, 600);
+      });
+      el.addEventListener("pointerup", cancel);
+      el.addEventListener("pointerleave", cancel);
+      el.addEventListener("pointercancel", cancel);
+    });
   }
 
   function renderCats(){
     const box = document.getElementById("mbCats");
     box.innerHTML = CATS.map(c=>{
       const realD = real[c];
-      const list = realD.length ? realD : ED[c].map(e=>({emer:e.emer,cmim:e.cmim,kat:c,src:"ed"}));
+      const list = realD.length ? realD : ED[c].map(e=>({emer:e.emer,cmim:e.cmim,kat:c,src:"ed",foto:e.foto||""}));
       const edOnly = !realD.length;
       const tag = realD.length
         ? '<span class="ed-tag" style="background:rgba(62,207,142,.12);border-color:rgba(62,207,142,.35);color:#7fe0ae">'+TRY.t("mb.realMenu")+'</span>'
@@ -253,23 +388,23 @@ if(!rest){
       return '<section class="mb-cat"><h2>'+TRY.t(CAT_KEY[c])+'</h2>'+note
         + '<div class="mb-grid">'+list.map(d=>{
           const on = isSel(d);
-          return '<div class="mb-dish'+(on?" sel":"")+'">'
+          return '<div class="mb-dish'+(on?" sel":"")+'"'
+            + ' data-k="'+TRY.esc(d.kat)+'" data-e="'+TRY.esc(d.emer)+'" data-c="'+d.cmim+'" data-s="'+d.src+'" data-f="'+TRY.esc(d.foto||"")+'">'
+            + thumbHTML(d)
             + '<div class="nm"><b>'+TRY.esc(d.emer)+'</b><span>'+(d.cmim? d.cmim+" L":"—")+'</span></div>'
-            + '<button class="mb-add'+(on?" on":"")+'" data-k="'+TRY.esc(d.kat)+'" data-e="'+TRY.esc(d.emer)+'" data-c="'+d.cmim+'" data-s="'+d.src+'"'
+            + '<button class="mb-add'+(on?" on":"")+'"'
             + ' aria-label="'+TRY.esc(TRY.t(on?"mb.added":"mb.add"))+'" aria-pressed="'+on+'">'+(on?"✓":"+")
             + '</button></div>';
         }).join("")+'</div></section>';
     }).join("");
-    box.querySelectorAll(".mb-add").forEach(b=>b.addEventListener("click",()=>{
-      const d = {emer:b.dataset.e, cmim:+b.dataset.c||0, kat:b.dataset.k, src:b.dataset.s};
-      const i = sel.findIndex(s=>key(s)===key(d));
-      if(i>=0){
-        sel.splice(i,1); persist(); renderCats(); renderPreview();
-        TRY.toast(TRY.t("mb.removedT",{emer:d.emer}));
-      }else{
-        flyToTable(b, d, ()=>commitAdd(d));
-      }
-    }));
+    box.querySelectorAll(".mb-dish").forEach(card=>{
+      const dish = readDish(card);
+      card.querySelector(".mb-add").addEventListener("click", ev=>{
+        ev.stopPropagation();
+        toggleDish(dish, card);
+      });
+      bindDrag(card);
+    });
   }
 
   function renderTableDishes(){
@@ -279,9 +414,12 @@ if(!rest){
     g.innerHTML = sel.map((d,i)=>{
       const a = n===1 ? -Math.PI/2 : -Math.PI/2 + i*(Math.PI*2/n);
       const x = 100+56*Math.cos(a), y = 100+56*Math.sin(a);
-      return '<text x="'+x.toFixed(1)+'" y="'+(y+7).toFixed(1)+'" text-anchor="middle" font-size="19" class="mb-dish-emoji">'
-        + (CAT_EMOJI[d.kat]||"🍽️") + '<title>'+TRY.esc(d.emer)+'</title></text>';
+      const inner = d.foto
+        ? '<image href="'+TRY.esc(d.foto)+'" x="'+(x-13).toFixed(1)+'" y="'+(y-13).toFixed(1)+'" width="26" height="26" style="clip-path:circle(50%)"/>'
+        : '<text x="'+x.toFixed(1)+'" y="'+(y+7).toFixed(1)+'" text-anchor="middle" font-size="19">'+(CAT_EMOJI[d.kat]||"🍽️")+'</text>';
+      return '<g class="mb-tdish" data-i="'+i+'"><title>'+TRY.esc(d.emer)+'</title>'+inner+'</g>';
     }).join("");
+    bindHoldRemove(g);
   }
 
   function renderPreview(){
@@ -294,10 +432,13 @@ if(!rest){
     }else{
       list.innerHTML = CATS.filter(c=>sel.some(d=>d.kat===c)).map(c=>
         '<span class="cat-lbl">'+TRY.t(CAT_KEY[c])+'</span>' +
-        sel.filter(d=>d.kat===c).map(d=>
-          '<div class="mb-item"><span>'+TRY.esc(d.emer)+'</span>'
-          + '<span><span class="pr">'+d.cmim+' L</span> <button class="rm" data-k="'+TRY.esc(d.kat)+'" data-e="'+TRY.esc(d.emer)+'" aria-label="'+TRY.esc(TRY.t("mb.remove"))+'">×</button></span></div>'
-        ).join("")
+        sel.filter(d=>d.kat===c).map(d=>{
+          const th = d.foto
+            ? '<img class="mt" src="'+TRY.esc(d.foto)+'" alt="" loading="lazy">'
+            : '<span class="me">'+(CAT_EMOJI[d.kat]||"🍽️")+'</span>';
+          return '<div class="mb-item"><span>'+th+'<span>'+TRY.esc(d.emer)+'</span></span>'
+          + '<span><span class="pr">'+d.cmim+' L</span> <button class="rm" data-k="'+TRY.esc(d.kat)+'" data-e="'+TRY.esc(d.emer)+'" aria-label="'+TRY.esc(TRY.t("mb.remove"))+'">×</button></span></div>';
+        }).join("")
       ).join("");
       list.querySelectorAll(".rm").forEach(b=>b.addEventListener("click",()=>{
         const i = sel.findIndex(s=>s.kat===b.dataset.k && s.emer===b.dataset.e);
@@ -306,16 +447,112 @@ if(!rest){
       }));
     }
     renderTableDishes();
+    const hint = document.getElementById("mbHint");
+    if(hint) hint.textContent = TRY.t(sel.length===0?"mb.hint0":sel.length===1?"mb.hint1":"mb.hint2");
     document.getElementById("mbPerP").textContent = fmt(perP);
     document.getElementById("mbTotalLbl").textContent = TRY.t("mb.totalFor",{n:persona});
     document.getElementById("mbTotal").textContent = fmt(tot);
     document.getElementById("mbBarTotal").textContent = fmt(tot);
     const cta = document.getElementById("mbCta"), bar = document.getElementById("mbBarCta");
-    cta.innerHTML = sel.length ? TRY.t("mb.cta",{total:tot.toLocaleString("sq-AL")}) : TRY.t("mb.ctaEmpty");
-    cta.disabled = !sel.length;
-    bar.innerHTML = sel.length ? TRY.t("mb.cta",{total:tot.toLocaleString("sq-AL")}) : "+";
+    if(sel.length){
+      cta.innerHTML = TRY.t("mb.fire"); cta.disabled = false;
+      bar.innerHTML = TRY.t("mb.fire");
+    }else{
+      cta.innerHTML = TRY.t("mb.ctaEmpty"); cta.disabled = true;
+      bar.innerHTML = "+";
+    }
     document.getElementById("gNum").textContent = persona;
   }
+
+  /* ---------- firing: "Dërgo në kuzhinë 🔥" ---------- */
+  function startFiring(){
+    if(!sel.length){ TRY.toast(TRY.t("mb.ctaEmpty")); return; }
+    if(REDUCED){ openOrder(); return; }
+    const tw = document.getElementById("mbTableWrap");
+    const ov = document.createElement("div");
+    ov.className = "mb-fire-ov";
+    ov.innerHTML = '<div class="flames"><i class="fl"></i><i class="fl"></i><i class="fl"></i><i class="fl"></i><i class="fl"></i></div><p>'+TRY.esc(TRY.t("mb.firing"))+'</p>';
+    tw.appendChild(ov);
+    setTimeout(()=>{
+      ov.remove();
+      tw.classList.add("cooked");
+      TRY.toast(TRY.t("mb.cookedT"));
+      setTimeout(openOrder, 380);
+    }, 2000);
+  }
+
+  /* ---------- order screen ---------- */
+  function orderGroups(){
+    const m = new Map();
+    sel.forEach(d=>{
+      const k = key(d);
+      if(!m.has(k)) m.set(k, {d:d, qty:0});
+      m.get(k).qty++;
+    });
+    return [...m.values()];
+  }
+  function renderOrderLines(){
+    const box = document.getElementById("mbOrderLines");
+    const fmt = v => v.toLocaleString("sq-AL")+" L";
+    box.innerHTML = orderGroups().map(g=>{
+      const d = g.d;
+      const th = d.foto
+        ? '<img src="'+TRY.esc(d.foto)+'" alt="" loading="lazy">'
+        : '<span class="oe">'+(CAT_EMOJI[d.kat]||"🍽️")+'</span>';
+      return '<div class="mb-oline">'+th
+        + '<div class="on"><b>'+TRY.esc(d.emer)+'</b><span>'+fmt(d.cmim)+' · '+TRY.t("mb.perPerson")+'</span></div>'
+        + '<div class="qstep"><button data-act="dec" data-k="'+TRY.esc(d.kat)+'" data-e="'+TRY.esc(d.emer)+'" aria-label="−">−</button>'
+        + '<b>'+g.qty+'</b>'
+        + '<button data-act="inc" data-k="'+TRY.esc(d.kat)+'" data-e="'+TRY.esc(d.emer)+'" aria-label="+">+</button></div>'
+        + '</div>';
+    }).join("");
+    box.querySelectorAll(".qstep button").forEach(b=>b.addEventListener("click",()=>{
+      const k = b.dataset.k, e = b.dataset.e;
+      if(b.dataset.act==="inc"){
+        const d = sel.find(s=>s.kat===k && s.emer===e);
+        if(d) sel.push({emer:d.emer,cmim:d.cmim,kat:d.kat,src:d.src,foto:d.foto||""});
+      }else{
+        const i = sel.findIndex(s=>s.kat===k && s.emer===e);
+        if(i>=0) sel.splice(i,1);
+      }
+      persist(); renderCats(); renderPreview(); renderOrderLines(); updateOrderTotals();
+    }));
+  }
+  function updateOrderTotals(){
+    const perP = sel.reduce((s,d)=>s+(+d.cmim||0),0);
+    const fmt = v => v.toLocaleString("sq-AL")+" L";
+    document.getElementById("mbOrderPerP").textContent = fmt(perP);
+    document.getElementById("mbOrderTotalLbl").textContent = TRY.t("mb.totalFor",{n:persona});
+    document.getElementById("mbOrderTotal").textContent = fmt(perP*persona);
+    const go = document.getElementById("mbOrderGo");
+    go.innerHTML = sel.length ? TRY.t("mb.cta",{total:(perP*persona).toLocaleString("sq-AL")}) : TRY.t("mb.ctaEmpty");
+    go.disabled = !sel.length;
+  }
+  function openOrder(){
+    renderOrderLines();
+    document.getElementById("mbKitchen").value = kitchenNote || "";
+    updateOrderTotals();
+    const ov = document.getElementById("mbOrderOv");
+    ov.classList.add("open");
+    ov.setAttribute("aria-hidden","false");
+    document.body.style.overflow = "hidden";
+  }
+  function closeOrder(){
+    const ov = document.getElementById("mbOrderOv");
+    ov.classList.remove("open");
+    ov.setAttribute("aria-hidden","true");
+    document.body.style.overflow = "";
+  }
+  document.getElementById("mbOrderBack").addEventListener("click", closeOrder);
+  document.getElementById("mbOrderOv").addEventListener("click", e=>{
+    if(e.target.id==="mbOrderOv") closeOrder();
+  });
+  document.getElementById("mbOrderGo").addEventListener("click", ()=>{
+    if(!sel.length){ TRY.toast(TRY.t("mb.ctaEmpty")); return; }
+    kitchenNote = document.getElementById("mbKitchen").value.trim();
+    closeOrder();
+    goBooking();
+  });
 
   function goBooking(){
     if(!sel.length){ TRY.toast(TRY.t("mb.ctaEmpty")); return; }
@@ -323,10 +560,13 @@ if(!rest){
     TRY.toast(TRY.t("mb.savedT"));
     setTimeout(()=>{ location.href = "restorant.html?id="+encodeURIComponent(rest.id); }, 450);
   }
-  document.getElementById("mbCta").addEventListener("click", goBooking);
-  document.getElementById("mbBarCta").addEventListener("click", goBooking);
+  document.getElementById("mbCta").addEventListener("click", startFiring);
+  document.getElementById("mbBarCta").addEventListener("click", startFiring);
   document.getElementById("mbReset").addEventListener("click", ()=>{
-    sel = []; persist(); renderCats(); renderPreview(); TRY.toast(TRY.t("mb.resetDone"));
+    sel = []; kitchenNote = ""; closeOrder();
+    const tw = document.getElementById("mbTableWrap");
+    if(tw) tw.classList.remove("cooked");
+    persist(); renderCats(); renderPreview(); TRY.toast(TRY.t("mb.resetDone"));
   });
   document.getElementById("gMinus").addEventListener("click", ()=>{ if(persona>1){persona--; persist(); renderPreview();} });
   document.getElementById("gPlus").addEventListener("click", ()=>{ if(persona<20){persona++; persist(); renderPreview();} });
@@ -334,6 +574,7 @@ if(!rest){
   renderCats(); renderPreview();
   persist();
 }
+
 </script>
 </body>
 </html>

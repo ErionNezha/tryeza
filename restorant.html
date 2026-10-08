@@ -141,7 +141,7 @@ function buildPage() {
     ? kats.map(k =>
       `<h3 class="menu-cat">${TRY.esc(k)}</h3>` +
       rest.menu.filter(m => m.kategori === k).map(m =>
-        `<div class="menu-row"><span>${TRY.esc(m.emer)}</span><span class="p">${cmimTxt2(m.cmim)}</span></div>`
+        `<div class="menu-row"><span>${m.foto?`<img class="menu-thumb" src="${TRY.esc(m.foto)}" alt="" loading="lazy">`:""}${TRY.esc(m.emer)}</span><span class="p">${cmimTxt2(m.cmim)}</span></div>`
       ).join("")
     ).join("")
     : `<p style="color:var(--muted)">${TRY.t("det.fullMenuNote")}</p>`;
