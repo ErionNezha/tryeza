@@ -87,12 +87,31 @@ const TRY = (() => {
 
   /* ---------- stars ---------- */
   function stars(r, n=0){
+    if(r==null || !(r>0)){
+      return `<span class="stars" title="Pa vlerësime ende"><span class="off">★★★★★</span></span>` +
+        (n?` <span style="color:var(--muted2);font-size:.82rem">(${n})</span>`:`<span style="color:var(--muted2);font-size:.82rem"> · pa vlerësime</span>`);
+    }
     const full = Math.round(r*2)/2;
     let s = "";
     for(let i=1;i<=5;i++){
       s += i<=Math.floor(full) ? "★" : (i-0.5===full ? "⯪" : `<span class="off">★</span>`);
     }
     return `<span class="stars" title="${r.toFixed(1)} / 5">${s}</span>` + (n?` <span style="color:var(--muted2);font-size:.82rem">(${n})</span>`:"");
+  }
+
+  /* ---------- cover: foto reale nëse ka, ndryshe art gjenerativ ---------- */
+  function coverFor(r, w=800, h=420){
+    if(r && r.fotot && r.fotot.length){
+      const f = r.fotot[0];
+      const cred = f.autor ? `Foto: ${f.autor}${f.license?` (${f.license})`:""}` : "Foto reale";
+      return `<img class="cover-img" src="${esc(f.file)}" alt="${esc(r.emer)}" title="${esc(cred)}" loading="lazy" width="${w}" height="${h}"/>`;
+    }
+    return coverSVG(r ? (r.coverSeed||1) : 1, w, h);
+  }
+  function waLink(rest, msg){
+    const digits = (rest.telefon||"").replace(/\D/g, "");
+    if(!digits) return "";
+    return `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`;
   }
 
   /* ---------- data lookups ---------- */
@@ -193,7 +212,7 @@ const TRY = (() => {
             <p style="color:var(--muted);font-size:.9rem;max-width:320px;margin-top:.5rem">Rezervo tavolinën tënde në restorantet më të mira të Shqipërisë — në sekonda, pa telefonata, falas.</p></div>
           <div><h4>Zbulo</h4>${[["restorante.html","Të gjitha restorantet"],["restorante.html?qytet=Tiranë","Tiranë"],["restorante.html?qytet=Korçë","Korçë"],["restorante.html?qytet=Durrës","Durrës"],["restorante.html?qytet=Shkodër","Shkodër"]].map(([u,l])=>`<a href="${u}">${l}</a>`).join("")}</div>
           <div><h4>Llogaria</h4><a href="rezervimet.html">Rezervimet e mia</a><a href="sugjero.html">Sugjero restorant</a><a href="dashboard.html">Paneli i restorantit</a><a href="faq.html">Pyetje të shpeshta</a></div>
-          <div><h4>Kompania</h4><a href="blog.html">Blog</a><a href="kodi.html">Kodi burimor</a><a href="faq.html#kontakt">Kontakt</a></div>
+          <div><h4>Kompania</h4><a href="blog.html">Blog</a><a href="kodi.html">Kodi burimor</a><a href="kredite.html">Kreditë e fotove</a><a href="faq.html#kontakt">Kontakt</a></div>
         </div>
         <div class="foot-bottom"><span>© 2026 TRYEZA — Të gjitha të drejtat e rezervuara.</span><span>Krijuar nga <b style="color:var(--gold-lt)">Erion Nezha</b></span></div>
       </div>`;
@@ -207,7 +226,7 @@ const TRY = (() => {
     return `<article class="rcard" data-id="${r.id}">
       <button class="fav ${fav}" data-fav="${r.id}" aria-label="Shto te të preferuarat">♥</button>
       <span class="citychip">${esc(r.qytet)}</span>
-      <a class="cover" href="restorant.html?id=${r.id}" aria-label="${esc(r.emer)}">${coverSVG(r.coverSeed||1)}</a>
+      <a class="cover" href="restorant.html?id=${r.id}" aria-label="${esc(r.emer)}">${coverFor(r)}</a>
       <div class="body">
         <h3><a href="restorant.html?id=${r.id}">${esc(r.emer)}</a></h3>
         <div class="meta">${stars(rt,n)}<span class="price">${cmimTxt(r.cmim)}</span><span>· ${esc(r.lagje)}</span></div>
@@ -224,7 +243,7 @@ const TRY = (() => {
   function trackPage(){ /* placeholder for analytics hook */ }
 
   return { LS, QYTETET, DITET, MUAJT, SLOTS, $, $$, esc, load, save, uid, todayStr, fmtDate,
-    cmimTxt, genCode, toast, markSVG, coverSVG, citySVG, stars, restById, getReviews,
+    cmimTxt, genCode, toast, markSVG, coverSVG, coverFor, waLink, citySVG, stars, restById, getReviews,
     liveRating, favs, isFav, toggleFav, suitableTables, slotInfo, freeTablesList,
     bookings, createBooking, findBooking, updateBooking, renderChrome, cardHTML, bindFavs, trackPage };
 })();

@@ -13,8 +13,9 @@ TRYEZA (tryezë = tavolinë në gegërisht) është një aplikacion web statik, 
 
 ### Çfarë bën
 - **Kërkim i zgjuar** — qytet (Tiranë, Korçë, Durrës, Shkodër), datë, orë, numër personash → badge disponueshmërie reale për çdo restorant
-- **28 restorante fiktive** me menu, çmime, orare, zona (sallë/tarracë), plan tavolinash dhe vlerësime
+- **21 restorante REALE** (6 Tiranë, 5 Korçë, 5 Durrës, 5 Shkodër) me **foto të vërteta** (42 foto lokale, me kredite autor/burim/licencë në faqen "Kreditë e fotove"), numra telefoni realë të verifikuar, orare, zona (sallë/tarracë), plan tavolinash
 - **Rezervim me 6 hapa** — persona → datë → orë (slot-e të lira të llogaritura) → zonë → tavolinë (planimetri SVG interaktive) → të dhënat e mysafirit → konfirmim me kod `TRZ-XXXXXX` + shkarkim ftese `.ics`
+- **Kontakt real me restorantin** — numri i telefonit i dukshëm në faqen e restorantit DHE në ekranin e konfirmimit ("Për konfirmim telefono: ...") + buton **"Dërgo me WhatsApp"** që hap `wa.me` me tekst të plotësuar automatikisht (emër, datë, orë, persona, zonë/tavolinë, kod TRZ, shënime) — rezervimi i shkon restorantit direkt, pa backend
 - **Rezervimet e mia** — kërkim me kod/telefon/emër, modifikim date/ore, anulim, ftesë kalendari
 - **Vlerësime** — shkruaj vlerësim, rating-u përditësohet live; **të preferuarat** (♥) ruhen lokalisht
 - **Sugjero restorant** — me votim komunitar
@@ -23,7 +24,7 @@ TRYEZA (tryezë = tavolinë në gegërisht) është një aplikacion web statik, 
 - **Faqja "Kodi burimor"** — kodi i plotë i shfaqur me syntax highlighting të brendshëm
 
 ### Teknologjitë
-HTML5 · CSS3 (design system dark premium + gold `#D4AF37`) · JavaScript vanilla · `localStorage` (namespace `tryeza.*`) · art gjenerativ SVG (asnjë imazh ekstern që thyhet) · i testuar me Playwright (39 kontrolle, 0 dështime).
+HTML5 · CSS3 (design system dark premium + gold `#D4AF37`) · JavaScript vanilla · `localStorage` (namespace `tryeza.*`) · foto reale lokale (zero hotlink) + art gjenerativ SVG si fallback · i testuar me Playwright (rruga reale: kërkim → rezervim → WhatsApp → modifikim → anulim, 0 gabime).
 
 ### Si ta ekzekutosh lokalisht
 ```bash
@@ -45,8 +46,9 @@ TRYEZA ("tryeza" = table in Gheg Albanian) is an ultra-premium static web app fo
 
 ### Features
 - **Smart search** — city (Tirana, Korçë, Durrës, Shkodër), date, time, party size → real availability badge per restaurant
-- **28 fictional restaurants** with menus, prices, hours, zones (hall/terrace), table floor plans and reviews
+- **21 REAL restaurants** (6 Tirana, 5 Korçë, 5 Durrës, 5 Shkodër) with **real photos** (42 local photos, credited author/source/license on the "Photo credits" page), verified real phone numbers, hours, zones (hall/terrace), table floor plans
 - **6-step booking** — party → date → time (computed free slots) → zone → table (interactive SVG floor plan) → guest details → confirmation with `TRZ-XXXXXX` code + downloadable `.ics` invite
+- **Real restaurant contact** — phone number visible on the restaurant page AND on the confirmation screen ("Për konfirmim telefono: ...") + **"Send via WhatsApp"** button opening `wa.me` with prefilled text (name, date, time, guests, zone/table, TRZ code, notes) — the booking reaches the restaurant directly, no backend needed
 - **My bookings** — lookup by code/phone/name, reschedule, cancel, calendar invite
 - **Reviews** — write a review, rating updates live; **favorites** (♥) stored locally
 - **Suggest a restaurant** — with community voting
@@ -55,7 +57,7 @@ TRYEZA ("tryeza" = table in Gheg Albanian) is an ultra-premium static web app fo
 - **"Source code" page** — full source displayed with a built-in syntax highlighter
 
 ### Tech
-HTML5 · CSS3 (dark premium + gold `#D4AF37` design system) · vanilla JavaScript · `localStorage` (`tryeza.*` namespace) · generative SVG art (zero external images) · tested with Playwright (39 checks, 0 failures).
+HTML5 · CSS3 (dark premium + gold `#D4AF37` design system) · vanilla JavaScript · `localStorage` (`tryeza.*` namespace) · real local photos (zero hotlinking) + generative SVG art as fallback · tested with Playwright (real path: search → booking → WhatsApp → reschedule → cancel, 0 errors).
 
 ### Run locally
 ```bash
@@ -79,8 +81,10 @@ tryeza/
 ├── blog.html           # Blog (6 artikuj origjinalë)
 ├── faq.html            # Pyetje të shpeshta
 ├── kodi.html           # Kodi burimor me highlighting
+├── kredite.html        # Kreditë e fotove (autor/burim/licencë)
+├── img/<id>/           # Fotot reale të restoranteve (lokale, 42)
 ├── css/style.css       # Design system
-├── js/data.js          # 28 restorante (të dhëna fiktive)
+├── js/data.js          # 21 restorante REALE me foto e telefona të verifikuar
 ├── js/app.js           # Motori: disponueshmëri, rezervime, vlerësime, art SVG
 └── tests/validate.py   # Testet Playwright
 ```

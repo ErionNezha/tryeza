@@ -76,20 +76,40 @@ function buildPage() {
   const pikat = [];
   if (rest.zona.some(z => /tarrac|tarracë|verand|kopsht|verore/i.test(z.emer)))
     pikat.push(["Tarracë / ambient i hapur", "Shijoje vaktin nën qiell të hapur"]);
-  pikat.push(["Deri në " + rest.maxPersona + " persona", "Ideale edhe për grupe e festa"]);
+  if (rest.maxPersona) pikat.push(["Deri në " + rest.maxPersona + " persona", "Ideale edhe për grupe e festa"]);
   pikat.push(["Parkim: " + rest.parking, ""]);
   pikat.push(["Kuzhina: " + rest.kuzhina.join(", "), "Çmim mesatar " + TRY.cmimTxt(rest.cmim)]);
   while (pikat.length < 4) pikat.push(["Dress code: " + rest.dressCode, ""]);
 
   /* ---------- menu e grupuar ---------- */
   const kats = [];
-  rest.menu.forEach(m => { if (!kats.includes(m.kategori)) kats.push(m.kategori); });
-  const menuHTML = kats.map(k =>
-    `<h3 class="menu-cat">${TRY.esc(k)}</h3>` +
-    rest.menu.filter(m => m.kategori === k).map(m =>
-      `<div class="menu-row"><span>${TRY.esc(m.emer)}</span><span class="p">${m.cmim} L</span></div>`
+  (rest.menu||[]).forEach(m => { if (!kats.includes(m.kategori)) kats.push(m.kategori); });
+  const cmimTxt2 = c => (c ? `${c} L` : `<span style="color:var(--muted2);font-size:.8rem">çmimi në restorant</span>`);
+  const menuHTML = (rest.menu && rest.menu.length)
+    ? kats.map(k =>
+      `<h3 class="menu-cat">${TRY.esc(k)}</h3>` +
+      rest.menu.filter(m => m.kategori === k).map(m =>
+        `<div class="menu-row"><span>${TRY.esc(m.emer)}</span><span class="p">${cmimTxt2(m.cmim)}</span></div>`
+      ).join("")
     ).join("")
-  ).join("");
+    : `<p style="color:var(--muted)">Menuja e plotë me çmime gjendet në restorant — na shkruaj për detaje.</p>`;
+
+  /* ---------- fotot reale me kredite ---------- */
+  const fotoHTML = (rest.fotot && rest.fotot.length)
+    ? rest.fotot.map(f => {
+        const cred = `${f.autor ? TRY.esc(f.autor) : TRY.esc(f.burim)}${f.license ? ` · ${TRY.esc(f.license)}` : ""}`;
+        const link = f.url ? `<a href="${TRY.esc(f.url)}" target="_blank" rel="noopener">${cred}</a>` : cred;
+        return `<div class="ph"><img src="${TRY.esc(f.file)}" alt="${TRY.esc(rest.emer)}" loading="lazy"/><div class="cred" title="${cred}">${link}</div></div>`;
+      }).join("")
+    : [0, 1, 2, 3, 4, 5].map(i => `<div class="ph">${TRY.coverSVG(rest.coverSeed + i * 7, 400, 300)}</div>`).join("");
+
+  /* ---------- kutia e kontaktit (numri i dukshëm) ---------- */
+  const digits = (rest.telefon||"").replace(/\D/g, "");
+  const kontaktHTML = (rest.telefon && digits)
+    ? `<div class="kontakt-box"><div style="font-weight:700;margin-bottom:.3rem">📞 Kontakti i restorantit</div>
+       <a class="tel" href="tel:+${digits}">${TRY.esc(rest.telefon)}</a>
+       <div style="color:var(--muted);font-size:.85rem;margin-top:.3rem">Telefono për konfirmim, grupe të mëdha apo kërkesa speciale.</div></div>`
+    : "";
 
   /* ---------- restorante afër ---------- */
   const sameCity = RESTORANTET.filter(r => r.qytet === rest.qytet && r.id !== rest.id);
@@ -98,7 +118,7 @@ function buildPage() {
 
   main.innerHTML = `
   <div class="banner">
-    ${TRY.coverSVG(rest.coverSeed, 1400, 340)}
+    ${TRY.coverFor(rest, 1400, 340)}
     <div class="shade"></div>
     <button class="fav ${TRY.isFav(rest.id) ? "on" : ""}" id="favBtn" aria-label="Shto te të preferuarat">♥</button>
     <div class="banner-info"><div class="wrap">
@@ -133,12 +153,13 @@ function buildPage() {
         <div class="pikat">${pikat.slice(0, 4).map(p =>
           `<div class="pika"><b>${TRY.esc(p[0])}</b>${p[1] ? TRY.esc(p[1]) : ""}</div>`).join("")}
         </div>
+        ${kontaktHTML}
       </div>
 
       <div class="tabpane" id="pane-pjata">
         <div class="dish-mini-grid">
           ${rest.menu.slice(0, 4).map(m =>
-            `<div class="dish-mini"><b>${TRY.esc(m.emer)}</b><span>${m.cmim} L · ${TRY.esc(m.kategori)}</span></div>`).join("")}
+            `<div class="dish-mini"><b>${TRY.esc(m.emer)}</b><span>${m.cmim ? m.cmim + " L" : "çmimi në restorant"} · ${TRY.esc(m.kategori)}</span></div>`).join("")}
         </div>
       </div>
 
@@ -146,8 +167,9 @@ function buildPage() {
 
       <div class="tabpane" id="pane-foto">
         <div class="photo-grid">
-          ${[0, 1, 2, 3, 4, 5].map(i => `<div class="ph">${TRY.coverSVG(rest.coverSeed + i * 7, 400, 300)}</div>`).join("")}
+          ${fotoHTML}
         </div>
+        ${(rest.fotot && rest.fotot.length) ? `<p style="color:var(--muted2);font-size:.8rem;margin-top:.8rem">Kreditë e plota të fotove: <a href="kredite.html" style="color:var(--gold)">kredite.html</a></p>` : ""}
       </div>
 
       <div class="tabpane" id="pane-vler">
@@ -166,14 +188,15 @@ function buildPage() {
       <div class="tabpane" id="pane-det">
         <dl class="detail-list">
           <div><dt>Adresa</dt><dd>${TRY.esc(rest.adrese)}</dd></div>
-          <div><dt>Telefoni</dt><dd><a href="tel:${TRY.esc(rest.telefon.replace(/\s/g, ""))}" style="color:var(--gold)">${TRY.esc(rest.telefon)}</a></dd></div>
+          ${(rest.telefon && digits) ? `<div><dt>Telefoni</dt><dd><a href="tel:+${digits}" style="color:var(--gold)">${TRY.esc(rest.telefon)}</a></dd></div>` : ""}
           <div><dt>Orari</dt><dd>${Object.entries(rest.orare).map(([d, o]) => `${TRY.esc(d)}: <b>${TRY.esc(o)}</b>`).join("<br>")}</dd></div>
           <div><dt>Kuzhina</dt><dd>${rest.kuzhina.map(TRY.esc).join(", ")}</dd></div>
           <div><dt>Stili</dt><dd>${TRY.esc(rest.stil)}</dd></div>
           <div><dt>Dress code</dt><dd>${TRY.esc(rest.dressCode)}</dd></div>
           <div><dt>Parkimi</dt><dd>${TRY.esc(rest.parking)}</dd></div>
           <div><dt>Pagesa</dt><dd>${rest.pagesa.map(TRY.esc).join(", ")}</dd></div>
-          <div><dt>Max persona</dt><dd>Deri në ${rest.maxPersona} persona</dd></div>
+          ${rest.maxPersona ? `<div><dt>Max persona</dt><dd>Deri në ${rest.maxPersona} persona</dd></div>` : ""}
+          ${rest.ratingBurim ? `<div><dt>Vlerësimi</dt><dd>Nga ${TRY.esc(rest.ratingBurim)}</dd></div>` : ""}
         </dl>
       </div>
 
@@ -467,12 +490,25 @@ function buildPage() {
 
   function showConfirmation(b) {
     const sum = `${b.persona} ${b.persona === 1 ? "person" : "persona"} · ${TRY.fmtDate(b.date)} · ${b.time} · ${TRY.esc(b.zonaEmer)} · Tavolina ${TRY.esc(b.tavolina[0])} — ${TRY.esc(b.emer)}`;
+    const rDigits = (rest.telefon||"").replace(/\D/g, "");
+    let kontaktBox = "";
+    if (rest.telefon && rDigits) {
+      const waMsg = `Përshëndetje ${rest.emer}! Rezervim i ri nga TRYEZA — ${b.emer}, data ${TRY.fmtDate(b.date)}, ora ${b.time}, ${b.persona} ${b.persona===1?"person":"persona"}, ${b.zonaEmer} – Tavolina ${b.tavolina[0]}, kodi ${b.code}.${b.shenime ? " Shënime: " + b.shenime : ""}`;
+      const waUrl = `https://wa.me/${rDigits}?text=${encodeURIComponent(waMsg)}`;
+      kontaktBox = `<div class="kontakt-box" style="text-align:center;margin-top:1rem">
+        <div style="font-weight:700;margin-bottom:.2rem">Për konfirmim telefono:</div>
+        <a class="tel" href="tel:+${rDigits}">${TRY.esc(rest.telefon)}</a><br/>
+        <a class="wa-btn" href="${waUrl}" target="_blank" rel="noopener">💬 Dërgo rezervimin me WhatsApp</a>
+        <div style="color:var(--muted);font-size:.8rem;margin-top:.4rem">Rezervimi i dërgohet direkt restorantit — pa pritur.</div>
+      </div>`;
+    }
     document.getElementById("bookingBody").innerHTML = `
       <div class="code-box">
         <div style="font-size:3rem;color:var(--green)">✓</div>
         <h2>Rezervimi u konfirmua!</h2>
         <div class="code">${TRY.esc(b.code)}</div>
         <p style="color:var(--muted);font-size:.93rem">${sum}</p>
+        ${kontaktBox}
         <div class="bk-actions" style="justify-content:center;margin-top:1.1rem">
           <button class="btn btn-gold btn-sm" id="cfMy">Shiko rezervimet e mia</button>
           <button class="btn btn-ghost btn-sm" id="cfAgain">Rezervo tjetër</button>

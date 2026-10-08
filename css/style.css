@@ -77,7 +77,8 @@ header.site{position:sticky;top:0;z-index:50;background:rgba(7,11,22,.86);backdr
 .rcard:hover{transform:translateY(-5px);box-shadow:var(--shadow);border-color:var(--line2)}
 .rcard .cover{height:170px;position:relative;overflow:hidden}
 .rcard .cover svg{width:100%;height:100%;display:block;transition:transform .4s}
-.rcard:hover .cover svg{transform:scale(1.05)}
+.rcard .cover .cover-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.rcard:hover .cover svg,.rcard:hover .cover .cover-img{transform:scale(1.05)}
 .rcard .body{padding:1rem 1.1rem 1.2rem;display:flex;flex-direction:column;gap:.45rem;flex:1}
 .rcard h3{font-size:1.3rem;line-height:1.25}
 .rcard .meta{display:flex;align-items:center;gap:.55rem;font-size:.85rem;color:var(--muted);flex-wrap:wrap}
@@ -136,6 +137,7 @@ footer.site{border-top:1px solid var(--line);background:#05080f;margin-top:3rem}
 /* ---------- Detail page ---------- */
 .banner{position:relative;height:340px;overflow:hidden}
 .banner svg{width:100%;height:100%}
+.banner .cover-img{width:100%;height:340px;object-fit:cover;display:block}
 .banner .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,8,18,.25),rgba(5,8,18,.92))}
 .banner-info{position:absolute;left:0;right:0;bottom:0}
 .banner-info .wrap{padding-bottom:1.6rem}
@@ -162,8 +164,17 @@ footer.site{border-top:1px solid var(--line);background:#05080f;margin-top:3rem}
 .review .when{font-size:.78rem;color:var(--muted2)}
 .review p{font-size:.93rem;color:var(--muted)}
 .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.8rem}
-.photo-grid .ph{border-radius:var(--r-sm);overflow:hidden;border:1px solid var(--line);aspect-ratio:4/3}
+.photo-grid .ph{border-radius:var(--r-sm);overflow:hidden;border:1px solid var(--line);aspect-ratio:4/3;position:relative}
 .photo-grid svg{width:100%;height:100%}
+.photo-grid .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-grid .ph .cred{position:absolute;left:0;right:0;bottom:0;font-size:.62rem;color:#fff;background:rgba(0,0,0,.62);padding:.18rem .4rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.photo-grid .ph .cred a{color:#fff;text-decoration:underline}
+/* kontakti i restorantit */
+.kontakt-box{border:1px solid var(--line);border-radius:var(--r);padding:1rem 1.2rem;margin-top:1.2rem;background:rgba(212,175,55,.06)}
+.kontakt-box .tel{font-size:1.25rem;font-weight:700;color:var(--gold);text-decoration:none}
+.kontakt-box .tel:hover{text-decoration:underline}
+.wa-btn{display:inline-flex;align-items:center;gap:.5rem;background:#25D366;color:#06281a;font-weight:700;border:0;border-radius:999px;padding:.7rem 1.3rem;cursor:pointer;text-decoration:none;margin-top:.6rem}
+.wa-btn:hover{filter:brightness(1.07)}
 
 /* ---------- Booking widget ---------- */
 .booking{position:sticky;top:86px;background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line2);border-radius:20px;box-shadow:var(--shadow);padding:1.4rem}
