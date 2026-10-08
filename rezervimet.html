@@ -1,0 +1,242 @@
+<!-- Created by Erion Nezha — © 2026 All rights reserved -->
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRYEZA — Rezervimet e mia</title>
+<meta name="description" content="Gjej, modifiko ose anulo rezervimet e tua në TRYEZA me kodin TRZ, numrin e telefonit ose emrin.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site"></header>
+<main class="wrap">
+  <div class="page-head">
+    <span class="eyebrow">Llogaria jote</span>
+    <h1>Rezervimet e mia</h1>
+    <p>Gjej rezervimin me kodin <b>TRZ-…</b> që more pas rezervimit, me numrin e telefonit ose me emrin tënd.</p>
+  </div>
+  <section style="padding-top:.4rem">
+    <form class="form-card" id="searchForm" autocomplete="off">
+      <div class="mrow">
+        <label for="q">Kodi i rezervimit, telefoni ose emri</label>
+        <input id="q" placeholder="p.sh. TRZ-A8K2M4  ose  069 123 4567  ose  emri yt">
+      </div>
+      <button class="btn btn-gold" type="submit" style="width:100%">Kërko rezervimin</button>
+      <p class="hint">Kërkimi i fundit mbahet mend në këtë shfletues.</p>
+    </form>
+    <div class="divider"></div>
+    <div id="results" class="tbl-list" aria-live="polite"></div>
+  </section>
+</main>
+<footer class="site"></footer>
+
+<div class="modal-bg" id="mEdit">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Modifiko rezervimin">
+    <h2>Modifiko rezervimin</h2>
+    <p class="hint" id="editInfo" style="margin-bottom:1rem"></p>
+    <div class="row2">
+      <div class="mrow"><label for="editDate">Data e re</label><input type="date" id="editDate"></div>
+      <div class="mrow"><label for="editTime">Ora e re</label><select id="editTime"></select></div>
+    </div>
+    <div class="hint" id="editAvail" style="margin-top:.4rem"></div>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.2rem">
+      <button class="btn btn-dark btn-sm" data-close>Mbyll</button>
+      <button class="btn btn-gold btn-sm" id="editSave">Ruaj ndryshimet</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="mCancel">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Anulo rezervimin">
+    <h2>Anulo rezervimin</h2>
+    <p id="cancelInfo" style="color:var(--muted);margin-bottom:1.2rem"></p>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end">
+      <button class="btn btn-dark btn-sm" data-close>Mbaje rezervimin</button>
+      <button class="btn btn-gold btn-sm" id="cancelYes">Po, anuloje</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+"use strict";
+TRY.renderChrome("rezervimet.html");
+const $ = TRY.$, $$ = TRY.$$;
+const LS_SEARCH = "tryeza.searchLast.v1";
+
+const digits = s => String(s || "").replace(/\D/g, "");
+function zonaEmer(r, zid){
+  if(!zid) return "—";
+  const z = (r.zona || []).find(z => z.id === zid);
+  return z ? z.emer : zid;
+}
+function statusPill(st){
+  if(st === "anuluar") return '<span class="status-pill st-cancel">ANULUAR</span>';
+  if(st === "no-show") return '<span class="status-pill st-noshow">NO-SHOW</span>';
+  return '<span class="status-pill st-ok">AKTIVE</span>';
+}
+
+function cardHTML(b){
+  const r = TRY.restById(b.restId);
+  const tblTxt = (b.tavolina && b.tavolina.length) ? b.tavolina.join(", ") : "—";
+  const det = `${TRY.fmtDate(b.date)} · ora ${TRY.esc(b.time)} · ${b.persona || "—"} persona · ${TRY.esc(zonaEmer(r, b.zonaId))} · Tavolina: ${TRY.esc(tblTxt)}`;
+  const actions = b.status === "aktive"
+    ? `<div class="bk-actions">
+        <button class="btn btn-ghost btn-sm" data-act="edit" data-code="${TRY.esc(b.code)}">Modifiko</button>
+        <button class="btn btn-ghost btn-sm" data-act="ics" data-code="${TRY.esc(b.code)}">Ftesa .ics</button>
+        <button class="btn btn-dark btn-sm" data-act="cancel" data-code="${TRY.esc(b.code)}">Anulo</button>
+      </div>` : "";
+  return `<article class="bk-card">
+    <div>
+      <div class="t">${TRY.esc(r ? r.emer : "Restorant")}</div>
+      <div class="d">${TRY.esc((b.emer || b.name) || "")}${(b.telefon || b.phone) ? " · " + TRY.esc(b.telefon || b.phone) : ""}</div>
+      <div class="d">${det}</div>
+      <span class="bk-code">${TRY.esc(b.code)}</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.7rem;align-items:flex-end">${statusPill(b.status)}${actions}</div>
+  </article>`;
+}
+
+function doSearch(q){
+  const box = $("#results");
+  q = String(q || "").trim();
+  if(!q){
+    box.innerHTML = `<div class="empty"><div class="big">🔍</div><p>Shkruaj kodin e rezervimit (TRZ-XXXXXX), numrin e telefonit ose emrin për të gjetur rezervimet e tua.</p></div>`;
+    return;
+  }
+  const qd = digits(q), qu = q.toUpperCase(), ql = q.toLowerCase();
+  const hits = TRY.bookings().filter(b => {
+    if(b.code && b.code.toUpperCase() === qu) return true;
+    if(qd.length >= 4 && digits(b.telefon || b.phone || "").includes(qd)) return true;
+    if(ql.length >= 2 && String((b.emer || b.name) || "").toLowerCase().includes(ql)) return true;
+    return false;
+  });
+  if(!hits.length){
+    box.innerHTML = `<div class="empty"><div class="big">🙁</div><p>S'u gjet asnjë rezervim për «${TRY.esc(q)}». Kontrollo kodin, ose <a href="faq.html#kontakt" style="color:var(--gold)">na kontakto</a> — ta gjejmë bashkë.</p></div>`;
+    return;
+  }
+  hits.sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  box.innerHTML = `<p class="result-count">U gjetën <b>${hits.length}</b> rezervim${hits.length === 1 ? "" : "e"}.</p>` + hits.map(cardHTML).join("");
+}
+
+/* ---------- modify ---------- */
+let editing = null;
+function checkEditAvail(){
+  if(!editing) return false;
+  const r = TRY.restById(editing.restId);
+  const si = TRY.slotInfo(r, $("#editDate").value, $("#editTime").value, editing.persona || 2, editing.zonaId);
+  const ok = !!si.free;
+  $("#editAvail").innerHTML = ok
+    ? `<span style="color:var(--green)">✓ Ka vend të lirë për ${editing.persona || 2} persona në këtë orar.</span>`
+    : `<span style="color:var(--red)">✕ S'ka vend të lirë në këtë orar. Zgjidh datë ose orë tjetër.</span>`;
+  $("#editSave").disabled = !ok;
+  return ok;
+}
+function openEdit(code){
+  const b = TRY.bookings().find(x => x.code === code);
+  if(!b) return;
+  editing = b;
+  const r = TRY.restById(b.restId);
+  $("#editInfo").innerHTML = `<b>${TRY.esc((b.emer || b.name) || "")}</b> · ${TRY.esc(r ? r.emer : "")} · aktualisht <b>${TRY.fmtDate(b.date)}</b>, ora <b>${TRY.esc(b.time)}</b>`;
+  const d = $("#editDate");
+  d.min = TRY.todayStr();
+  d.value = (b.date >= TRY.todayStr()) ? b.date : TRY.todayStr();
+  $("#editTime").innerHTML = TRY.SLOTS.map(s => `<option${s === b.time ? " selected" : ""}>${s}</option>`).join("");
+  $("#mEdit").classList.add("open");
+  checkEditAvail();
+}
+$("#editDate").addEventListener("change", checkEditAvail);
+$("#editTime").addEventListener("change", checkEditAvail);
+$("#editSave").addEventListener("click", () => {
+  if(!editing || !checkEditAvail()) return;
+  const r = TRY.restById(editing.restId);
+  const free = TRY.freeTablesList(r, $("#editDate").value, $("#editTime").value, editing.persona || 2, editing.zonaId)
+    .sort((a, b) => a.vende - b.vende);
+  TRY.updateBooking(editing.code, {
+    date: $("#editDate").value,
+    time: $("#editTime").value,
+    tavolina: free.length ? [free[0].id] : (editing.tavolina || [])
+  });
+  $("#mEdit").classList.remove("open");
+  TRY.toast("Rezervimi u <b>përditësua</b> me sukses");
+  doSearch($("#q").value);
+});
+
+/* ---------- cancel ---------- */
+let cancelling = null;
+function openCancel(code){
+  const b = TRY.bookings().find(x => x.code === code);
+  cancelling = code;
+  $("#cancelInfo").innerHTML = b
+    ? `Je i sigurt që do ta anulosh rezervimin <b>${TRY.esc(code)}</b> (${TRY.esc((b.emer || b.name) || "")}, ${TRY.fmtDate(b.date)} ora ${TRY.esc(b.time)})? Ky veprim s'mund të zhbëhet.`
+    : `Je i sigurt që do ta anulosh rezervimin <b>${TRY.esc(code)}</b>?`;
+  $("#mCancel").classList.add("open");
+}
+$("#cancelYes").addEventListener("click", () => {
+  TRY.updateBooking(cancelling, { status: "anuluar" });
+  $("#mCancel").classList.remove("open");
+  TRY.toast("Rezervimi u <b>anullua</b>");
+  doSearch($("#q").value);
+});
+
+/* ---------- .ics invite ---------- */
+function icsEsc(s){ return String(s || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n"); }
+function downloadICS(b){
+  const r = TRY.restById(b.restId);
+  const dt0 = b.date.replace(/-/g, "") + "T" + String(b.time).replace(":", "") + "00";
+  const [H, M] = String(b.time).split(":").map(Number);
+  const dt1 = b.date.replace(/-/g, "") + "T" + String(H + 2).padStart(2, "0") + String(M).padStart(2, "0") + "00";
+  const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//TRYEZA//Rezervim//SQ",
+    "BEGIN:VEVENT", "UID:" + b.code + "@tryeza.al", "DTSTAMP:" + stamp,
+    "DTSTART:" + dt0, "DTEND:" + dt1,
+    "SUMMARY:" + icsEsc("Rezervim TRYEZA — " + (r ? r.emer : "")),
+    "DESCRIPTION:" + icsEsc("Kodi: " + b.code) + "\\n" + icsEsc((b.persona || "") + " persona"),
+    "LOCATION:" + icsEsc(r ? (r.emer + ", " + r.adrese) : ""),
+    "END:VEVENT", "END:VCALENDAR"];
+  const blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = b.code + ".ics";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  TRY.toast("Ftesa <b>.ics</b> u shkarkua — shtoje në kalendarin tënd");
+}
+
+/* ---------- events ---------- */
+$("#results").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-act]");
+  if(!btn) return;
+  const code = btn.dataset.code, act = btn.dataset.act;
+  if(act === "edit") openEdit(code);
+  else if(act === "cancel") openCancel(code);
+  else if(act === "ics"){ const bk = TRY.bookings().find(x => x.code === code); if(bk) downloadICS(bk); }
+});
+$$(".modal-bg").forEach(bg => {
+  bg.addEventListener("click", e => { if(e.target === bg) bg.classList.remove("open"); });
+});
+$$("[data-close]").forEach(b => b.addEventListener("click", () => b.closest(".modal-bg").classList.remove("open")));
+document.addEventListener("keydown", e => { if(e.key === "Escape") $$(".modal-bg.open").forEach(m => m.classList.remove("open")); });
+
+$("#searchForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const q = $("#q").value.trim();
+  TRY.save(LS_SEARCH, q);
+  doSearch(q);
+});
+
+/* restore last search */
+(function(){
+  const last = TRY.load(LS_SEARCH, "");
+  if(last){ $("#q").value = last; doSearch(last); }
+  else doSearch("");
+})();
+</script>
+</body>
+</html>

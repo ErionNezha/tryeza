@@ -1,0 +1,153 @@
+<!-- Created by Erion Nezha — © 2026 All rights reserved -->
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRYEZA — Kodi burimor</title>
+<meta name="description" content="Kodi burimor i platformës TRYEZA — shfleto, kopjo dhe mëso si është ndërtuar.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site"></header>
+<main class="wrap">
+  <div class="page-head">
+    <span class="eyebrow">Transparencë</span>
+    <h1>Kodi burimor</h1>
+    <p>TRYEZA është ndërtuar hapur. Shfleto çdo file, kopjo copëza kodi dhe shiko si funksionon platforma — pa fshehtësi.</p>
+  </div>
+  <section style="padding-top:.4rem">
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.6rem">
+      <button class="btn btn-gold btn-sm" id="showAll">Shfaq të gjitha</button>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/erionnezha/tryeza" target="_blank" rel="noopener">↗ Hap në GitHub</a>
+    </div>
+    <div id="fileList"></div>
+    <p class="hint" style="text-align:center;margin-top:1rem">Ngjyrosja e sintaksës bëhet me një highlighter të brendshëm JavaScript — pa libra të jashtëm.</p>
+  </section>
+</main>
+<footer class="site"></footer>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+"use strict";
+TRY.renderChrome("kodi.html");
+
+const FILES = [
+  ["index.html", "Faqja kryesore"],
+  ["restorante.html", "Lista e restoranteve"],
+  ["restorant.html", "Faqja e restorantit + rezervimi"],
+  ["rezervimet.html", "Rezervimet e mia"],
+  ["sugjero.html", "Sugjero restorant"],
+  ["dashboard.html", "Paneli i restorantit (demo)"],
+  ["blog.html", "Blogu"],
+  ["faq.html", "Pyetje të shpeshta"],
+  ["kodi.html", "Kjo faqe"],
+  ["css/style.css", "Stilet (design system)"],
+  ["js/app.js", "Motori i përbashkët"],
+  ["js/data.js", "Katalogu i restoranteve"]
+];
+const cache = {};
+
+const esc = TRY.esc;
+function highlight(src){
+  const re = /(<!--[\s\S]*?-->)|(\/\*[\s\S]*?\*\/|\/\/[^\n]*)|(`(?:\\.|[^`\\])*`|"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*')|(<\/?[A-Za-z][\w-]*(?:\s+[\w-]+(?:=(?:"[^"]*"|'[^']*'|[^\s>]+))?)*\s*\/?>)|(\b\d+(?:\.\d+)?\b)|(\b(?:const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|new|typeof|instanceof|in|of|try|catch|finally|throw|class|extends|import|export|from|default|async|await|null|true|false|undefined|this|document|window|localStorage|navigator|location|JSON|Math|Array|Object|String|Number|Date|Promise|setTimeout|clearTimeout)\b)/g;
+  let out = "", last = 0, m;
+  while((m = re.exec(src))){
+    out += esc(src.slice(last, m.index));
+    const tok = m[0];
+    if(m[1] || m[2]) out += '<span class="tok-c">' + esc(tok) + "</span>";
+    else if(m[3]) out += '<span class="tok-s">' + esc(tok) + "</span>";
+    else if(m[4]) out += '<span class="tok-t">' + esc(tok) + "</span>";
+    else if(m[5]) out += '<span class="tok-n">' + esc(tok) + "</span>";
+    else if(m[6]) out += '<span class="tok-k">' + esc(tok) + "</span>";
+    last = m.index + tok.length;
+  }
+  return out + esc(src.slice(last));
+}
+
+async function fetchFile(f){
+  if(cache[f]) return cache[f];
+  const res = await fetch(f);
+  if(!res.ok) throw new Error("HTTP " + res.status);
+  const txt = await res.text();
+  cache[f] = txt;
+  return txt;
+}
+
+function renderBody(file, body){
+  const f = file.f;
+  if(cache[f]){
+    body.innerHTML = "<pre>" + highlight(cache[f]) + "</pre>";
+    return;
+  }
+  body.innerHTML = '<p class="hint">Po ngarkohet…</p>';
+  fetchFile(f).then(txt => {
+    if(body.dataset.loaded === f) body.innerHTML = "<pre>" + highlight(txt) + "</pre>";
+  }).catch(() => {
+    if(body.dataset.loaded === f){
+      body.innerHTML = `<div class="empty" style="border:none;padding:1.6rem">
+        <div class="big">📂</div>
+        <p>Kodi i <b>${esc(f)}</b> s'u ngarkua dot — ka gjasa faqja po hapet si <i>file://</i> dhe shfletuesi e bllokon <i>fetch</i>-in lokal.<br>
+        Hapeni përmes një serveri lokal (<i> p.sh. <b>npx serve</b></i>) ose shikojeni në
+        <a href="https://github.com/erionnezha/tryeza" target="_blank" rel="noopener" style="color:var(--gold)">GitHub</a>.</p>
+      </div>`;
+    }
+  });
+}
+
+const list = TRY.$("#fileList");
+list.innerHTML = FILES.map(([f, desc], i) => `
+  <div class="code-file" data-file="${esc(f)}">
+    <div class="code-head">
+      <span><b>${esc(f)}</b> <span style="color:var(--muted2)">— ${esc(desc)}</span></span>
+      <span style="display:flex;gap:.4rem">
+        <button data-show="${i}">Shfaq</button>
+        <button data-copy="${i}">Kopjo</button>
+      </span>
+    </div>
+    <div class="code-body" data-body="${i}"><p class="hint">Kliko “Shfaq” për të ngarkuar kodin e këtij file-i.</p></div>
+  </div>`).join("");
+
+list.addEventListener("click", async e => {
+  const sh = e.target.closest("button[data-show]");
+  const cp = e.target.closest("button[data-copy]");
+  if(sh){
+    const i = +sh.dataset.show, f = FILES[i][0];
+    const body = list.querySelector(`[data-body="${i}"]`);
+    body.dataset.loaded = f;
+    sh.textContent = "Rifresko";
+    renderBody({ f }, body);
+  } else if(cp){
+    const i = +cp.dataset.copy, f = FILES[i][0];
+    try {
+      const txt = await fetchFile(f);
+      try { await navigator.clipboard.writeText(txt); }
+      catch {
+        const ta = document.createElement("textarea");
+        ta.value = txt; document.body.appendChild(ta); ta.select();
+        document.execCommand("copy"); ta.remove();
+      }
+      TRY.toast(`<b>${esc(f)}</b> u kopjua`);
+    } catch {
+      TRY.toast("S'u kopjua dot — file-i s'u ngarkua");
+    }
+  }
+});
+
+TRY.$("#showAll").addEventListener("click", () => {
+  FILES.forEach(([f], i) => {
+    const body = list.querySelector(`[data-body="${i}"]`);
+    body.dataset.loaded = f;
+    renderBody({ f }, body);
+    const sh = list.querySelector(`button[data-show="${i}"]`);
+    if(sh) sh.textContent = "Rifresko";
+  });
+  TRY.toast("Po ngarkohen të gjitha file-t…");
+});
+</script>
+</body>
+</html>

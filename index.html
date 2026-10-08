@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<!-- Created by Erion Nezha — © 2026 All rights reserved -->
+<html lang="sq"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRYEZA — Rezervo tavolinën tënde në Shqipëri</title>
+<meta name="description" content="TRYEZA — platforma shqiptare për rezervimin e tavolinave në restorantet më të mira të Tiranës, Korçës, Durrësit dhe Shkodrës. Konfirmim i menjëhershëm, pa telefonata, falas.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 8 L24 20 L20 32 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css"></head>
+<body><header class="site"></header><main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-art" id="heroArt" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <span class="eyebrow">Rezervime tavolinash në Shqipëri</span>
+      <h1>Tavolina jote, <span class="g">gati</span> para se të ulesh.</h1>
+      <p class="lead">Gjej restorantin perfekt, zgjidh orarin dhe rezervo tavolinën në sekonda — pa telefonata, pa pritje, plotësisht falas.</p>
+      <form class="search-card" id="searchForm" novalidate>
+        <div class="search-grid">
+          <div>
+            <label for="fQytet">Qyteti</label>
+            <select id="fQytet"></select>
+          </div>
+          <div>
+            <label for="fData">Data</label>
+            <input type="date" id="fData">
+          </div>
+          <div>
+            <label for="fOra">Ora</label>
+            <select id="fOra"></select>
+          </div>
+          <div>
+            <label for="fPersona">Persona</label>
+            <input type="number" id="fPersona" min="1" max="20" value="2">
+          </div>
+          <button class="btn btn-gold go" type="submit">Kërko tavolinë</button>
+        </div>
+        <p class="hint">Kërkimi është falas — pagesa bëhet vetëm në restorant, nëse vendos të shkosh.</p>
+      </form>
+      <div class="hero-stats">
+        <div class="hstat"><b id="statRest">–</b><span>restorante partnere</span></div>
+        <div class="hstat"><b>4</b><span>qytete</span></div>
+        <div class="hstat"><b>100%</b><span>falas për mysafirët</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TË ZGJEDHURA -->
+  <section>
+    <div class="wrap">
+      <span class="eyebrow">Më të vlerësuarat</span>
+      <h2 class="sec-title">Të zgjedhura për ty</h2>
+      <p class="sec-sub">Restorantet me vlerësimin më të lartë nga mysafirët tanë — gati për t'u rezervuar.</p>
+      <div class="carousel">
+        <div class="car-track" id="carTrack"></div>
+        <div class="car-nav" id="carNav">
+          <button class="car-btn" id="carPrev" aria-label="Shko majtas">←</button>
+          <button class="car-btn" id="carNext" aria-label="Shko djathtas">→</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="divider"></div></div>
+
+  <!-- QYTETET -->
+  <section>
+    <div class="wrap">
+      <span class="eyebrow">Destinacione</span>
+      <h2 class="sec-title">Zbulo sipas qytetit</h2>
+      <p class="sec-sub">Zgjidh qytetin dhe shiko të gjitha restorantet partnere atje.</p>
+      <div class="cities" id="citiesGrid"></div>
+    </div>
+  </section>
+
+  <!-- SI FUNKSIONON -->
+  <section>
+    <div class="wrap">
+      <span class="eyebrow">E thjeshtë</span>
+      <h2 class="sec-title">Si funksionon</h2>
+      <p class="sec-sub">Nga kërkimi te tavolina në tre hapa.</p>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><h3>Kërko</h3><p>Zgjidh qytetin, datën, orën dhe numrin e personave. Filtro sipas kuzhinës, çmimit dhe vlerësimit.</p></div>
+        <div class="step"><div class="n">2</div><h3>Rezervo</h3><p>Shiko oraret e lira në kohë reale, zgjidh tavolinën tënde dhe konfirmo me një kod unik rezervimi.</p></div>
+        <div class="step"><div class="n">3</div><h3>Shijo</h3><p>Shko në restorant dhe ulesh direkt — tavolina të pret. Modifiko ose anulo online kur të duash.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PSE TRYEZA -->
+  <section>
+    <div class="wrap">
+      <span class="eyebrow">Përfitimet</span>
+      <h2 class="sec-title">Pse TRYEZA</h2>
+      <p class="sec-sub">Gjithçka që të duhet për një darkë pa stres.</p>
+      <div class="stat-grid">
+        <div class="stat"><b>⚡</b><span><strong style="color:var(--gold-lt)">Konfirmim i menjëhershëm</strong><br>Merr kodin e rezervimit në sekonda.</span></div>
+        <div class="stat"><b>📵</b><span><strong style="color:var(--gold-lt)">Pa telefonata</strong><br>Asnjë pritje në linjë, asnjë keqkuptim.</span></div>
+        <div class="stat"><b>🎁</b><span><strong style="color:var(--gold-lt)">Falas për mysafirët</strong><br>Rezervimi nuk kushton asgjë, kurrë.</span></div>
+        <div class="stat"><b>🔄</b><span><strong style="color:var(--gold-lt)">Modifiko / anulo online</strong><br>Ndrysho planet nga faqja "Rezervimet e mia".</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA SUGJERO -->
+  <section>
+    <div class="wrap" style="text-align:center">
+      <span class="eyebrow">Bashkohu</span>
+      <h2 class="sec-title">Ke restorant? Sugjeroje</h2>
+      <p class="sec-sub" style="margin-left:auto;margin-right:auto">Njihni një vend fantastik që mungon në TRYEZA? Sugjeroje dhe ne do ta kontaktojmë për t'u bashkuar.</p>
+      <a class="btn btn-gold" href="sugjero.html">Sugjero restorant</a>
+    </div>
+  </section>
+
+  <!-- FAQ PREVIEW -->
+  <section>
+    <div class="wrap" style="max-width:820px">
+      <span class="eyebrow">Ndihmë</span>
+      <h2 class="sec-title">Pyetje të shpeshta</h2>
+      <p class="sec-sub">Përgjigjet e shpejta për gjërat që pyesin më shpesh.</p>
+      <div id="faqPreview">
+        <div class="faq-item">
+          <button class="faq-q" type="button">A paguaj për rezervimin? <span class="pm">+</span></button>
+          <div class="faq-a"><p>Jo. Rezervimi përmes TRYEZA-s është plotësisht falas për mysafirët. Paguani vetëm konsumimin tuaj në restorant, si zakonisht.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button">Si e marr konfirmimin? <span class="pm">+</span></button>
+          <div class="faq-a"><p>Menjëherë pas rezervimit merrni një kod unik (p.sh. TRZ-4K8Q2M). Ruajeni kodin — me të mund ta gjeni, modifikoni ose anuloni rezervimin te "Rezervimet e mia".</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button">A mund ta anuloj ose ndryshoj rezervimin? <span class="pm">+</span></button>
+          <div class="faq-a"><p>Po, në çdo moment dhe falas. Shkoni te "Rezervimet e mia", shkruani kodin tuaj dhe zgjidhni modifikimin ose anulimin.</p></div>
+        </div>
+      </div>
+      <div style="margin-top:1.2rem"><a class="btn btn-ghost" href="faq.html">Shiko të gjitha pyetjet</a></div>
+    </div>
+  </section>
+
+</main><footer class="site"></footer>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+TRY.renderChrome('index.html');
+(function(){
+  "use strict";
+  const R = ((typeof RESTORANTET!=="undefined" && RESTORANTET) || window.RESTORANTET || []);
+
+  /* Hero art + statistika */
+  TRY.$("#heroArt").innerHTML = TRY.coverSVG("hero");
+  TRY.$("#statRest").textContent = R.length;
+
+  /* Formulari i kërkimit */
+  const fQytet = TRY.$("#fQytet"), fData = TRY.$("#fData"),
+        fOra = TRY.$("#fOra"), fPersona = TRY.$("#fPersona");
+  fQytet.innerHTML = `<option value="">Kudo</option>` +
+    TRY.QYTETET.map(q => `<option value="${TRY.esc(q)}">${TRY.esc(q)}</option>`).join("");
+  fOra.innerHTML = `<option value="">Zgjidh orën…</option>` +
+    TRY.SLOTS.map(s => `<option value="${s}">${s}</option>`).join("");
+  const sot = TRY.todayStr();
+  fData.min = sot; fData.value = sot;
+
+  TRY.$("#searchForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    [fData, fPersona].forEach(f => f.classList.remove("field-err"));
+    const ds = fData.value.trim();
+    const p = parseInt(fPersona.value, 10);
+    let ok = true;
+    if(!ds || ds < sot){ fData.classList.add("field-err"); ok = false; }
+    if(!p || p < 1 || p > 20){ fPersona.classList.add("field-err"); ok = false; }
+    if(!ok){
+      TRY.toast("Kontrollo <b>datën</b> (jo në të kaluarën) dhe <b>numrin e personave</b> (1–20).");
+      return;
+    }
+    const q = new URLSearchParams();
+    if(fQytet.value) q.set("qytet", fQytet.value);
+    q.set("data", ds);
+    if(fOra.value) q.set("ora", fOra.value);
+    q.set("persona", String(p));
+    location.href = "restorante.html?" + q.toString();
+  });
+
+  /* Karuseli: 8 më të vlerësuarat */
+  const track = TRY.$("#carTrack");
+  const top8 = [...R]
+    .map(r => ({r, rt: TRY.liveRating(r.id).r}))
+    .sort((a,b) => b.rt - a.rt)
+    .slice(0, 8)
+    .map(x => x.r);
+  track.innerHTML = top8.map(TRY.cardHTML).join("");
+  TRY.bindFavs(track);
+  const step = () => Math.max(300, track.clientWidth * 0.8);
+  TRY.$("#carPrev").addEventListener("click", () => track.scrollBy({left: -step(), behavior: "smooth"}));
+  TRY.$("#carNext").addEventListener("click", () => track.scrollBy({left:  step(), behavior: "smooth"}));
+  if(track.scrollWidth <= track.clientWidth + 4) TRY.$("#carNav").style.display = "none";
+
+  /* Qytetet */
+  TRY.$("#citiesGrid").innerHTML = TRY.QYTETET.map(q => {
+    const n = R.filter(r => r.qytet === q).length;
+    const ntxt = n === 1 ? "1 restorant" : n + " restorante";
+    return `<a class="city-card" href="restorante.html?qytet=${encodeURIComponent(q)}" aria-label="Restorantet në ${TRY.esc(q)}">
+      <span class="city-art">${TRY.citySVG(q)}</span>
+      <span class="city-info"><h3>${TRY.esc(q)}</h3><p>${ntxt}</p></span>
+    </a>`;
+  }).join("");
+
+  /* FAQ accordion */
+  TRY.$$(".faq-q").forEach(btn => btn.addEventListener("click", () => {
+    const item = btn.closest(".faq-item");
+    const wasOpen = item.classList.contains("open");
+    TRY.$$(".faq-item").forEach(x => x.classList.remove("open"));
+    if(!wasOpen) item.classList.add("open");
+  }));
+})();
+</script></body></html>

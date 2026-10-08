@@ -1,0 +1,169 @@
+<!-- Created by Erion Nezha — © 2026 All rights reserved -->
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRYEZA — Blog</title>
+<meta name="description" content="Blogu i TRYEZA-s: guida, etiketa tryeze, qytete shijesh dhe sekrete kuzhine nga Shqipëria.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+.article-cover{border-radius:16px;overflow:hidden;border:1px solid var(--line);margin:1.2rem 0}
+.article-cover svg{width:100%;height:auto;display:block}
+</style>
+</head>
+<body>
+<header class="site"></header>
+<main class="wrap" id="blogMain">
+  <div class="page-head">
+    <span class="eyebrow">Blogu</span>
+    <h1>Histori nga tryeza</h1>
+    <p>Guida, etiketa, qytete shijesh dhe sekrete kuzhine — shkruar me dashuri për tryezën shqiptare.</p>
+  </div>
+  <section style="padding-top:.4rem"><div class="blog-grid" id="blogGrid"></div></section>
+</main>
+<footer class="site"></footer>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+"use strict";
+TRY.renderChrome("blog.html");
+const $ = TRY.$, $$ = TRY.$$;
+
+const POSTS = [
+{
+  slug: "tavolina-perfekte-60-sekonda", titull: "Si të rezervosh tavolinën perfekte në 60 sekonda",
+  data: "2026-10-06", excerpt: "Harroji telefonatat që s'përgjigjen. Ja formula me tre hapa për ta siguruar tavolinën ideale — pa stres, pa pritje.",
+  coverSeed: 101,
+  lead: "Shumica e darkave të prishura nuk prishen nga kuzhina, por nga planifikimi: orar i gabuar, vend i keq, tavolinë pranë derës. Ja si e shmang gjithçka në një minutë.",
+  p1: "Sekreti i parë është të vendosësh për orën para se të zgjedhësh restorantin, jo anasjelltas. Kuzhinat shqiptare kanë dy maja: 13:00–14:30 për drekë dhe 20:00–21:30 për darkë. Nëse do qetësi dhe shërbim më të vëmendshëm, syno 12:30 ose 19:00 — tavolinat janë bosh, kuzhinieri është i freskët dhe kamerieri ka kohë për ty.",
+  h2a: "Hapi 1: filtro, mos shfleto verbërisht",
+  p2: "Në vend që të hapësh dhjetë faqe, filtro një herë: qyteti, kuzhina dhe çmimi. Një kërkim i ngushtë të kthen tre-katër kandidatë seriozë në vend të tridhjetë emrave që s'të thonë asgjë. Lexo dy-tri vlerësime të fundit — jo yjet, fjalët: nëse përmendet shpesh \"shërbim i ngadaltë të shtunën\", merre parasysh.",
+  p3: "Hapi 2 është konfirmimi i detajeve: numri i personave, nevoja për karrige fëmijësh apo qasje për karrocë, dhe zona (sallë e qetë apo tarracë me pamje?). Shënoji në fushën e shënimeve të rezervimit — restorantet e mira i lexojnë vërtet ato shënime.",
+  h2b: "Truku i minutës së fundit",
+  p4: "Nëse je vonë dhe gjithçka duket plot, provo oraret \"e çuditshme\": 18:30 ose 21:45. Janë dritaret mes dy valëve të klientëve dhe shpesh kanë tavolinën më të mirë të shtëpisë — atë që mbahet për \"rastin\".",
+  p5: "Dhe rregulli i artë: ruaje kodin e rezervimit (TRZ-…). Me të, ndryshimi i orës apo anulimi zgjat dhjetë sekonda në faqen \"Rezervimet e mia\" — pa telefonata, pa siklet."
+},
+{
+  slug: "etiketa-e-arte-restorant", titull: "Etiketa e artë në restorant: 7 rregulla",
+  data: "2026-09-28", excerpt: "Nga vonesat te bakshishi — shtatë rregulla të thjeshta që të bëjnë mysafirin që çdo restorant do ta kthejë.",
+  coverSeed: 202,
+  lead: "Etiketa në restorant s'ka të bëjë me pirunjtë e renditur, por me respektin: për stafin, për tryezën ngjitur dhe për kohën e të gjithëve. Ja shtatë rregulla që mjaftojnë.",
+  p1: "Rregulli i parë është koha: vonohu më shumë se 15 minuta pa lajmëruar dhe tavolina jote i jepet tjetrit — jo nga pabesia, por sepse restoranti jeton me rotacion tavolinash. Një telefonatë dy-minutëshe të shpëton darkën dhe i kursen stafin një dilemë.",
+  h2a: "Telefoni, zëri dhe fëmijët",
+  p2: "Rregulli i dytë: telefoni rrëshqet në xhep ose kthehet me faqe poshtë. Askush s'ka nevojë ta dëgjojë bisedën tënde me zë të lartë, dhe fotot e pjatës le të zgjasin dhjetë sekonda — jo dhjetë minuta. Rregulli i tretë lidhet me zërin: restoranti s'është stadium; nëse tavolina ngjitur kthen kokën, ke kaluar masën.",
+  p3: "Rregulli i katërt është për prindërit: fëmijët janë të mirëseardhur kudo, por korridoret mes tavolinave s'janë pistë vrapimi. Një libër ngjyrosjeje apo një lojë e qetë e shpëton darkën — tënde dhe të të tjerëve.",
+  h2b: "Stafi, bakshishi dhe lamtumira",
+  p4: "Rregulli i pestë: fol me kamerierin si me njeri, jo si me buton porosish. \"Të lutem\" dhe \"faleminderit\" kushtojnë zero dhe ndryshojnë gjithë shërbimin. Rregulli i gjashtë është bakshishi: në Shqipëri s'është i detyrueshëm, por 5–10% për shërbim të mirë është gjesti që të bën mysafir të dashur.",
+  p5: "Rregulli i shtatë: mos u zhduk pa paguar \"pjesën tënde të llogarisë\" — ndajeni qartë në fillim, jo në fund kur vjen fatura. Dhe nëse diçka shkoi keq, thuaja menaxherit qetësisht aty, jo me një yll inati në internet të nesërmen."
+},
+{
+  slug: "korca-kryeqyteti-i-shijes", titull: "Korça: pse quhet kryeqyteti i shijes",
+  data: "2026-09-20", excerpt: "Lakrori, kërnackat, birra dhe serenatat — një udhëtim në qytetin ku tryeza është mënyrë jetese.",
+  coverSeed: 303,
+  lead: "Korçarët s'hanë për t'u ngopur — hanë për të ndenjur. Në Korçë, darka zgjat sa një serenatë, dhe kjo filozofi e ka bërë qytetin kryeqytetin e padiskutueshëm të shijes shqiptare.",
+  p1: "Fillo nga lakrori: petë të holla të hapura me dorë, me presh, spinaq apo kungull, të pjekura në saç. Është pjata që e gjen kudo, por askund s'e gjen si në Korçë — sepse aty s'është \"street food\", është trashëgimi që gjyshet e mbrojnë me fanatizëm.",
+  h2a: "Kërnackat dhe birra: dyshja e shenjtë",
+  p2: "Pastaj vijnë kërnackat — qofte të vogla pikante të skuqura në tigan, që hahen me duar dhe me birrë të ftohtë. Korça prodhon birrën më të vjetër të vendit dhe kombinimi kërnackë + birrë është rituali i mbrëmjes korçare, aq i shenjtë sa edhe oreksi i mysafirit respektohet pa diskutim.",
+  p3: "Mos harro fasulen e butë me pastërma, turshitë e shtëpisë dhe glikonë e arrës për ëmbëlsirë. Dhe nëse të ofrojnë raki mani — pranoje; refuzimi konsiderohet fyerje e lehtë diplomatike.",
+  h2b: "Ku ta përjetosh",
+  p4: "Pazari i Vjetër është zemra: kalldrëm, drita të ngrohta dhe taverna që hapen njëra pas tjetrës. Zgjidh një vend me muzikë live — serenata korçare me kitarë e bën lakrorin të shijojë dyfish.",
+  p5: "Këshilla praktike: në fundjavë Korça mbushet me vizitorë nga gjithë vendi — rezervo tavolinën një ditë më parë, sidomos nëse do tarracë. Dhe lëre vend për ëmbëlsirë: petullat me mjaltë ia vlejnë sakrificën."
+},
+{
+  slug: "darke-romantike-sekrete", titull: "Darkë romantike: 5 sekrete nga kuzhinierët",
+  data: "2026-09-14", excerpt: "Drita, koha, porosia e duhur — pesë truke të vogla që e kthejnë një darkë të zakonshme në mbrëmje për t'u mbajtur mend.",
+  coverSeed: 404,
+  lead: "Romanca s'blihet me shampanjën më të shtrenjtë, por ndërtohet me detaje. Pyetëm kuzhinierë dhe menaxherë sallash: ja pesë sekretet që ata vetë përdorin.",
+  p1: "Sekreti i parë është ora: rezervo për 19:30, jo për 21:00. Do ta kesh sallën gjysmë bosh, dritën e perëndimit në tarracë dhe stafin plotësisht të përqendruar te ty. Darkat e vona janë për turmat; darkat e hershme janë për njerëzit.",
+  h2a: "Tavolina, drita dhe porosia",
+  p2: "Sekreti i dytë: kërko tavolinë qoshe, larg derës dhe banjës — dhe shkruaje në shënimet e rezervimit. Restorantet i duan mysafirët që e dinë çfarë duan; shënimi \"tavolinë e qetë, rast i veçantë\" lexohet gjithmonë.",
+  p3: "Sekreti i tretë është porosia: mos porosit të njëjtën gjë të dy. Porosit dy pjata të ndryshme dhe ndajini — ndarja e ushqimit është gjesti më intim i tryezës. Dhe lëri ëmbëlsirën surprizë: thuaji kamerierit paraprakisht, ai do ta sjellë me qiri pa e prishur momentin.",
+  h2b: "Dy rregullat e arta",
+  p4: "Sekreti i katërt: telefonat zhduken. Jo \"me faqe poshtë\" — zhduken, në xhep apo në çantë. Prania e plotë është dhurata më romantike e mbrëmjes. Sekreti i pestë: mos nxito. Porosit kafenë pasi të mblidhen pjatat; një darkë romantike matet me orë, jo me pjata.",
+  p5: "Dhe nëse je nervoz, mos u shqetëso: stafi e ka parë këtë skenë një mijë herë dhe është në anën tënde. Thjesht shijoje — kjo është e gjithë filozofia."
+},
+{
+  slug: "durresi-peshku-sezoni", titull: "Durrësi dhe peshku: udhëzuesi i sezonit",
+  data: "2026-09-06", excerpt: "Çfarë peshku të porosisësh e në cilin muaj — dhe si ta dallosh të freskëtin nga i ngriri me një shikim.",
+  coverSeed: 505,
+  lead: "Në Durrës, pyetja \"çfarë peshku keni?\" ka përgjigje të ndryshme çdo muaj. Ky udhëzues sezonal të kursen zhgënjimin dhe të çon te pjata më e mirë e vitit.",
+  p1: "Rregulli i parë i detit: peshku ka stinë, si frutat. Levreku dhe koçi janë në formën më të mirë në pranverë dhe vjeshtë; sardelet shkëlqejnë në verë, kur janë të majme dhe të lira; karkaleci i Adriatikut arrin kulmin në muajt e ftohtë. Nëse menuja të ofron \"gjithçka, gjithmonë\", bëhu dyshues.",
+  h2a: "Si ta dallosh të freskëtin",
+  p2: "Syri s'gënjen kurrë: peshku i freskët ka sy të qartë e të fryrë, luspa që shkëlqejnë dhe mish elastik që kthehet në vend kur e shtyp me gisht. Era duhet të jetë erë deti — e pastër dhe e kripur. Nëse nuhat amoniak apo \"peshk të vjetër\", ngrihu dhe ndrysho vend.",
+  p3: "Truku i mençur: pyet kamerierin \"çfarë erdhi sot në mëngjes?\" në vend të \"çfarë më sugjeron?\". Pyetja e parë të jep të vërtetën e varkave; e dyta të jep pjatën me marzhin më të madh.",
+  h2b: "Çfarë të porosisësh",
+  p4: "Nëse je për herë të parë: fillo me antipastë deti të përzier për të kuptuar dorën e kuzhinës, pastaj një peshk të pjekur në kripë për dy persona — është teatri më i bukur i tryezës dhe mishi del perfekt çdo herë.",
+  p5: "Dhe për verën: harroji rregullat e rrepta, por vera e bardhë e ftohtë e zonës — një shesh i bardhë apo malvazi — me peshk të pjekur është kombinimi që s'dështon kurrë në bregdetin durrësak."
+},
+{
+  slug: "shkodra-sofrat", titull: "Shkodra veriore: sofrat që s'harrohen",
+  data: "2026-08-30", excerpt: "Tavë kosi, fërgesë veriore dhe mikpritja legjendare — pse tryeza shkodrane mbetet në kujtesë.",
+  coverSeed: 606,
+  lead: "Thonë që në Shkodër mysafiri hahet me sy para se të hajë me gojë — sepse sofra shtrohet si për dasmë edhe për një kafe të thjeshtë. Ja çfarë e bën tryezën veriore të paharrueshme.",
+  p1: "Fillo nga mikpritja: në traditën e veriut, mysafiri është i shenjtë. Të ofrohet më e mira e shtëpisë pa diskutim, dhe refuzimi merret si fyerje e ëmbël që duhet përsëritur tri herë para se të pranohet. Në restorantet e mira shkodrane, kjo frymë jeton ende: stafi të trajton si të ishe i ftuar, jo klient.",
+  h2a: "Pjatat që duhet t'i provosh",
+  p2: "Tava e kosit me mish qengji është mbretëresha — e pjekur ngadalë derisa kosi të marrë ngjyrë ari. Fërgesa veriore, ndryshe nga ajo tiranase, vjen më e trashë dhe më e \"fshatare\", me speca të pjekur në prush. Dhe byreku me qumësht për mëngjes është arsyeja pse ia vlen të zgjohesh herët.",
+  p3: "Mos ik pa provuar mantijat — petë të vogla me mish të grira hollë — dhe djathin e bardhë të zonës me mjaltë gështenje. Ëmbëlsira e veriut është e thjeshtë, pa pretendime, dhe pikërisht prandaj e paharrueshme.",
+  h2b: "Rituali i tryezës",
+  p4: "Darka veriore ka ritëm: fillon me raki dhe meze të ngadalta, vazhdon me bisedë të gjatë dhe mbyllet me kafe turke — kurrë me nxitim. Nëse nxiton, humbet gjysmën e përvojës. Lëre mbrëmjen të rrjedhë.",
+  p5: "Këshilla e fundit: zgjidh një tavernë buzë liqenit në Shirokë për perëndimin, ose pedonalen për gjallërinë e mbrëmjes. Të dyja janë Shkodra e vërtetë — thjesht në dy drita të ndryshme."
+}
+];
+
+const main = $("#blogMain");
+const slug = new URLSearchParams(location.search).get("p");
+const post = POSTS.find(p => p.slug === slug);
+
+if(post){
+  document.title = "TRYEZA — " + post.titull;
+  main.innerHTML = `
+    <a class="back-link" href="blog.html">← Kthehu te blogu</a>
+    <article class="article">
+      <span class="eyebrow">Blog</span>
+      <h1>${TRY.esc(post.titull)}</h1>
+      <span class="when" style="font-size:.85rem;color:var(--muted2)">${TRY.fmtDate(post.data)} · TRYEZA</span>
+      <div class="article-cover">${TRY.coverSVG(post.coverSeed, 900, 380)}</div>
+      <p class="lead">${TRY.esc(post.lead)}</p>
+      <p>${TRY.esc(post.p1)}</p>
+      <h2>${TRY.esc(post.h2a)}</h2>
+      <p>${TRY.esc(post.p2)}</p>
+      <p>${TRY.esc(post.p3)}</p>
+      <h2>${TRY.esc(post.h2b)}</h2>
+      <p>${TRY.esc(post.p4)}</p>
+      <p>${TRY.esc(post.p5)}</p>
+      <div class="divider"></div>
+      <div class="share-row">
+        <button id="copyLink">🔗 Kopjo linkun</button>
+        <a class="btn btn-ghost btn-sm" href="restorante.html" style="text-decoration:none">Gjej restorant →</a>
+      </div>
+    </article>`;
+  $("#copyLink").addEventListener("click", async () => {
+    const url = location.href;
+    try { await navigator.clipboard.writeText(url); }
+    catch {
+      const ta = document.createElement("textarea");
+      ta.value = url; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); ta.remove();
+    }
+    TRY.toast("Linku u <b>kopjua</b>");
+  });
+} else {
+  $("#blogGrid").innerHTML = POSTS.map(p => `
+    <article class="post">
+      <div class="cover"><a href="blog.html?p=${p.slug}" aria-label="${TRY.esc(p.titull)}">${TRY.coverSVG(p.coverSeed, 600, 300)}</a></div>
+      <div class="body">
+        <span class="when">${TRY.fmtDate(p.data)}</span>
+        <h3><a href="blog.html?p=${p.slug}">${TRY.esc(p.titull)}</a></h3>
+        <p>${TRY.esc(p.excerpt)}</p>
+        <a class="btn btn-ghost btn-sm" style="margin-top:.8rem" href="blog.html?p=${p.slug}">Lexo artikullin</a>
+      </div>
+    </article>`).join("");
+}
+</script>
+</body>
+</html>

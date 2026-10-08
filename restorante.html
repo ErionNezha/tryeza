@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<!-- Created by Erion Nezha — © 2026 All rights reserved -->
+<html lang="sq"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRYEZA — Restorantet</title>
+<meta name="description" content="Shfleto të gjitha restorantet partnere të TRYEZA-s në Tiranë, Korçë, Durrës dhe Shkodër. Filtro sipas kuzhinës, çmimit dhe vlerësimit, dhe shiko disponueshmërinë në kohë reale.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 8 L24 20 L20 32 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+.slotbadge{position:absolute;top:.65rem;left:50%;transform:translateX(-50%);z-index:3;
+  font-size:.72rem;font-weight:700;padding:.3rem .85rem;border-radius:999px;white-space:nowrap;pointer-events:none}
+.slotbadge.ok{background:rgba(62,207,142,.94);color:#06281a;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.slotbadge.busy{background:rgba(255,107,107,.92);color:#3a0d0d}
+.slotctx{display:inline-block;margin-bottom:1rem;font-size:.88rem;color:var(--muted);
+  border:1px solid var(--line2);border-radius:999px;padding:.45rem 1.1rem;background:rgba(212,175,55,.06)}
+.slotctx b{color:var(--gold-lt)}
+</style></head>
+<body><header class="site"></header><main>
+<div class="wrap">
+  <div class="page-head">
+    <span class="eyebrow">Shfleto</span>
+    <h1>Restorantet</h1>
+    <p>Gjej vendin perfekt për darkën tënde — filtro sipas qytetit, kuzhinës, çmimit dhe vlerësimit.</p>
+  </div>
+
+  <form class="filters" id="filters" onsubmit="return false">
+    <div>
+      <label for="fltQ">Kërko</label>
+      <input type="search" id="fltQ" placeholder="Emër, lagje, kuzhinë…" autocomplete="off">
+    </div>
+    <div>
+      <label for="fltQytet">Qyteti</label>
+      <select id="fltQytet"></select>
+    </div>
+    <div>
+      <label for="fltKuzhine">Kuzhina</label>
+      <select id="fltKuzhine"></select>
+    </div>
+    <div>
+      <label for="fltCmim">Çmimi</label>
+      <select id="fltCmim">
+        <option value="">Të gjitha</option>
+        <option value="1">€ — Ekonomik</option>
+        <option value="2">€€ — Mesatar</option>
+        <option value="3">€€€ — Premium</option>
+      </select>
+    </div>
+    <div>
+      <label for="fltRating">Vlerësimi</label>
+      <select id="fltRating">
+        <option value="">Të gjitha</option>
+        <option value="3.5">3.5+ yje</option>
+        <option value="4">4.0+ yje</option>
+        <option value="4.5">4.5+ yje</option>
+      </select>
+    </div>
+    <div>
+      <label for="fltRendit">Renditja</label>
+      <select id="fltRendit">
+        <option value="rek">E rekomanduar</option>
+        <option value="rating">Vlerësimi</option>
+        <option value="cmim-asc">Çmimi: rritës</option>
+        <option value="cmim-desc">Çmimi: zbritës</option>
+      </select>
+    </div>
+    <div style="display:flex;align-items:flex-end">
+      <button type="button" class="btn btn-ghost btn-sm" id="btnClear" style="width:100%">Pastro filtrat</button>
+    </div>
+  </form>
+
+  <div id="slotCtx"></div>
+  <p class="result-count" id="resultCount"></p>
+  <div class="grid-cards" id="grid"></div>
+  <div class="empty" id="emptyState" hidden>
+    <div class="big">🍽️</div>
+    <p><strong style="color:var(--text)">Nuk u gjet asnjë restorant</strong> me këto filtra.<br>Provo të heqësh disa filtra për më shumë rezultate.</p>
+    <div style="margin-top:1rem"><button class="btn btn-gold btn-sm" id="btnClear2" type="button">Pastro filtrat</button></div>
+  </div>
+</div>
+</main><footer class="site"></footer>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+TRY.renderChrome('restorante.html');
+(function(){
+  "use strict";
+  const R = ((typeof RESTORANTET!=="undefined" && RESTORANTET) || window.RESTORANTET || []);
+  const RATINGS_OK = ["3.5","4","4.5"];
+  const RENDIT_OK = ["rek","rating","cmim-asc","cmim-desc"];
+
+  /* ---- Lexo parametrat e URL-së ---- */
+  const P = new URLSearchParams(location.search);
+  const state = {
+    q: (P.get("q") || "").trim(),
+    qytet: TRY.QYTETET.includes(P.get("qytet")) ? P.get("qytet") : "",
+    kuzhine: (P.get("kuzhine") || "").trim(),
+    cmim: ["1","2","3"].includes(P.get("cmim")) ? P.get("cmim") : "",
+    minrating: RATINGS_OK.includes(P.get("minrating")) ? parseFloat(P.get("minrating")) : 0,
+    rendit: RENDIT_OK.includes(P.get("rendit")) ? P.get("rendit") : "rek",
+    data: (P.get("data") || "").trim(),
+    ora: TRY.SLOTS.includes(P.get("ora")) ? P.get("ora") : "",
+    persona: parseInt(P.get("persona") || "2", 10)
+  };
+  if(!(state.persona >= 1 && state.persona <= 20)) state.persona = 2;
+  const hasSlot = /^\d{4}-\d{2}-\d{2}$/.test(state.data) && state.data >= TRY.todayStr() && state.ora !== "";
+
+  /* ---- Kontrollet ---- */
+  const fltQ = TRY.$("#fltQ"), fltQytet = TRY.$("#fltQytet"), fltKuzhine = TRY.$("#fltKuzhine"),
+        fltCmim = TRY.$("#fltCmim"), fltRating = TRY.$("#fltRating"), fltRendit = TRY.$("#fltRendit");
+
+  fltQ.value = state.q;
+  fltQytet.innerHTML = `<option value="">Të gjitha qytetet</option>` +
+    TRY.QYTETET.map(q => `<option value="${TRY.esc(q)}"${q===state.qytet?" selected":""}>${TRY.esc(q)}</option>`).join("");
+  const kuzhinat = [...new Set(R.flatMap(r => r.kuzhina || []))].sort((a,b)=>a.localeCompare(b,"sq"));
+  fltKuzhine.innerHTML = `<option value="">Të gjitha kuzhinat</option>` +
+    kuzhinat.map(k => `<option value="${TRY.esc(k)}"${k===state.kuzhine?" selected":""}>${TRY.esc(k)}</option>`).join("");
+  fltCmim.value = state.cmim;
+  fltRating.value = state.minrating ? String(state.minrating) : "";
+  fltRendit.value = state.rendit;
+
+  /* ---- Konteksti i disponueshmërisë ---- */
+  const slotCtx = TRY.$("#slotCtx");
+  if(hasSlot){
+    slotCtx.innerHTML = `<span class="slotctx">Disponueshmëria për <b>${TRY.esc(TRY.fmtDate(state.data))}</b> · <b>${TRY.esc(state.ora)}</b> · <b>${state.persona} persona</b></span>`;
+  } else {
+    slotCtx.innerHTML = "";
+  }
+
+  function badgeFor(r){
+    if(!hasSlot) return "";
+    const s = TRY.slotInfo(r, state.data, state.ora, state.persona);
+    return s.free
+      ? `<span class="slotbadge ok">✓ I lirë · ${TRY.esc(state.ora)}</span>`
+      : `<span class="slotbadge busy">I zënë</span>`;
+  }
+
+  /* ---- Filtrim + renditje + render ---- */
+  function applyFilters(){
+    const qn = state.q.toLowerCase();
+    let list = R.filter(r => {
+      if(qn && !(r.emer.toLowerCase().includes(qn) ||
+                 (r.lagje||"").toLowerCase().includes(qn) ||
+                 (r.kuzhina||[]).some(k => k.toLowerCase().includes(qn)))) return false;
+      if(state.qytet && r.qytet !== state.qytet) return false;
+      if(state.kuzhine && !(r.kuzhina||[]).includes(state.kuzhine)) return false;
+      if(state.cmim && String(r.cmim) !== state.cmim) return false;
+      if(state.minrating && TRY.liveRating(r.id).r < state.minrating) return false;
+      return true;
+    });
+    const lr = id => TRY.liveRating(id);
+    if(state.rendit === "rating") list.sort((a,b) => lr(b.id).r - lr(a.id).r);
+    else if(state.rendit === "cmim-asc") list.sort((a,b) => a.cmim - b.cmim);
+    else if(state.rendit === "cmim-desc") list.sort((a,b) => b.cmim - a.cmim);
+    else list.sort((a,b) => (lr(b.id).r * lr(b.id).n) - (lr(a.id).r * lr(a.id).n));
+
+    const grid = TRY.$("#grid"), empty = TRY.$("#emptyState");
+    grid.innerHTML = list.map(r => {
+      const badge = badgeFor(r);
+      const html = TRY.cardHTML(r);
+      return badge ? html.replace(/(<article[^>]*>)/, "$1" + badge) : html;
+    }).join("");
+    TRY.bindFavs(grid);
+    grid.hidden = !list.length;
+    empty.hidden = !!list.length;
+    TRY.$("#resultCount").textContent =
+      list.length === 1 ? "1 restorant u gjet" : list.length + " restorante u gjetën";
+  }
+
+  function syncURL(){
+    const q = new URLSearchParams();
+    if(state.q) q.set("q", state.q);
+    if(state.qytet) q.set("qytet", state.qytet);
+    if(state.kuzhine) q.set("kuzhine", state.kuzhine);
+    if(state.cmim) q.set("cmim", state.cmim);
+    if(state.minrating) q.set("minrating", String(state.minrating));
+    if(state.rendit !== "rek") q.set("rendit", state.rendit);
+    if(state.data) q.set("data", state.data);
+    if(state.ora) q.set("ora", state.ora);
+    q.set("persona", String(state.persona));
+    const qs = q.toString();
+    history.replaceState(null, "", "restorante.html" + (qs ? "?" + qs : ""));
+  }
+
+  function pullFromControls(){
+    state.q = fltQ.value.trim();
+    state.qytet = fltQytet.value;
+    state.kuzhine = fltKuzhine.value;
+    state.cmim = fltCmim.value;
+    state.minrating = fltRating.value ? parseFloat(fltRating.value) : 0;
+    state.rendit = fltRendit.value;
+    syncURL();
+    applyFilters();
+  }
+
+  let deb;
+  fltQ.addEventListener("input", () => { clearTimeout(deb); deb = setTimeout(pullFromControls, 250); });
+  [fltQytet, fltKuzhine, fltCmim, fltRating, fltRendit].forEach(el =>
+    el.addEventListener("change", pullFromControls));
+
+  function clearAll(){
+    Object.assign(state, {q:"", qytet:"", kuzhine:"", cmim:"", minrating:0, rendit:"rek"});
+    fltQ.value = ""; fltQytet.value = ""; fltKuzhine.value = "";
+    fltCmim.value = ""; fltRating.value = ""; fltRendit.value = "rek";
+    syncURL();
+    applyFilters();
+  }
+  TRY.$("#btnClear").addEventListener("click", clearAll);
+  TRY.$("#btnClear2").addEventListener("click", clearAll);
+
+  applyFilters();
+})();
+</script></body></html>

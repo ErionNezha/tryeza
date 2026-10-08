@@ -1,0 +1,527 @@
+<!-- Created by Erion Nezha — © 2026 All rights reserved -->
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restoranti — TRYEZA</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.dish-mini-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.8rem;margin-top:1rem}
+.dish-mini{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:1rem;text-align:center}
+.dish-mini b{display:block;color:var(--gold-lt);margin-bottom:.3rem}
+.dish-mini span{color:var(--muted);font-size:.9rem}
+.pikat{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1.1rem}
+.pika{background:rgba(212,175,55,.06);border:1px solid var(--line);border-radius:var(--r-sm);padding:.8rem 1rem;font-size:.9rem}
+.pika b{color:var(--gold-lt);display:block;font-size:.95rem}
+.star-pick{display:flex;gap:.3rem}
+.star-pick button{background:none;border:none;font-size:1.9rem;color:#3a4360;padding:.1rem;transition:transform .12s}
+.star-pick button:hover{transform:scale(1.2)}
+.star-pick button.sel{color:var(--gold)}
+.floor .tbl{transform-box:fill-box;transform-origin:center}
+.floor-legend{font-size:.8rem;color:var(--muted2);margin-top:.5rem;text-align:center}
+.terms{margin:.6rem 0 .4rem 1.1rem;color:var(--muted);font-size:.93rem}
+.terms li{margin-bottom:.55rem}
+.err-hint{color:var(--red);font-size:.8rem;margin-top:.3rem;min-height:1.1rem}
+@media(max-width:720px){.pikat{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="site"></header>
+<main id="main"></main>
+<footer class="site"></footer>
+
+<div class="modal-bg" id="termsModal" role="dialog" aria-modal="true" aria-label="Kushtet e rezervimit">
+  <div class="modal">
+    <h2>Kushtet e rezervimit</h2>
+    <ol class="terms">
+      <li>Tavolina mbahet e rezervuar deri <b>15 minuta</b> pas orës së caktuar; pas kësaj kohe mund t'u ofrohet mysafirëve të tjerë.</li>
+      <li>Anulimi është <b>falas deri 3 orë para</b> orës së rezervimit — mjafton një telefonatë ose mesazh te restoranti.</li>
+      <li>Grupet me më shumë se <b>8 persona</b> konfirmohen me telefonatë nga stafi i restorantit.</li>
+      <li>Ju lutemi shënoni <b>alergjitë ushqimore</b> ose nevojat e veçanta — kuzhina bën çmos t'i akomodojë.</li>
+      <li>Fëmijët janë të mirëseardhur; karriget për fëmijë jepen <b>pa pagesë</b> sipas disponueshmërisë.</li>
+      <li>Duke konfirmuar, pranoni që restoranti t'ju kontaktojë për mbarëvajtjen e këtij rezervimi.</li>
+    </ol>
+    <button class="btn btn-gold" id="termsClose" style="width:100%;margin-top:1rem">Kuptova</button>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+"use strict";
+/* TRYEZA — faqja e restorantit */
+const params = new URLSearchParams(location.search);
+const rest = params.get("id") ? TRY.restById(params.get("id")) : null;
+TRY.renderChrome("restorante.html");
+const main = document.getElementById("main");
+
+if (!rest) {
+  document.title = "Nuk u gjet — TRYEZA";
+  main.innerHTML = `<div class="wrap"><div class="empty" style="margin:3rem 0">
+    <div class="big">🍽️</div><h2>Restoranti nuk u gjet</h2>
+    <p>Restoranti që kërkon nuk ekziston ose linku është i gabuar.</p>
+    <p style="margin-top:1.2rem"><a class="btn btn-gold" href="restorante.html">← Kthehu te restorantet</a></p>
+  </div></div>`;
+} else {
+  document.title = rest.emer + " — TRYEZA";
+  buildPage();
+}
+
+function buildPage() {
+  const live = TRY.liveRating(rest.id);
+  const zona0 = rest.zona[0];
+
+  /* ---------- pikat e forta (derivohen nga të dhënat) ---------- */
+  const pikat = [];
+  if (rest.zona.some(z => /tarrac|tarracë|verand|kopsht|verore/i.test(z.emer)))
+    pikat.push(["Tarracë / ambient i hapur", "Shijoje vaktin nën qiell të hapur"]);
+  pikat.push(["Deri në " + rest.maxPersona + " persona", "Ideale edhe për grupe e festa"]);
+  pikat.push(["Parkim: " + rest.parking, ""]);
+  pikat.push(["Kuzhina: " + rest.kuzhina.join(", "), "Çmim mesatar " + TRY.cmimTxt(rest.cmim)]);
+  while (pikat.length < 4) pikat.push(["Dress code: " + rest.dressCode, ""]);
+
+  /* ---------- menu e grupuar ---------- */
+  const kats = [];
+  rest.menu.forEach(m => { if (!kats.includes(m.kategori)) kats.push(m.kategori); });
+  const menuHTML = kats.map(k =>
+    `<h3 class="menu-cat">${TRY.esc(k)}</h3>` +
+    rest.menu.filter(m => m.kategori === k).map(m =>
+      `<div class="menu-row"><span>${TRY.esc(m.emer)}</span><span class="p">${m.cmim} L</span></div>`
+    ).join("")
+  ).join("");
+
+  /* ---------- restorante afër ---------- */
+  const sameCity = RESTORANTET.filter(r => r.qytet === rest.qytet && r.id !== rest.id);
+  const others = RESTORANTET.filter(r => r.qytet !== rest.qytet && r.id !== rest.id);
+  const nearby = [...sameCity, ...others].slice(0, 3);
+
+  main.innerHTML = `
+  <div class="banner">
+    ${TRY.coverSVG(rest.coverSeed, 1400, 340)}
+    <div class="shade"></div>
+    <button class="fav ${TRY.isFav(rest.id) ? "on" : ""}" id="favBtn" aria-label="Shto te të preferuarat">♥</button>
+    <div class="banner-info"><div class="wrap">
+      <h1>${TRY.esc(rest.emer)}</h1>
+      <div class="meta">
+        <span id="rateStars">${TRY.stars(live.r, live.n)}</span>
+        <span>${TRY.esc(rest.qytet)} · ${TRY.esc(rest.lagje)}</span>
+        <span class="price">${TRY.cmimTxt(rest.cmim)}</span>
+        <span class="tags">${rest.kuzhina.map(k => `<span class="tag">${TRY.esc(k)}</span>`).join("")}</span>
+      </div>
+      <div class="share-row">
+        <button id="btnCopyLink">🔗 Kopjo linkun</button>
+        <button id="btnShareX">𝕏 Ndaje në X</button>
+        <button id="btnShareFb">f Ndaje në Facebook</button>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="wrap"><div class="detail-grid">
+    <div class="dmain">
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-pane="perm">Përmbledhje</button>
+        <button class="tab" data-pane="pjata">Pjata popullore</button>
+        <button class="tab" data-pane="menu">Menu</button>
+        <button class="tab" data-pane="foto">Foto</button>
+        <button class="tab" data-pane="vler">Vlerësime <span id="revCount"></span></button>
+        <button class="tab" data-pane="det">Detaje</button>
+      </div>
+
+      <div class="tabpane active" id="pane-perm">
+        <p style="color:var(--muted)">${TRY.esc(rest.pershkrim)}</p>
+        <div class="pikat">${pikat.slice(0, 4).map(p =>
+          `<div class="pika"><b>${TRY.esc(p[0])}</b>${p[1] ? TRY.esc(p[1]) : ""}</div>`).join("")}
+        </div>
+      </div>
+
+      <div class="tabpane" id="pane-pjata">
+        <div class="dish-mini-grid">
+          ${rest.menu.slice(0, 4).map(m =>
+            `<div class="dish-mini"><b>${TRY.esc(m.emer)}</b><span>${m.cmim} L · ${TRY.esc(m.kategori)}</span></div>`).join("")}
+        </div>
+      </div>
+
+      <div class="tabpane" id="pane-menu">${menuHTML}</div>
+
+      <div class="tabpane" id="pane-foto">
+        <div class="photo-grid">
+          ${[0, 1, 2, 3, 4, 5].map(i => `<div class="ph">${TRY.coverSVG(rest.coverSeed + i * 7, 400, 300)}</div>`).join("")}
+        </div>
+      </div>
+
+      <div class="tabpane" id="pane-vler">
+        <div id="revList"></div>
+        <div class="divider"></div>
+        <h3 style="margin-bottom:1rem">Shkruaj vlerësim</h3>
+        <div class="guest-form" style="max-width:520px">
+          <div><label for="rvEmer">Emri *</label><input id="rvEmer" placeholder="Emri yt" maxlength="40"></div>
+          <div><label>Vlerësimi yt *</label><div class="star-pick" id="rvStars" role="radiogroup" aria-label="Yjet"></div></div>
+          <div><label for="rvTekst">Komenti *</label><textarea id="rvTekst" rows="3" maxlength="500" placeholder="Si ishte përvoja jote?"></textarea></div>
+          <div class="err-hint" id="rvErr"></div>
+          <div><button class="btn btn-gold" id="rvSend">Dërgo vlerësimin</button></div>
+        </div>
+      </div>
+
+      <div class="tabpane" id="pane-det">
+        <dl class="detail-list">
+          <div><dt>Adresa</dt><dd>${TRY.esc(rest.adrese)}</dd></div>
+          <div><dt>Telefoni</dt><dd><a href="tel:${TRY.esc(rest.telefon.replace(/\s/g, ""))}" style="color:var(--gold)">${TRY.esc(rest.telefon)}</a></dd></div>
+          <div><dt>Orari</dt><dd>${Object.entries(rest.orare).map(([d, o]) => `${TRY.esc(d)}: <b>${TRY.esc(o)}</b>`).join("<br>")}</dd></div>
+          <div><dt>Kuzhina</dt><dd>${rest.kuzhina.map(TRY.esc).join(", ")}</dd></div>
+          <div><dt>Stili</dt><dd>${TRY.esc(rest.stil)}</dd></div>
+          <div><dt>Dress code</dt><dd>${TRY.esc(rest.dressCode)}</dd></div>
+          <div><dt>Parkimi</dt><dd>${TRY.esc(rest.parking)}</dd></div>
+          <div><dt>Pagesa</dt><dd>${rest.pagesa.map(TRY.esc).join(", ")}</dd></div>
+          <div><dt>Max persona</dt><dd>Deri në ${rest.maxPersona} persona</dd></div>
+        </dl>
+      </div>
+
+      <h2 class="sec-title" style="margin-top:2.4rem;font-size:1.7rem">Restorante afër</h2>
+      <div class="nearby" id="nearby">${nearby.map(r => TRY.cardHTML(r)).join("")}</div>
+    </div>
+
+    <aside class="booking" id="rezervo">
+      <div id="bookingBody"></div>
+    </aside>
+  </div></div>`;
+
+  TRY.bindFavs(main);
+
+  /* ---------- tabs ---------- */
+  TRY.$$("#tabs .tab").forEach(t => t.addEventListener("click", () => {
+    TRY.$$("#tabs .tab").forEach(x => x.classList.remove("active"));
+    TRY.$$("[id^='pane-']").forEach(p => p.classList.remove("active"));
+    t.classList.add("active");
+    document.getElementById("pane-" + t.dataset.pane).classList.add("active");
+  }));
+
+  /* ---------- favorite ---------- */
+  document.getElementById("favBtn").addEventListener("click", e => {
+    const on = TRY.toggleFav(rest.id);
+    e.currentTarget.classList.toggle("on", on);
+  });
+
+  /* ---------- share ---------- */
+  document.getElementById("btnCopyLink").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(location.href); TRY.toast("🔗 Linku u kopjua"); }
+    catch { TRY.toast("Kopjimi dështoi — kopjoje manualisht nga shiriti i adresës"); }
+  });
+  const shareTxt = encodeURIComponent(rest.emer + " — rezervo tavolinë në TRYEZA");
+  const shareUrl = encodeURIComponent(location.href);
+  document.getElementById("btnShareX").addEventListener("click", () =>
+    window.open("https://twitter.com/intent/tweet?text=" + shareTxt + "&url=" + shareUrl, "_blank", "noopener"));
+  document.getElementById("btnShareFb").addEventListener("click", () =>
+    window.open("https://www.facebook.com/sharer/sharer.php?u=" + shareUrl, "_blank", "noopener"));
+
+  /* ---------- reviews ---------- */
+  let rvYje = 5;
+  const rvStarsBox = document.getElementById("rvStars");
+  const paintRvStars = () => {
+    rvStarsBox.innerHTML = [1, 2, 3, 4, 5].map(i =>
+      `<button type="button" data-y="${i}" class="${i <= rvYje ? "sel" : ""}" aria-label="${i} yje">★</button>`).join("");
+  };
+  paintRvStars();
+  rvStarsBox.addEventListener("click", e => {
+    const b = e.target.closest("button[data-y]");
+    if (b) { rvYje = +b.dataset.y; paintRvStars(); }
+  });
+
+  function renderReviews() {
+    const list = TRY.getReviews(rest.id);
+    document.getElementById("revList").innerHTML = list.length ? list.map(v => `
+      <div class="review">
+        <div class="who"><b>${TRY.esc(v.emer)}</b><span class="when">${TRY.fmtDate(v.data)}</span></div>
+        <div>${TRY.stars(v.yje)}</div>
+        <p>${TRY.esc(v.tekst)}</p>
+      </div>`).join("")
+      : `<p class="hint">Ende s'ka vlerësime — bëhu i pari!</p>`;
+    document.getElementById("revCount").textContent = `(${list.length})`;
+  }
+  function refreshLiveRating() {
+    const lr = TRY.liveRating(rest.id);
+    document.getElementById("rateStars").innerHTML = TRY.stars(lr.r, lr.n);
+  }
+  renderReviews(); refreshLiveRating();
+
+  document.getElementById("rvSend").addEventListener("click", () => {
+    const emer = document.getElementById("rvEmer").value.trim();
+    const tekst = document.getElementById("rvTekst").value.trim();
+    const err = document.getElementById("rvErr");
+    if (emer.length < 2) { err.textContent = "Shkruaj emrin tënd (min. 2 shkronja)."; return; }
+    if (tekst.length < 10) { err.textContent = "Komenti duhet të ketë të paktën 10 karaktere."; return; }
+    err.textContent = "";
+    const arr = TRY.load(TRY.LS.reviews, []);
+    arr.push({ restId: rest.id, emer, yje: rvYje, tekst, data: TRY.todayStr() });
+    TRY.save(TRY.LS.reviews, arr);
+    document.getElementById("rvEmer").value = "";
+    document.getElementById("rvTekst").value = "";
+    rvYje = 5; paintRvStars();
+    renderReviews(); refreshLiveRating();
+    TRY.toast("Faleminderit! Vlerësimi yt u publikua.");
+  });
+
+  /* ================= BOOKING WIDGET ================= */
+  const S = { persona: 2, date: TRY.todayStr(), time: null, zonaId: zona0.id, tavolina: null };
+
+  const zonaEmer = () => (rest.zona.find(z => z.id === S.zonaId) || {}).emer || "";
+  const isPastSlot = slot => {
+    if (S.date !== TRY.todayStr()) return false;
+    const [h, m] = slot.split(":").map(Number);
+    const now = new Date();
+    return (h * 60 + m) <= (now.getHours() * 60 + now.getMinutes() - 60);
+  };
+  const slotFree = slot => TRY.slotInfo(rest, S.date, slot, S.persona, S.zonaId).free;
+
+  function renderBookingShell() {
+    document.getElementById("bookingBody").innerHTML = `
+      <h2>Rezervo tavolinë</h2>
+      <p class="bk-sub">Konfirmim i menjëhershëm · Falas</p>
+
+      <div class="bk-step"><span class="lbl">① Persona</span>
+        <div class="party-ctl">
+          <button id="pMinus" aria-label="Pakëso">−</button>
+          <b id="pNum">${S.persona}</b>
+          <button id="pPlus" aria-label="Shto">+</button>
+          <span class="hint" style="margin:0">1–20 persona</span>
+        </div>
+      </div>
+
+      <div class="bk-step"><span class="lbl">② Data</span>
+        <input type="date" id="bkDate" min="${TRY.todayStr()}" max="${TRY.todayStr(60)}" value="${S.date}">
+      </div>
+
+      <div class="bk-step"><span class="lbl">③ Ora</span>
+        <select id="bkTimeSel" style="margin-bottom:.6rem">
+          <option value="">— Zgjidh orën —</option>
+          ${TRY.SLOTS.map(s => `<option value="${s}">${s}</option>`).join("")}
+        </select>
+        <div class="slots" id="bkSlots"></div>
+      </div>
+
+      <div class="bk-step"><span class="lbl">④ Zona</span>
+        <div class="zone-pick" id="bkZones">
+          ${rest.zona.map(z => `<button data-z="${z.id}" class="${z.id === S.zonaId ? "sel" : ""}">${TRY.esc(z.emer)}</button>`).join("")}
+        </div>
+      </div>
+
+      <div class="bk-step"><span class="lbl">⑤ Tavolina</span>
+        <div class="floor" id="bkFloor"></div>
+        <div class="floor-legend">● e lirë — kliko rrethin për të zgjedhur tavolinën</div>
+      </div>
+
+      <div class="bk-step"><span class="lbl">⑥ Të dhënat e mysafirit</span>
+        <div class="guest-form">
+          <div><label for="gEmer">Emër mbiemër *</label><input id="gEmer" placeholder="p.sh. Erion Nezha" autocomplete="name"></div>
+          <div class="row2">
+            <div><label for="gTel">Telefon *</label><input id="gTel" placeholder="+355 6X XXX XXXX" inputmode="tel" autocomplete="tel"></div>
+            <div><label for="gEmail">Email (opsional)</label><input id="gEmail" type="email" placeholder="emri@email.com" autocomplete="email"></div>
+          </div>
+          <div><label for="gRasti">Rasti</label><select id="gRasti">
+            <option>Asnjë</option><option>Ditëlindje</option><option>Darkë romantike</option>
+            <option>Darkë biznesi</option><option>Familjare</option><option>Tjetër</option>
+          </select></div>
+          <div><label for="gShenime">Shënime (opsional)</label><textarea id="gShenime" rows="2" placeholder="Alergji, karrige për fëmijë, etj."></textarea></div>
+          <label class="check-line" style="cursor:pointer">
+            <input type="checkbox" id="gKushtet" style="width:auto;margin-top:.25rem">
+            <span>Pranoj <a href="#" id="termsLink" style="color:var(--gold);text-decoration:underline">kushtet e rezervimit</a> *</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="bk-summary" id="bkSummary"></div>
+      <div class="err-hint" id="bkErr"></div>
+      <button class="btn btn-gold" id="bkConfirm" style="width:100%">Konfirmo rezervimin</button>`;
+
+    document.getElementById("pMinus").addEventListener("click", () => setPersona(S.persona - 1));
+    document.getElementById("pPlus").addEventListener("click", () => setPersona(S.persona + 1));
+    document.getElementById("bkDate").addEventListener("change", e => {
+      const v = e.target.value;
+      if (v >= TRY.todayStr() && v <= TRY.todayStr(60)) { S.date = v; afterAvailChange(); }
+      else { e.target.value = S.date; TRY.toast("Zgjidh një datë nga sot deri 60 ditë më vonë."); }
+    });
+    document.getElementById("bkTimeSel").addEventListener("change", e => setTime(e.target.value || null));
+    document.getElementById("bkSlots").addEventListener("click", e => {
+      const b = e.target.closest("button.slot:not(:disabled)");
+      if (b) setTime(b.dataset.slot);
+    });
+    document.getElementById("bkZones").addEventListener("click", e => {
+      const b = e.target.closest("button[data-z]");
+      if (b && b.dataset.z !== S.zonaId) {
+        S.zonaId = b.dataset.z;
+        TRY.$$("#bkZones button").forEach(x => x.classList.toggle("sel", x.dataset.z === S.zonaId));
+        afterAvailChange();
+      }
+    });
+    document.getElementById("bkFloor").addEventListener("click", e => {
+      const g = e.target.closest("g.tbl");
+      if (!g || g.classList.contains("busy")) return;
+      S.tavolina = g.dataset.tbl;
+      TRY.$$("#bkFloor g.tbl").forEach(x => x.classList.toggle("sel", x.dataset.tbl === S.tavolina));
+      renderSummary();
+    });
+    document.getElementById("termsLink").addEventListener("click", e => { e.preventDefault(); openTerms(); });
+    document.getElementById("bkConfirm").addEventListener("click", confirmBooking);
+
+    renderSlots(); renderTables(); renderSummary();
+  }
+
+  function setPersona(n) {
+    S.persona = Math.min(20, Math.max(1, n));
+    document.getElementById("pNum").textContent = S.persona;
+    afterAvailChange();
+  }
+  function setTime(t) {
+    S.time = t; S.tavolina = null;
+    document.getElementById("bkTimeSel").value = t || "";
+    renderSlots(); renderTables(); renderSummary();
+  }
+  function afterAvailChange() {
+    // nëse ora e zgjedhur u zë me kushtet e reja → çzgjidhe
+    if (S.time && (!slotFree(S.time) || isPastSlot(S.time))) {
+      S.time = null;
+      document.getElementById("bkTimeSel").value = "";
+    }
+    S.tavolina = null;
+    renderSlots(); renderTables(); renderSummary();
+  }
+
+  function renderSlots() {
+    document.getElementById("bkSlots").innerHTML = TRY.SLOTS.map(s => {
+      const past = isPastSlot(s);
+      const free = !past && slotFree(s);
+      const title = past ? "Ora ka kaluar" : (free ? "E lirë — kliko për të zgjedhur" : "E zënë");
+      return `<button class="slot ${S.time === s ? "sel" : ""}" data-slot="${s}" ${free ? "" : "disabled"} title="${title}">${s}</button>`;
+    }).join("");
+  }
+
+  function renderTables() {
+    const box = document.getElementById("bkFloor");
+    if (!S.time) {
+      box.innerHTML = `<p class="hint" style="margin:0">Zgjidh një orë të lirë më sipër për të parë tavolinat.</p>`;
+      return;
+    }
+    const free = TRY.freeTablesList(rest, S.date, S.time, S.persona, S.zonaId);
+    if (!free.length) {
+      const altZona = rest.zona.find(z => z.id !== S.zonaId &&
+        TRY.freeTablesList(rest, S.date, S.time, S.persona, z.id).length > 0);
+      box.innerHTML = `<p class="hint" style="margin:0">S'ka tavolina të lira në <b>${TRY.esc(zonaEmer())}</b> për orën ${S.time}.</p>
+        <p class="hint">${altZona
+          ? `Provo zonën <b>${TRY.esc(altZona.emer)}</b> — ka vende të lira për këtë orë.`
+          : "Provo një orë tjetër të ditës — gjendja ndryshon nga ora në orë."}</p>`;
+      return;
+    }
+    const cols = Math.ceil(Math.sqrt(free.length));
+    const cw = 150, chh = 125, W = cols * cw, H = Math.ceil(free.length / cols) * chh;
+    box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="group" aria-label="Tavolinat e lira">` +
+      free.map((t, i) => {
+        const x = (i % cols) * cw + cw / 2, y = Math.floor(i / cols) * chh + chh / 2;
+        return `<g class="tbl ${S.tavolina === t.id ? "sel" : ""}" data-tbl="${t.id}">
+          <circle class="tseat" cx="${x}" cy="${y - 12}" r="34" fill="#142040" stroke="#d4af37" stroke-width="1.5"/>
+          <text class="tnum" x="${x}" y="${y - 5}" text-anchor="middle" fill="#f0d47a" font-size="19">${TRY.esc(t.id)}</text>
+          <text x="${x}" y="${y + 44}" text-anchor="middle" fill="#a7aec6" font-size="12">${t.vende} vende</text>
+        </g>`;
+      }).join("") + `</svg>`;
+  }
+
+  function renderSummary() {
+    const tbl = S.tavolina ? "Tavolina " + S.tavolina : "pa tavolinë të zgjedhur";
+    document.getElementById("bkSummary").innerHTML =
+      `<b>${S.persona}</b> ${S.persona === 1 ? "person" : "persona"} · ${TRY.fmtDate(S.date)} · ` +
+      `<b>${S.time || "—"}</b> · ${TRY.esc(zonaEmer())} · <b>${TRY.esc(tbl)}</b>`;
+  }
+
+  const validTel = tel => {
+    const digits = tel.replace(/\D/g, "");
+    return digits.length >= 9 && /^(355|0)/.test(digits);
+  };
+
+  function confirmBooking() {
+    const err = document.getElementById("bkErr");
+    const fail = msg => { err.textContent = msg; TRY.toast(msg); };
+    err.textContent = "";
+    if (S.date < TRY.todayStr() || S.date > TRY.todayStr(60)) return fail("Data e rezervimit nuk është e vlefshme.");
+    if (!S.time || !slotFree(S.time) || isPastSlot(S.time)) return fail("Zgjidh një orë të lirë nga lista.");
+    const free = TRY.freeTablesList(rest, S.date, S.time, S.persona, S.zonaId);
+    if (!S.tavolina || !free.some(t => t.id === S.tavolina)) return fail("Zgjidh një tavolinë të lirë nga plani.");
+    const emer = document.getElementById("gEmer").value.trim();
+    const tel = document.getElementById("gTel").value.trim();
+    const email = document.getElementById("gEmail").value.trim();
+    if (emer.length < 3) return fail("Shkruaj emrin dhe mbiemrin.");
+    if (!validTel(tel)) return fail("Numri i telefonit nuk është i vlefshëm (p.sh. +355 69 XXX XXXX).");
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail("Email-i nuk është i vlefshëm.");
+    if (!document.getElementById("gKushtet").checked) return fail("Duhet të pranosh kushtet e rezervimit.");
+
+    const b = TRY.createBooking({
+      restId: rest.id, restEmer: rest.emer,
+      date: S.date, time: S.time, persona: S.persona,
+      zonaId: S.zonaId, zonaEmer: zonaEmer(),
+      tavolina: [S.tavolina],
+      emer, telefon: tel, email,
+      rasti: document.getElementById("gRasti").value,
+      shenime: document.getElementById("gShenime").value.trim()
+    });
+    showConfirmation(b);
+    TRY.toast("Rezervimi u konfirmua!");
+  }
+
+  function showConfirmation(b) {
+    const sum = `${b.persona} ${b.persona === 1 ? "person" : "persona"} · ${TRY.fmtDate(b.date)} · ${b.time} · ${TRY.esc(b.zonaEmer)} · Tavolina ${TRY.esc(b.tavolina[0])} — ${TRY.esc(b.emer)}`;
+    document.getElementById("bookingBody").innerHTML = `
+      <div class="code-box">
+        <div style="font-size:3rem;color:var(--green)">✓</div>
+        <h2>Rezervimi u konfirmua!</h2>
+        <div class="code">${TRY.esc(b.code)}</div>
+        <p style="color:var(--muted);font-size:.93rem">${sum}</p>
+        <div class="bk-actions" style="justify-content:center;margin-top:1.1rem">
+          <button class="btn btn-gold btn-sm" id="cfMy">Shiko rezervimet e mia</button>
+          <button class="btn btn-ghost btn-sm" id="cfAgain">Rezervo tjetër</button>
+          <button class="btn btn-ghost btn-sm" id="cfIcs">📅 Shto në kalendar</button>
+          <button class="btn btn-ghost btn-sm" id="cfCopy">Kopjo kodin</button>
+        </div>
+      </div>`;
+    document.getElementById("cfMy").addEventListener("click", () => location.href = "rezervimet.html");
+    document.getElementById("cfAgain").addEventListener("click", () => {
+      S.persona = 2; S.date = TRY.todayStr(); S.time = null; S.zonaId = rest.zona[0].id; S.tavolina = null;
+      renderBookingShell();
+      document.getElementById("rezervo").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    document.getElementById("cfCopy").addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(b.code); TRY.toast("Kodi u kopjua: " + TRY.esc(b.code)); }
+      catch { TRY.toast("Kopjimi dështoi"); }
+    });
+    document.getElementById("cfIcs").addEventListener("click", () => downloadICS(b));
+  }
+
+  function downloadICS(b) {
+    const dt = b.date.replace(/-/g, "");
+    const [h, m] = b.time.split(":").map(Number);
+    const pad = n => String(n).padStart(2, "0");
+    const start = `${dt}T${pad(h)}${pad(m)}00`;
+    const end = `${dt}T${pad(h + 2)}${pad(m)}00`;
+    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//TRYEZA//Rezervim//SQ",
+      "BEGIN:VEVENT", "UID:" + b.code + "@tryeza",
+      "DTSTAMP:" + dt + "T000000Z",
+      "DTSTART:" + start, "DTEND:" + end,
+      "SUMMARY:Rezervim TRYEZA — " + b.restEmer,
+      "DESCRIPTION:Kodi: " + b.code + "\\n" + b.persona + " persona · Tavolina " + b.tavolina[0] + " · " + b.zonaEmer,
+      "LOCATION:" + rest.adrese,
+      "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+    a.download = "rezervim-" + b.code + ".ics";
+    document.body.appendChild(a); a.click(); a.remove();
+    TRY.toast("📅 File-i .ics u shkarkua");
+  }
+
+  renderBookingShell();
+
+  /* ---------- modal kushtet ---------- */
+  const termsModal = document.getElementById("termsModal");
+  function openTerms() { termsModal.classList.add("open"); }
+  document.getElementById("termsClose").addEventListener("click", () => termsModal.classList.remove("open"));
+  termsModal.addEventListener("click", e => { if (e.target === termsModal) termsModal.classList.remove("open"); });
+}
+</script>
+</body>
+</html>
