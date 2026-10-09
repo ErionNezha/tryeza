@@ -415,6 +415,8 @@ header.site.scrolled .brand{font-size:1.32rem}
   background:linear-gradient(180deg,rgba(14,15,18,.66) 0%,rgba(14,15,18,.42) 38%,rgba(14,15,18,.55) 62%,rgba(14,15,18,.96) 100%)}
 .hero-qilim{position:absolute;inset:0;z-index:1;background:url("../img/qilim.svg");background-size:210px;opacity:.09;pointer-events:none}
 .hero-video .hero-inner{position:relative;z-index:2;padding:7.5rem 0 6rem;will-change:transform}
+.hero-gold{position:absolute;inset:0;z-index:1;width:100%;height:100%;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.hero-gold{display:none}}
 .hero-video .search-card{background:rgba(10,15,30,.78);border-color:rgba(197,168,128,.35)}
 .scroll-hint{position:absolute;bottom:1.4rem;left:50%;transform:translateX(-50%);z-index:2;text-align:center;
   color:var(--muted);font-size:.7rem;letter-spacing:.32em;text-transform:uppercase}
