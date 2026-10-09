@@ -600,16 +600,18 @@ function buildPage() {
 
   function downloadICS(b) {
     const dt = b.date.replace(/-/g, "");
-    const [h, m] = b.time.split(":").map(Number);
     const pad = n => String(n).padStart(2, "0");
-    const start = `${dt}T${pad(h)}${pad(m)}00`;
-    const end = `${dt}T${pad(h + 2)}${pad(m)}00`;
+    const startD = new Date(b.date + "T" + b.time + ":00");
+    const endD = new Date(startD.getTime() + 2 * 3600 * 1000);
+    const fdt = d => d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + "T" + pad(d.getHours()) + pad(d.getMinutes()) + "00";
+    const start = fdt(startD), end = fdt(endD);
+    const tbl = (b.tavolina && b.tavolina[0]) || "—";
     const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//TRYEZA//Rezervim//SQ",
       "BEGIN:VEVENT", "UID:" + b.code + "@tryeza",
       "DTSTAMP:" + dt + "T000000Z",
       "DTSTART:" + start, "DTEND:" + end,
       "SUMMARY:Rezervim TRYEZA — " + b.restEmer,
-      "DESCRIPTION:Kodi: " + b.code + "\\n" + b.persona + " persona · Tavolina " + b.tavolina[0] + " · " + b.zonaEmer,
+      "DESCRIPTION:Kodi: " + b.code + "\\n" + b.persona + " persona · Tavolina " + tbl + " · " + b.zonaEmer,
       "LOCATION:" + rest.adrese,
       "END:VEVENT", "END:VCALENDAR"].join("\r\n");
     const a = document.createElement("a");

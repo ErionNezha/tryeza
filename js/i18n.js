@@ -435,6 +435,7 @@ en: {
 "db.chartT":"Bookings per hour — today","db.chartHint":"Bars show today's real bookings plus the typical hourly flow (pseudo-data).",
 "db.tblT":"Upcoming bookings","db.thName":"Name","db.thTel":"Phone","db.thDate":"Date","db.thTime":"Time",
 "db.thPersons":"Guests","db.thTable":"Table","db.thStatus":"Status","db.thActions":"Actions",
+"db.thZone":"Area","db.thCode":"Code","db.thDemo":"Demo","db.yes":"yes","db.no":"no",
 "db.noRows":"No upcoming bookings. Generate demo data to see the table in action.",
 "db.gen":"＋ Generate demo data","db.csv":"⬇ Download CSV","db.clear":"Clear demo","db.demo":"demo",
 "db.noshow":"No-show","db.anulo":"Cancel","db.dash":"—",

@@ -243,9 +243,11 @@ $("#cancelYes").addEventListener("click", () => {
 function icsEsc(s){ return String(s || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n"); }
 function downloadICS(b){
   const r = TRY.restById(b.restId);
-  const dt0 = b.date.replace(/-/g, "") + "T" + String(b.time).replace(":", "") + "00";
-  const [H, M] = String(b.time).split(":").map(Number);
-  const dt1 = b.date.replace(/-/g, "") + "T" + String(H + 2).padStart(2, "0") + String(M).padStart(2, "0") + "00";
+  const pad2 = n => String(n).padStart(2, "0");
+  const startD = new Date(b.date + "T" + b.time + ":00");
+  const endD = new Date(startD.getTime() + 2 * 3600 * 1000);
+  const fdt = d => d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + "T" + pad2(d.getHours()) + pad2(d.getMinutes()) + "00";
+  const dt0 = fdt(startD), dt1 = fdt(endD);
   const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
   const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//TRYEZA//Rezervim//SQ",
     "BEGIN:VEVENT", "UID:" + b.code + "@tryeza.al", "DTSTAMP:" + stamp,
