@@ -334,7 +334,7 @@ const TRY = (() => {
               <button class="btn btn-gold btn-sm" type="submit" data-i18n="nl.btn">Abonohu</button>
             </form></div>
         </div>
-        <div class="foot-bottom"><span data-i18n="footer.rights">\u00a9 2026 TRYEZA \u2014 T\u00eb gjitha t\u00eb drejtat e rezervuara.</span><span><span data-i18n="footer.createdBy">Krijuar nga</span> <b style="color:var(--gold-lt)">Erion Nezha</b></span></div>
+        <div class="foot-bottom"><span data-i18n="footer.rights">\u00a9 2026 TRYEZA \u2014 T\u00eb gjitha t\u00eb drejtat e rezervuara.</span><span><span data-i18n="footer.createdBy">Krijuar nga</span> <b style="color:var(--gold-lt)">Erion Nezha</b> \u00b7 <a href="https://github.com/erionnezha/tryeza" target="_blank" rel="noopener" data-i18n="footer.srcLink" style="color:var(--gold);font-weight:700;text-decoration:none">&lt;/&gt; Kodi burim</a></span></div>
       </div>`;
     }
     if(!$("#toast")){ const t=document.createElement("div"); t.id="toast"; document.body.appendChild(t); }
