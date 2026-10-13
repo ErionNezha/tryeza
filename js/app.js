@@ -9,6 +9,7 @@ const TRY = (() => {
     sugg: "tryeza.suggestions.v1",
     dashRest: "tryeza.dashrest.v1",
     newsletter: "tryeza.newsletter.v1",
+    scans: "tryeza.scans.v1",
   };
   const QYTETET = ["Tiranë", "Korçë", "Durrës", "Shkodër"];
   const DITET = ["E diel","E hënë","E martë","E mërkurë","E enjte","E premte","E shtunë"];
@@ -147,6 +148,60 @@ const TRY = (() => {
     save(LS.favs, f); return f.includes(id);
   };
 
+  /* ---------- QR scans + pikët e restorantit ----------
+     Pikët (formula e dokumentuar, shfaqet edhe te renditja.html):
+       pikë = round(vlerësimi mesatar × 20)      — cilësia
+            + numri total i vlerësimeve           — popullariteti (të dhëna publike)
+            + 5 × vlerësime të reja nga mysafirët (të ruajtura në këtë pajisje)
+            + 10 nëse restoranti është te të preferuarat e përdoruesit
+            + 3 × skanime QR të regjistruara në këtë pajisje (tryeza.scans.v1) */
+  const getScans = () => load(LS.scans, {});
+  const scanCount = id => getScans()[id] || 0;
+  const addScan = id => {
+    const s = getScans();
+    s[id] = (s[id] || 0) + 1;
+    save(LS.scans, s);
+    return s[id];
+  };
+  const pointsFor = id => {
+    const lr = liveRating(id);
+    const userReviews = load(LS.reviews, []).filter(r => r.restId === id).length;
+    return Math.round(lr.r * 20) + lr.n + userReviews * 5 + (isFav(id) ? 10 : 0) + scanCount(id) * 3;
+  };
+  /* Renditja kryesore: vlerësimi zbritës; barazimet i zgjidhin pikët, pastaj nr. i vlerësimeve */
+  const leaderboard = () => dataArr()
+    .map(r => ({ r, lr: liveRating(r.id), pts: pointsFor(r.id), scans: scanCount(r.id) }))
+    .sort((a, b) => (b.lr.r - a.lr.r) || (b.pts - a.pts) || (b.lr.n - a.lr.n));
+
+  /* ---------- "e hapur tani" nga orari i publikuar (orare) ---------- */
+  const DAY_NAMES = ["e diel","e hënë","e martë","e mërkurë","e enjte","e premte","e shtunë"];
+  const WEEK_SEQ = [1, 2, 3, 4, 5, 6, 0]; // e hënë … e diel (getDay())
+  function dayInRange(key, dow){
+    const parts = key.toLowerCase().split(" - ").map(s => s.trim());
+    const idx = parts.map(p => DAY_NAMES.indexOf(p));
+    if(idx.some(i => i < 0)) return false;
+    if(idx.length === 1) return idx[0] === dow;
+    const pa = WEEK_SEQ.indexOf(idx[0]), pb = WEEK_SEQ.indexOf(idx[1]), pd = WEEK_SEQ.indexOf(dow);
+    if(pa < 0 || pb < 0 || pd < 0) return false;
+    return pa <= pb ? (pd >= pa && pd <= pb) : (pd >= pa || pd <= pb);
+  }
+  function openNow(rest, now = new Date()){
+    if(!rest || !rest.orare) return false;
+    const dow = now.getDay(), mins = now.getHours() * 60 + now.getMinutes();
+    for(const [days, ranges] of Object.entries(rest.orare)){
+      if(!dayInRange(days, dow)) continue;
+      for(const part of String(ranges).split(",")){
+        const m = part.trim().match(/^(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})$/);
+        if(!m) continue;
+        const o = (+m[1]) * 60 + (+m[2]);
+        let c = (+m[3]) * 60 + (+m[4]);
+        if(c <= o) c += 1440; // mbyllje pas mesnate
+        if((mins >= o && mins < c) || (mins + 1440 >= o && mins + 1440 < c)) return true;
+      }
+    }
+    return false;
+  }
+
   /* ---------- availability engine ---------- */
   const bookings = () => load(LS.bookings, []);
   function suitableTables(rest, persona, zonaId){
@@ -264,6 +319,9 @@ const TRY = (() => {
           </div>
           <a href="index.html#si-funksionon" data-i18n="nav.how">Si Funksionon</a>
           <a href="index.html#per-bizneset" data-i18n="nav.business">P\u00ebr Bizneset</a>
+          <a href="renditja.html" data-i18n="nav.leaderboard" class="${active==="renditja.html"?"active":""}">Renditja</a>
+          <a href="pune.html" data-i18n="nav.jobs" class="${active==="pune.html"?"active":""}">Pun\u00eb</a>
+          <a href="sherbime.html" data-i18n="nav.services" class="${active==="sherbime.html"?"active":""}">Sh\u00ebrbime</a>
           <a href="rezervimet.html" data-i18n="nav.mybookings" class="${active==="rezervimet.html"?"active":""}">Rezervimet e mia</a>
           <a href="blog.html" data-i18n="nav.blog" class="${active==="blog.html"?"active":""}">Blog</a>
           <a href="faq.html" data-i18n="nav.faq" class="${active==="faq.html"?"active":""}">FAQ</a>
@@ -283,6 +341,9 @@ const TRY = (() => {
             <div class="mmenu-cities">${cityLinks}</div>
             <a href="index.html#si-funksionon" data-i18n="nav.how">Si Funksionon</a>
             <a href="index.html#per-bizneset" data-i18n="nav.business">P\u00ebr Bizneset</a>
+            <a href="renditja.html" data-i18n="nav.leaderboard">Renditja</a>
+            <a href="pune.html" data-i18n="nav.jobs">Pun\u00eb</a>
+            <a href="sherbime.html" data-i18n="nav.services">Sh\u00ebrbime</a>
             <a href="rezervimet.html" data-i18n="nav.mybookings">Rezervimet e mia</a>
             <a href="blog.html" data-i18n="nav.blog">Blog</a>
             <a href="faq.html" data-i18n="nav.faq">FAQ</a>
@@ -326,7 +387,7 @@ const TRY = (() => {
             <p style="color:var(--muted);font-size:.9rem;max-width:320px;margin-top:.5rem" data-i18n="footer.tagline">Rezervo tavolin\u00ebn t\u00ebnde n\u00eb restorantet m\u00eb t\u00eb mira t\u00eb Shqip\u00ebris\u00eb \u2014 n\u00eb sekonda, pa telefonata, falas.</p></div>
           <div><h4 data-i18n="footer.discover">Zbulo</h4>${[["restorante.html","footer.allRest","T\u00eb gjitha restorantet"],["restorante.html?qytet=Tiran\u00eb",null,"Tiran\u00eb"],["restorante.html?qytet=Kor\u00e7\u00eb",null,"Kor\u00e7\u00eb"],["restorante.html?qytet=Durr\u00ebs",null,"Durr\u00ebs"],["restorante.html?qytet=Shkod\u00ebr",null,"Shkod\u00ebr"]].map(([u,k,fb])=>`<a href="${u}"${k?` data-i18n="${k}"`:""}>${fb}</a>`).join("")}</div>
           <div><h4 data-i18n="footer.account">Llogaria</h4><a href="rezervimet.html" data-i18n="footer.mybookings">Rezervimet e mia</a><a href="sugjero.html" data-i18n="footer.suggest">Sugjero restorant</a><a href="dashboard.html" data-i18n="footer.dashboard">Paneli i restorantit</a><a href="faq.html" data-i18n="footer.faq">Pyetje t\u00eb shpeshta</a></div>
-          <div><h4 data-i18n="footer.company">Kompania</h4><a href="blog.html" data-i18n="footer.blog">Blog</a><a href="sugjero.html?owner=1" data-i18n="footer.bizReg">Regjistro restorantin t\u00ebnd</a><a href="kodi.html" data-i18n="footer.source">Kodi burimor</a><a href="kredite.html" data-i18n="footer.photos">Kredit\u00eb e fotove</a><a href="faq.html#kontakt" data-i18n="footer.contact">Kontakt</a></div>
+          <div><h4 data-i18n="footer.company">Kompania</h4><a href="blog.html" data-i18n="footer.blog">Blog</a><a href="renditja.html" data-i18n="footer.leaderboard">Tabela e renditjes</a><a href="pune.html" data-i18n="footer.jobs">Pun\u00eb n\u00eb restorante</a><a href="sherbime.html" data-i18n="footer.services">Sh\u00ebrbime p\u00ebr restorante</a><a href="sugjero.html?owner=1" data-i18n="footer.bizReg">Regjistro restorantin t\u00ebnd</a><a href="kodi.html" data-i18n="footer.source">Kodi burimor</a><a href="kredite.html" data-i18n="footer.photos">Kredit\u00eb e fotove</a><a href="faq.html#kontakt" data-i18n="footer.contact">Kontakt</a></div>
           <div class="foot-news"><h4 data-i18n="nl.title">Oferta n\u00eb email</h4>
             <p data-i18n="nl.sub">Merr ofertat m\u00eb t\u00eb mira t\u00eb restoranteve \u2014 1 email n\u00eb muaj, pa spam.</p>
             <form class="nl-form" id="nlForm" novalidate>
@@ -363,7 +424,7 @@ const TRY = (() => {
   function initFx(){
     if(fxDone) return; fxDone = true;
     const reduced = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const RV_SEL = "main section, .rcard, .lux-card, .step, .stat, .city-card, .post, .faq-item, .panel, .bk-card, .sugg, .credit-item, .pika, .dish-mini, .stat-grid .stat";
+    const RV_SEL = "main section, .rcard, .lux-card, .step, .stat, .city-card, .post, .faq-item, .panel, .bk-card, .sugg, .credit-item, .pika, .dish-mini, .stat-grid .stat, .pod-card, .pkg-card, .job-card, .htab-panel";
     const io = ("IntersectionObserver" in window && !reduced) ? new IntersectionObserver(es => {
       es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
     }, {threshold:.08, rootMargin:"0px 0px -4% 0px"}) : null;
@@ -465,7 +526,8 @@ const TRY = (() => {
 
   return { LS, QYTETET, DITET, MUAJT, SLOTS, $, $$, esc, load, save, uid, todayStr, fmtDate,
     cmimTxt, genCode, toast, markSVG, coverSVG, coverFor, waLink, citySVG, stars, restById, getReviews,
-    liveRating, favs, isFav, toggleFav, suitableTables, slotInfo, freeTablesList,
+    liveRating, favs, isFav, toggleFav, getScans, scanCount, addScan, pointsFor, leaderboard, openNow,
+    suitableTables, slotInfo, freeTablesList,
     bookings, createBooking, findBooking, updateBooking, renderChrome, cardHTML, bindFavs, trackPage,
     shareText, shareWhats, copyShare, menuDraft, menuTotal, menuLine, menuWaLine, MB_LS,
     t: T, lang: () => (typeof I18N!=="undefined" ? I18N.getLang() : "sq") };

@@ -1,0 +1,124 @@
+<!-- Created by Erion Nezha — © 2026 All rights reserved -->
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="pg.renditja">TRYEZA — Tabela e renditjes</title>
+<meta name="description" content="Tabela e renditjes e restoranteve partnere të TRYEZA-s — renditur sipas vlerësimit të mysafirëve, me sistem pikësh nga vlerësimet, të preferuarat dhe skanimet QR.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+<style>
+#tryLoader{position:fixed;inset:0;z-index:2000;background:#0e0f12;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s}
+#tryLoader.done{opacity:0;visibility:hidden;pointer-events:none}
+#tryLoader .ld-inner{text-align:center;padding:0 1.5rem}
+#tryLoader .ld-cloche{width:148px;height:118px;margin:0 auto .9rem}
+#tryLoader .ld-cloche svg{width:100%;height:100%;overflow:visible}
+#tryLoader .draw{stroke-dasharray:430;stroke-dashoffset:430;animation:lddraw 1.05s ease forwards}
+#tryLoader .draw.d2{animation-delay:.16s}#tryLoader .draw.d3{animation-delay:.32s}#tryLoader .draw.d4{animation-delay:.48s}
+@keyframes lddraw{to{stroke-dashoffset:0}}
+#tryLoader .steam{animation:ldsteam 1.9s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+#tryLoader .steam.s2{animation-delay:.55s}
+@keyframes ldsteam{0%,100%{opacity:.15;transform:translateY(3px)}50%{opacity:.9;transform:translateY(-3px)}}
+#tryLoader .ld-name{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.9rem;letter-spacing:.42em;padding-left:.42em;color:#ecd9b8}
+#tryLoader .ld-tag{color:#a0a0a8;font-size:.82rem;letter-spacing:.14em;margin-top:.65rem;animation:ldpulse 1.7s ease-in-out infinite}
+@keyframes ldpulse{0%,100%{opacity:.5}50%{opacity:1}}
+#tryLoader .ld-bar{width:210px;max-width:60vw;height:2px;background:rgba(197,168,128,.18);margin:1.25rem auto 0;border-radius:2px;overflow:hidden}
+#tryLoader .ld-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a8895e,#ecd9b8)}
+@media (prefers-reduced-motion:reduce){
+#tryLoader .draw{animation:none;stroke-dashoffset:0}
+#tryLoader .steam,#tryLoader .ld-tag{animation:none;opacity:1}
+}
+</style></head>
+<body><div id="tryLoader" aria-hidden="true"><div class="ld-inner">
+<div class="ld-cloche"><svg viewBox="0 0 120 96" fill="none" aria-hidden="true">
+<path class="steam s1" d="M44 32 q5 -7 0 -14 q-5 -7 0 -13" stroke="#c5a880" stroke-width="1.6" stroke-linecap="round"/>
+<path class="steam s2" d="M76 32 q-5 -7 0 -14 q5 -7 0 -13" stroke="#c5a880" stroke-width="1.6" stroke-linecap="round"/>
+<path class="draw" d="M22 72 A38 38 0 0 1 98 72" stroke="#c5a880" stroke-width="1.8" stroke-linecap="round"/>
+<line class="draw d2" x1="14" y1="72" x2="106" y2="72" stroke="#c5a880" stroke-width="1.8" stroke-linecap="round"/>
+<circle class="draw d3" cx="60" cy="28" r="4" stroke="#ecd9b8" stroke-width="1.6"/>
+<line class="draw d3" x1="60" y1="32" x2="60" y2="37" stroke="#ecd9b8" stroke-width="1.6"/>
+<ellipse class="draw d4" cx="60" cy="81" rx="50" ry="8" stroke="#a8895e" stroke-width="1.4"/>
+<g class="draw d4" stroke="#c5a880" stroke-width="1.5" stroke-linecap="round">
+<line x1="7" y1="52" x2="7" y2="68"/><line x1="3" y1="52" x2="3" y2="60"/><line x1="7" y1="52" x2="7" y2="60"/><line x1="11" y1="52" x2="11" y2="60"/><line x1="3" y1="60" x2="11" y2="60"/>
+</g>
+<g class="draw d4" stroke="#c5a880" stroke-width="1.5" stroke-linecap="round">
+<line x1="113" y1="52" x2="113" y2="68"/><path d="M113 52 L117 52 L115 40 Z" fill="#c5a880" stroke="none" opacity=".85"/>
+</g>
+</svg></div>
+<div class="ld-name">TRYEZA</div>
+<div class="ld-tag" data-i18n="loader.tag2">Po bëjmë gati tavolinën tënde...</div>
+<div class="ld-bar"><i id="ldFill"></i></div>
+</div></div>
+<script>(function(){var el=document.getElementById('tryLoader');if(!el)return;
+function kill(){if(el.parentNode)el.parentNode.removeChild(el)}
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){kill();return}
+var fill=document.getElementById('ldFill'),t0=performance.now(),DUR=1300;
+function tick(now){var p=Math.min(1,(now-t0)/DUR),e=1-Math.pow(1-p,3);
+if(fill)fill.style.width=Math.round(e*100)+'%';if(p<1)requestAnimationFrame(tick);}
+requestAnimationFrame(tick);
+var exited=false,t0b=Date.now(),MINT=1400;
+function exit(){if(exited)return;exited=true;el.classList.add('done');setTimeout(kill,750);}
+function ready(){setTimeout(exit,Math.max(0,MINT-(Date.now()-t0b)));}
+if(document.readyState==='complete')ready();else{window.addEventListener('load',ready);setTimeout(ready,5000);}})();</script>
+<header class="site"></header>
+<main>
+<div class="wrap">
+  <div class="page-head">
+    <span class="eyebrow" data-i18n="lb.eyebrow">Renditja</span>
+    <h1 data-i18n="lb.h1">Tabela e renditjes</h1>
+    <p data-i18n="lb.sub">21 restorantet partnere të renditura sipas vlerësimit të mysafirëve. Pikët rriten me çdo vlerësim të ri, ruajtje te të preferuarat dhe skanim të kodit QR.</p>
+  </div>
+  <div class="podium" id="podium"></div>
+  <div class="lb-wrap">
+    <table class="lb-table">
+      <thead><tr>
+        <th data-i18n="lb.thRank">#</th>
+        <th data-i18n="lb.thRest">Restoranti</th>
+        <th class="col-city" data-i18n="lb.thCity">Qyteti</th>
+        <th data-i18n="lb.thRating">Vlerësimi</th>
+        <th data-i18n="lb.thReviews">Vlerësime</th>
+        <th data-i18n="lb.thPoints">Pikë</th>
+      </tr></thead>
+      <tbody id="lbBody"></tbody>
+    </table>
+  </div>
+  <div class="panel" style="margin-top:1.6rem">
+    <h3 data-i18n="lb.formulaT">Si llogariten pikët</h3>
+    <p style="color:var(--muted);font-size:.95rem" data-i18n="lb.formula">Pikët = vlerësimi mesatar × 20 + numri i vlerësimeve + 5 pikë për çdo vlerësim të ri nga mysafirët + 10 pikë nëse restoranti është te të preferuarat e tua + 3 pikë për çdo skanim QR të regjistruar në këtë pajisje. Renditja kryesore bëhet sipas vlerësimit; pikët zgjidhin barazimet.</p>
+  </div>
+</div>
+</main>
+<footer class="site"></footer>
+<script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+<script>
+TRY.renderChrome("renditja.html");
+(function(){
+  "use strict";
+  const board = TRY.leaderboard();
+  const medal = ["1", "2", "3"];
+  TRY.$("#podium").innerHTML = board.slice(0, 3).map((x, i) => `
+    <article class="pod-card pod-${i + 1}">
+      <span class="pod-medal">${medal[i]}</span>
+      <a class="cover" href="restorant.html?id=${x.r.id}" aria-label="${TRY.esc(x.r.emer)}">${TRY.coverFor(x.r, 640, 400)}</a>
+      <div class="pbody">
+        <h3><a href="restorant.html?id=${x.r.id}">${TRY.esc(x.r.emer)}</a></h3>
+        <div style="margin-top:.3rem">${TRY.stars(x.lr.r, x.lr.n)}<span style="color:var(--muted);font-size:.85rem"> · ${TRY.esc(x.r.qytet)}</span></div>
+        <span class="pod-pts">${x.pts} ${TRY.esc(TRY.t("lb.points"))}</span>
+      </div>
+    </article>`).join("");
+  TRY.$("#lbBody").innerHTML = board.map((x, i) => `
+    <tr>
+      <td class="rk">${i + 1}</td>
+      <td class="rn"><a href="restorant.html?id=${x.r.id}">${TRY.esc(x.r.emer)}</a></td>
+      <td class="col-city" style="color:var(--muted)">${TRY.esc(x.r.qytet)}</td>
+      <td>${TRY.stars(x.lr.r, 0)} <b>${x.lr.r ? x.lr.r.toFixed(1) : "—"}</b></td>
+      <td style="color:var(--muted)">${x.lr.n}</td>
+      <td class="pts">${x.pts}</td>
+    </tr>`).join("");
+})();
+</script>
+</body>
+</html>

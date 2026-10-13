@@ -73,6 +73,15 @@ if(document.readyState==='complete')ready();else{window.addEventListener('load',
       <span class="eyebrow" data-i18n="hero.eyebrow">Rezervime tavolinash në Shqipëri</span>
       <h1 data-i18n="hero.title">Tavolina jote, <span class="g">gati</span> para se të ulesh.</h1>
       <p class="lead" data-i18n="hero.lead">Gjej restorantin perfekt, zgjidh orarin dhe rezervo tavolinën në sekonda — pa telefonata, pa pritje, plotësisht falas.</p>
+      <div class="hero-tabs" role="navigation" data-i18n-aria="tab.aria" aria-label="Kategoritë e kërkimit">
+        <a class="htab active" href="restorante.html" data-i18n="tab.all">Të gjitha</a>
+        <a class="htab" href="restorante.html?qytet=Tiran%C3%AB">Tiranë</a>
+        <a class="htab" href="restorante.html?qytet=Kor%C3%A7%C3%AB">Korçë</a>
+        <a class="htab" href="restorante.html?qytet=Durr%C3%ABs">Durrës</a>
+        <a class="htab" href="restorante.html?qytet=Shkod%C3%ABr">Shkodër</a>
+        <a class="htab" href="restorante.html?cat=deti" data-i18n="tab.seafood">Kuzhinë deti</a>
+        <a class="htab" href="restorante.html?cat=tradicionale" data-i18n="tab.trad">Tradicionale</a>
+      </div>
       <form class="search-card" id="searchForm" novalidate>
         <div class="search-grid">
           <div>
@@ -140,6 +149,36 @@ if(document.readyState==='complete')ready();else{window.addEventListener('load',
         <div class="step"><div class="n">1</div><h3 data-i18n="home.s1t">Kërko</h3><p data-i18n="home.s1d">Zgjidh qytetin, datën, orën dhe numrin e personave. Filtro sipas kuzhinës, çmimit dhe vlerësimit.</p></div>
         <div class="step"><div class="n">2</div><h3 data-i18n="home.s2t">Rezervo</h3><p data-i18n="home.s2d">Shiko oraret e lira në kohë reale, zgjidh tavolinën tënde dhe konfirmo me një kod unik rezervimi.</p></div>
         <div class="step"><div class="n">3</div><h3 data-i18n="home.s3t">Shijo</h3><p data-i18n="home.s3d">Shko në restorant dhe ulesh direkt — tavolina të pret. Modifiko ose anulo online kur të duash.</p></div>
+      </div>
+      <div class="how-toggle-wrap" style="margin-top:2.4rem">
+        <div class="how-toggle" role="tablist" aria-label="Si funksionon">
+          <button class="htog active" type="button" role="tab" aria-selected="true" data-how="biz" data-i18n="how.forBiz">Për restorantet</button>
+          <button class="htog" type="button" role="tab" aria-selected="false" data-how="guest" data-i18n="how.forGuests">Për klientët</button>
+        </div>
+      </div>
+      <div class="htab-panel" id="howBiz" role="tabpanel">
+        <div class="steps" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+          <div class="step"><div class="n">1</div><h3 data-i18n="how.b1t">Listohu falas</h3><p data-i18n="how.b1d">Nëse je pronar, plotëso formularin e regjistrimit dhe profili i restorantit tënd shfaqet në TRYEZA pa asnjë pagesë.</p></div>
+          <div class="step"><div class="n">2</div><h3 data-i18n="how.b2t">Merr rezervime me WhatsApp</h3><p data-i18n="how.b2d">Çdo rezervim mbërrin direkt në numrin tënd të WhatsApp-it — pa ndërmjetës, pa komisione.</p></div>
+          <div class="step"><div class="n">3</div><h3 data-i18n="how.b3t">Mblidh pikë me kodin QR</h3><p data-i18n="how.b3d">Vendos kodin QR të faqes tënde në tavolina; sa herë një mysafir e skanon, restoranti yt fiton pikë.</p></div>
+          <div class="step"><div class="n">4</div><h3 data-i18n="how.b4t">Ngjitu në renditje</h3><p data-i18n="how.b4d">Vlerësimet e mysafirëve, ruajtjet te të preferuarat dhe skanimet QR përcaktojnë vendin tënd në tabelë.</p></div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-gold" href="sugjero.html?owner=1" data-i18n="how.bizCta">Regjistro restorantin</a>
+          <a class="how-board" href="renditja.html" data-i18n="how.boardLink">Shiko tabelën e plotë të renditjes →</a>
+        </div>
+      </div>
+      <div class="htab-panel" id="howGuest" role="tabpanel" hidden>
+        <div class="steps" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+          <div class="step"><div class="n">1</div><h3 data-i18n="how.g1t">Kërko dhe filtro</h3><p data-i18n="how.g1d">Zgjidh qytetin, kuzhinën, nivelin e çmimit dhe vlerësimin minimal — rezultatet përditësohen menjëherë.</p></div>
+          <div class="step"><div class="n">2</div><h3 data-i18n="how.g2t">Rezervo në sekonda</h3><p data-i18n="how.g2d">Shiko oraret e lira, zgjidh tavolinën dhe merr kodin unik të rezervimit pa asnjë telefonatë.</p></div>
+          <div class="step"><div class="n">3</div><h3 data-i18n="how.g3t">Krijo menunë e darkës</h3><p data-i18n="how.g3d">Me ndërtuesin e menusë zgjedh pjatat paraprakisht dhe e dërgon porosinë në WhatsApp-in e restorantit.</p></div>
+          <div class="step"><div class="n">4</div><h3 data-i18n="how.g4t">Vlerëso përvojën</h3><p data-i18n="how.g4d">Pas darkës, lëre vlerësimin tënd — ndihmon mysafirët e tjerë dhe e ngre restorantin në renditje.</p></div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-gold" href="restorante.html" data-i18n="how.guestCta">Shfleto restorantet</a>
+          <a class="how-board" href="renditja.html" data-i18n="how.boardLink">Shiko tabelën e plotë të renditjes →</a>
+        </div>
       </div>
     </div>
   </section>
@@ -215,6 +254,7 @@ if(document.readyState==='complete')ready();else{window.addEventListener('load',
 <script src="js/data.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
+<script src="js/assistant.js"></script>
 <script>
 TRY.renderChrome('index.html');
 (function(){
@@ -324,6 +364,19 @@ TRY.renderChrome('index.html');
     const wasOpen = item.classList.contains("open");
     TRY.$$(".faq-item").forEach(x => x.classList.remove("open"));
     if(!wasOpen) item.classList.add("open");
+  }));
+
+  /* Si funksionon: toggle Për restorantet / Për klientët */
+  const howBiz = TRY.$("#howBiz"), howGuest = TRY.$("#howGuest");
+  TRY.$$(".htog").forEach(btn => btn.addEventListener("click", () => {
+    const which = btn.dataset.how;
+    TRY.$$(".htog").forEach(b => {
+      const on = b === btn;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    if(howBiz) howBiz.hidden = which !== "biz";
+    if(howGuest) howGuest.hidden = which !== "guest";
   }));
 
   /* Grimca ari + parallax në hero */

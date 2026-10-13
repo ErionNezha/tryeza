@@ -131,6 +131,7 @@ if(document.readyState==='complete')ready();else{window.addEventListener('load',
 <script src="js/data.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
+<script src="js/assistant.js"></script>
 <script>
 TRY.renderChrome('restorante.html');
 (function(){
@@ -141,10 +142,12 @@ TRY.renderChrome('restorante.html');
 
   /* ---- Lexo parametrat e URL-së ---- */
   const P = new URLSearchParams(location.search);
+  const SEAFOOD = ["Seafood", "Peshk", "Fruta deti"];
   const state = {
     q: (P.get("q") || "").trim(),
     qytet: TRY.QYTETET.includes(P.get("qytet")) ? P.get("qytet") : "",
     kuzhine: (P.get("kuzhine") || "").trim(),
+    cat: ["deti", "tradicionale"].includes(P.get("cat")) ? P.get("cat") : "",
     cmim: ["1","2","3"].includes(P.get("cmim")) ? P.get("cmim") : "",
     minrating: RATINGS_OK.includes(P.get("minrating")) ? parseFloat(P.get("minrating")) : 0,
     rendit: RENDIT_OK.includes(P.get("rendit")) ? P.get("rendit") : "rek",
@@ -169,13 +172,16 @@ TRY.renderChrome('restorante.html');
   fltRating.value = state.minrating ? String(state.minrating) : "";
   fltRendit.value = state.rendit;
 
-  /* ---- Konteksti i disponueshmërisë ---- */
+  /* ---- Konteksti i disponueshmërisë / kategorisë ---- */
   const slotCtx = TRY.$("#slotCtx");
+  const ctxParts = [];
   if(hasSlot){
-    slotCtx.innerHTML = `<span class="slotctx">${TRY.t("lst.slotFor")} <b>${TRY.esc(TRY.fmtDate(state.data))}</b> · <b>${TRY.esc(state.ora)}</b> · <b>${state.persona} ${TRY.t("lst.persons")}</b></span>`;
-  } else {
-    slotCtx.innerHTML = "";
+    ctxParts.push(`${TRY.t("lst.slotFor")} <b>${TRY.esc(TRY.fmtDate(state.data))}</b> · <b>${TRY.esc(state.ora)}</b> · <b>${state.persona} ${TRY.t("lst.persons")}</b>`);
   }
+  if(state.cat){
+    ctxParts.push(`<b>${TRY.esc(TRY.t(state.cat === "deti" ? "cat.deti" : "cat.tradicionale"))}</b>`);
+  }
+  slotCtx.innerHTML = ctxParts.length ? `<span class="slotctx">${ctxParts.join(" · ")}</span>` : "";
 
   function badgeFor(r){
     if(!hasSlot) return "";
@@ -194,6 +200,8 @@ TRY.renderChrome('restorante.html');
                  (r.kuzhina||[]).some(k => k.toLowerCase().includes(qn)))) return false;
       if(state.qytet && r.qytet !== state.qytet) return false;
       if(state.kuzhine && !(r.kuzhina||[]).includes(state.kuzhine)) return false;
+      if(state.cat === "deti" && !(r.kuzhina||[]).some(k => SEAFOOD.includes(k))) return false;
+      if(state.cat === "tradicionale" && !(r.kuzhina||[]).some(k => k.toLowerCase().includes("tradicionale"))) return false;
       if(state.cmim && String(r.cmim) !== state.cmim) return false;
       if(state.minrating && TRY.liveRating(r.id).r < state.minrating) return false;
       return true;
@@ -222,6 +230,7 @@ TRY.renderChrome('restorante.html');
     if(state.q) q.set("q", state.q);
     if(state.qytet) q.set("qytet", state.qytet);
     if(state.kuzhine) q.set("kuzhine", state.kuzhine);
+    if(state.cat) q.set("cat", state.cat);
     if(state.cmim) q.set("cmim", state.cmim);
     if(state.minrating) q.set("minrating", String(state.minrating));
     if(state.rendit !== "rek") q.set("rendit", state.rendit);
@@ -249,9 +258,10 @@ TRY.renderChrome('restorante.html');
     el.addEventListener("change", pullFromControls));
 
   function clearAll(){
-    Object.assign(state, {q:"", qytet:"", kuzhine:"", cmim:"", minrating:0, rendit:"rek"});
+    Object.assign(state, {q:"", qytet:"", kuzhine:"", cat:"", cmim:"", minrating:0, rendit:"rek"});
     fltQ.value = ""; fltQytet.value = ""; fltKuzhine.value = "";
     fltCmim.value = ""; fltRating.value = ""; fltRendit.value = "rek";
+    slotCtx.innerHTML = "";
     syncURL();
     applyFilters();
   }

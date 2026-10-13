@@ -1,0 +1,125 @@
+<!-- Created by Erion Nezha — © 2026 All rights reserved -->
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="pg.pune">TRYEZA — Punë në restorante</title>
+<meta name="description" content="Punë në restorante: apliko direkt me WhatsApp te 21 restorantet partnere të TRYEZA-s në Tiranë, Korçë, Durrës dhe Shkodër.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+<style>
+#tryLoader{position:fixed;inset:0;z-index:2000;background:#0e0f12;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s}
+#tryLoader.done{opacity:0;visibility:hidden;pointer-events:none}
+#tryLoader .ld-inner{text-align:center;padding:0 1.5rem}
+#tryLoader .ld-cloche{width:148px;height:118px;margin:0 auto .9rem}
+#tryLoader .ld-cloche svg{width:100%;height:100%;overflow:visible}
+#tryLoader .draw{stroke-dasharray:430;stroke-dashoffset:430;animation:lddraw 1.05s ease forwards}
+#tryLoader .draw.d2{animation-delay:.16s}#tryLoader .draw.d3{animation-delay:.32s}#tryLoader .draw.d4{animation-delay:.48s}
+@keyframes lddraw{to{stroke-dashoffset:0}}
+#tryLoader .steam{animation:ldsteam 1.9s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+#tryLoader .steam.s2{animation-delay:.55s}
+@keyframes ldsteam{0%,100%{opacity:.15;transform:translateY(3px)}50%{opacity:.9;transform:translateY(-3px)}}
+#tryLoader .ld-name{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.9rem;letter-spacing:.42em;padding-left:.42em;color:#ecd9b8}
+#tryLoader .ld-tag{color:#a0a0a8;font-size:.82rem;letter-spacing:.14em;margin-top:.65rem;animation:ldpulse 1.7s ease-in-out infinite}
+@keyframes ldpulse{0%,100%{opacity:.5}50%{opacity:1}}
+#tryLoader .ld-bar{width:210px;max-width:60vw;height:2px;background:rgba(197,168,128,.18);margin:1.25rem auto 0;border-radius:2px;overflow:hidden}
+#tryLoader .ld-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a8895e,#ecd9b8)}
+@media (prefers-reduced-motion:reduce){
+#tryLoader .draw{animation:none;stroke-dashoffset:0}
+#tryLoader .steam,#tryLoader .ld-tag{animation:none;opacity:1}
+}
+</style></head>
+<body><div id="tryLoader" aria-hidden="true"><div class="ld-inner">
+<div class="ld-cloche"><svg viewBox="0 0 120 96" fill="none" aria-hidden="true">
+<path class="steam s1" d="M44 32 q5 -7 0 -14 q-5 -7 0 -13" stroke="#c5a880" stroke-width="1.6" stroke-linecap="round"/>
+<path class="steam s2" d="M76 32 q-5 -7 0 -14 q5 -7 0 -13" stroke="#c5a880" stroke-width="1.6" stroke-linecap="round"/>
+<path class="draw" d="M22 72 A38 38 0 0 1 98 72" stroke="#c5a880" stroke-width="1.8" stroke-linecap="round"/>
+<line class="draw d2" x1="14" y1="72" x2="106" y2="72" stroke="#c5a880" stroke-width="1.8" stroke-linecap="round"/>
+<circle class="draw d3" cx="60" cy="28" r="4" stroke="#ecd9b8" stroke-width="1.6"/>
+<line class="draw d3" x1="60" y1="32" x2="60" y2="37" stroke="#ecd9b8" stroke-width="1.6"/>
+<ellipse class="draw d4" cx="60" cy="81" rx="50" ry="8" stroke="#a8895e" stroke-width="1.4"/>
+<g class="draw d4" stroke="#c5a880" stroke-width="1.5" stroke-linecap="round">
+<line x1="7" y1="52" x2="7" y2="68"/><line x1="3" y1="52" x2="3" y2="60"/><line x1="7" y1="52" x2="7" y2="60"/><line x1="11" y1="52" x2="11" y2="60"/><line x1="3" y1="60" x2="11" y2="60"/>
+</g>
+<g class="draw d4" stroke="#c5a880" stroke-width="1.5" stroke-linecap="round">
+<line x1="113" y1="52" x2="113" y2="68"/><path d="M113 52 L117 52 L115 40 Z" fill="#c5a880" stroke="none" opacity=".85"/>
+</g>
+</svg></div>
+<div class="ld-name">TRYEZA</div>
+<div class="ld-tag" data-i18n="loader.tag2">Po bëjmë gati tavolinën tënde...</div>
+<div class="ld-bar"><i id="ldFill"></i></div>
+</div></div>
+<script>(function(){var el=document.getElementById('tryLoader');if(!el)return;
+function kill(){if(el.parentNode)el.parentNode.removeChild(el)}
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){kill();return}
+var fill=document.getElementById('ldFill'),t0=performance.now(),DUR=1300;
+function tick(now){var p=Math.min(1,(now-t0)/DUR),e=1-Math.pow(1-p,3);
+if(fill)fill.style.width=Math.round(e*100)+'%';if(p<1)requestAnimationFrame(tick);}
+requestAnimationFrame(tick);
+var exited=false,t0b=Date.now(),MINT=1400;
+function exit(){if(exited)return;exited=true;el.classList.add('done');setTimeout(kill,750);}
+function ready(){setTimeout(exit,Math.max(0,MINT-(Date.now()-t0b)));}
+if(document.readyState==='complete')ready();else{window.addEventListener('load',ready);setTimeout(ready,5000);}})();</script>
+<header class="site"></header>
+<main>
+<div class="wrap">
+  <div class="page-head">
+    <span class="eyebrow" data-i18n="job.eyebrow">Karriera</span>
+    <h1 data-i18n="job.h1">Punë në restorante</h1>
+    <p data-i18n="job.sub">Kjo faqe është kanal i drejtpërdrejtë aplikimi: ne nuk shpikim vende të lira. Zgjidh restorantin ku do të doje të punoje, kliko butonin dhe pyet direkt në WhatsApp-in e tyre nëse kanë nevojë për staf.</p>
+  </div>
+  <div class="job-filter">
+    <div>
+      <label for="jobCity" data-i18n="job.cityLbl">Filtro sipas qytetit</label>
+      <select id="jobCity"></select>
+    </div>
+    <p class="result-count" id="jobCount" style="margin:0"></p>
+  </div>
+  <div class="job-grid" id="jobGrid"></div>
+  <p class="hint" style="margin-top:1.2rem" data-i18n="job.hint">Këshillë: prezantohu shkurt, përmend përvojën tënde dhe pyet për një intervistë të shkurtër.</p>
+</div>
+</main>
+<footer class="site"></footer>
+<script src="js/data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+<script>
+TRY.renderChrome("pune.html");
+(function(){
+  "use strict";
+  const R = ((typeof RESTORANTET !== "undefined" && RESTORANTET) || window.RESTORANTET || []);
+  const sel = TRY.$("#jobCity");
+  sel.innerHTML = `<option value="">${TRY.esc(TRY.t("job.cityAll"))}</option>` +
+    TRY.QYTETET.map(q => `<option value="${TRY.esc(q)}">${TRY.esc(q)}</option>`).join("");
+
+  function jobCard(r){
+    const { r: rt, n } = TRY.liveRating(r.id);
+    const wa = TRY.waLink(r, TRY.t("job.msg", { rest: r.emer }));
+    const btn = wa
+      ? `<div class="apply"><a class="btn-wa2" href="${wa}" target="_blank" rel="noopener">💬 ${TRY.esc(TRY.t("job.apply"))}</a></div>`
+      : "";
+    return `<article class="job-card">
+      <a class="cover" href="restorant.html?id=${r.id}" aria-label="${TRY.esc(r.emer)}">${TRY.coverFor(r, 640, 400)}</a>
+      <div class="jbody">
+        <h3><a href="restorant.html?id=${r.id}">${TRY.esc(r.emer)}</a></h3>
+        <div class="meta">${TRY.stars(rt, n)}<span>· ${TRY.esc(r.qytet)}</span><span>· ${TRY.esc(r.lagje || "")}</span></div>
+        <div class="tags">${(r.kuzhina || []).slice(0, 3).map(k => `<span class="tag">${TRY.esc(k)}</span>`).join("")}</div>
+        ${btn}
+      </div>
+    </article>`;
+  }
+
+  function render(){
+    const city = sel.value;
+    const list = city ? R.filter(r => r.qytet === city) : R;
+    TRY.$("#jobGrid").innerHTML = list.map(jobCard).join("");
+    TRY.$("#jobCount").textContent =
+      list.length === 1 ? TRY.t("job.count1") : TRY.t("job.countN", { n: list.length });
+  }
+  sel.addEventListener("change", render);
+  render();
+})();
+</script>
+</body>
+</html>
