@@ -1,0 +1,55 @@
+<!-- Created by Erion Nezha — © 2026 All rights reserved -->
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRYEZA — Pa lidhje</title>
+<meta name="theme-color" content="#0e0f12">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TRYEZA">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0e0f12;color:#ece7dd;font-family:Georgia,'Times New Roman',serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center}
+  .box{max-width:420px}
+  svg{margin:0 auto 1.4rem;display:block}
+  h1{font-size:1.9rem;letter-spacing:.34em;padding-left:.34em;color:#ecd9b8;font-weight:700;margin-bottom:.8rem}
+  p{color:#a7a296;font-size:1rem;line-height:1.6;margin-bottom:1.8rem;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+  button{background:linear-gradient(135deg,#ecd9b8,#c5a880 55%,#a8895e);color:#191304;border:0;border-radius:999px;padding:.85rem 2rem;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(197,168,128,.28);font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+  button:active{transform:scale(.97)}
+</style>
+</head>
+<body>
+<div class="box">
+  <svg width="96" height="96" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+    <circle cx="20" cy="20" r="18.5" stroke="#c5a880" stroke-width="1.6"/>
+    <circle cx="20" cy="20" r="14.5" stroke="#c5a880" stroke-width="0.7" opacity="0.55"/>
+    <path d="M20 7 L24 20 L20 33 L16 20 Z" fill="#c5a880"/>
+    <path d="M7 20 L20 16 L33 20 L20 24 Z" fill="#c5a880" opacity="0.75"/>
+    <circle cx="20" cy="20" r="3" fill="#0e0f12" stroke="#ecd9b8" stroke-width="1"/>
+  </svg>
+  <h1>TRYEZA</h1>
+  <p id="msg">Nuk ka lidhje interneti për momentin.<br>Kontrollo rrjetin dhe provo sërish — tavolina jote të pret.</p>
+  <button id="retry" type="button">Provo sërish</button>
+</div>
+<script>
+  (function () {
+    try {
+      if (localStorage.getItem("tryeza.lang.v1") === "en") {
+        document.documentElement.lang = "en";
+        document.title = "TRYEZA — Offline";
+        document.getElementById("msg").innerHTML = "You appear to be offline.<br>Check your connection and try again — your table is waiting.";
+        document.getElementById("retry").textContent = "Try again";
+      }
+    } catch (e) {}
+    document.getElementById("retry").addEventListener("click", function () { location.reload(); });
+  })();
+</script>
+<script src="js/pwa.js" defer></script>
+</body>
+</html>

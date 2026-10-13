@@ -29,7 +29,14 @@
 #tryLoader .draw{animation:none;stroke-dashoffset:0}
 #tryLoader .steam,#tryLoader .ld-tag{animation:none;opacity:1}
 }
-</style></head>
+</style><link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0e0f12">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TRYEZA">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+</head>
 <body><div id="tryLoader" aria-hidden="true"><div class="ld-inner">
 <div class="ld-cloche"><svg viewBox="0 0 120 96" fill="none" aria-hidden="true">
 <path class="steam s1" d="M44 32 q5 -7 0 -14 q-5 -7 0 -13" stroke="#c5a880" stroke-width="1.6" stroke-linecap="round"/>
@@ -113,6 +120,7 @@ if(document.readyState==='complete')ready();else{window.addEventListener('load',
 <script src="js/data.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
+<script src="js/pwa.js" defer></script>
 <script>
 "use strict";
 TRY.renderChrome("rezervimet.html");
