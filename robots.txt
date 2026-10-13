@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://erionnezha.github.io/tryeza/sitemap.xml
