@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title data-i18n="pg.renditja">TRYEZA — Tabela e renditjes</title>
-<meta name="description" content="Tabela e renditjes e restoranteve partnere të TRYEZA-s — renditur sipas vlerësimit të mysafirëve, me sistem pikësh nga vlerësimet, të preferuarat dhe skanimet QR.">
+<meta name="description" content="Tabela e renditjes e restoranteve partnere të TRYEZA-s — renditur sipas vlerësimit të mysafirëve, me sistem pikësh nga vizitat, vlerësimet, të preferuarat dhe skanimet QR.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="css/style.css">
 <style>
@@ -77,6 +77,8 @@ if(document.readyState==='complete')ready();else{window.addEventListener('load',
         <th data-i18n="lb.thRest">Restoranti</th>
         <th class="col-city" data-i18n="lb.thCity">Qyteti</th>
         <th data-i18n="lb.thRating">Vlerësimi</th>
+        <th data-i18n="lb.thVisits">Vizita</th>
+        <th data-i18n="lb.thScans">Skanime QR</th>
         <th data-i18n="lb.thReviews">Vlerësime</th>
         <th data-i18n="lb.thPoints">Pikë</th>
       </tr></thead>
@@ -115,6 +117,8 @@ TRY.renderChrome("renditja.html");
       <td class="rn"><a href="restorant.html?id=${x.r.id}">${TRY.esc(x.r.emer)}</a></td>
       <td class="col-city" style="color:var(--muted)">${TRY.esc(x.r.qytet)}</td>
       <td>${TRY.stars(x.lr.r, 0)} <b>${x.lr.r ? x.lr.r.toFixed(1) : "—"}</b></td>
+      <td style="color:var(--muted)">${x.visits}</td>
+      <td style="color:var(--muted)">${x.scans}</td>
       <td style="color:var(--muted)">${x.lr.n}</td>
       <td class="pts">${x.pts}</td>
     </tr>`).join("");

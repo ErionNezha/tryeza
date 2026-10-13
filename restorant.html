@@ -111,6 +111,8 @@ if (rest && params.get("qr") === "1") {
   TRY.addScan(rest.id);
   setTimeout(() => TRY.toast(TRY.t("scan.toast")), 1100);
 }
+/* Vizitë: hapja e faqes së restorantit numërohet 1 herë për sesion (metrikë renditjeje) */
+if (rest) TRY.trackPage(rest.id);
 const main = document.getElementById("main");
 
 if (!rest) {
@@ -246,7 +248,7 @@ function buildPage() {
 
       <div class="tabpane" id="pane-det">
         <dl class="detail-list">
-          <div><dt>${TRY.t("det.addr")}</dt><dd>${TRY.esc(rest.adrese)}</dd></div>
+          <div><dt>${TRY.t("det.addr")}</dt><dd>${TRY.esc(rest.adrese)}<br><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rest.emer + " " + rest.adrese + " " + rest.qytet)}" target="_blank" rel="noopener" style="color:var(--gold)">📍 ${TRY.t("det.map")}</a></dd></div>
           ${(rest.telefon && digits) ? `<div><dt>${TRY.t("det.phone")}</dt><dd><a href="tel:+${digits}" style="color:var(--gold)">${TRY.esc(rest.telefon)}</a></dd></div>` : ""}
           <div><dt>${TRY.t("det.hours")}</dt><dd>${Object.entries(rest.orare).map(([d, o]) => `${TRY.esc(d)}: <b>${TRY.esc(o)}</b>`).join("<br>")}</dd></div>
           <div><dt>${TRY.t("det.cuisine")}</dt><dd>${rest.kuzhina.map(TRY.esc).join(", ")}</dd></div>

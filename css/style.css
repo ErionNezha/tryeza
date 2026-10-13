@@ -924,7 +924,7 @@ footer.site{margin-top:4rem}
 
 /* v5.1 — rregullime pas auditit: tabela e renditjes scroll-on në mobile, nav pa mbështjellje */
 .lb-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.lb-table{min-width:540px}
+.lb-table{min-width:700px}
 .nav-links a{white-space:nowrap}
 @media(max-width:1500px){
   .nav-links{gap:.8rem;font-size:.9rem;margin-left:.9rem}

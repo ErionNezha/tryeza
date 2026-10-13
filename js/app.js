@@ -10,6 +10,7 @@ const TRY = (() => {
     dashRest: "tryeza.dashrest.v1",
     newsletter: "tryeza.newsletter.v1",
     scans: "tryeza.scans.v1",
+    visits: "tryeza.visits.v1",
   };
   const QYTETET = ["Tiranë", "Korçë", "Durrës", "Shkodër"];
   const DITET = ["E diel","E hënë","E martë","E mërkurë","E enjte","E premte","E shtunë"];
@@ -148,13 +149,31 @@ const TRY = (() => {
     save(LS.favs, f); return f.includes(id);
   };
 
-  /* ---------- QR scans + pikët e restorantit ----------
+  /* ---------- vizitat e faqes + skanimet QR + pikët e restorantit ----------
      Pikët (formula e dokumentuar, shfaqet edhe te renditja.html):
        pikë = round(vlerësimi mesatar × 20)      — cilësia
             + numri total i vlerësimeve           — popullariteti (të dhëna publike)
             + 5 × vlerësime të reja nga mysafirët (të ruajtura në këtë pajisje)
             + 10 nëse restoranti është te të preferuarat e përdoruesit
-            + 3 × skanime QR të regjistruara në këtë pajisje (tryeza.scans.v1) */
+            + 3 × skanime QR të regjistruara në këtë pajisje (tryeza.scans.v1)
+            + 1 × vizita të faqes së restorantit në këtë pajisje (tryeza.visits.v1;
+              numërohet vetëm 1 vizitë për sesion për restorant — shih trackPage) */
+  const getVisits = () => load(LS.visits, {});
+  const visitCount = id => getVisits()[id] || 0;
+  /* trackPage(id): regjistron vizitën e faqes së restorantit — roje sesioni me
+     sessionStorage që refresh-i të mos e fryjë numëruesin. Kthen numrin aktual. */
+  function trackPage(id){
+    if(!id || !restById(id)) return 0;
+    try {
+      const key = "tryeza.seen." + id;
+      if(sessionStorage.getItem(key)) return visitCount(id);
+      sessionStorage.setItem(key, "1");
+    } catch(e){ /* sessionStorage i padisponueshëm: numëro vizitën gjithsesi */ }
+    const v = getVisits();
+    v[id] = (v[id] || 0) + 1;
+    save(LS.visits, v);
+    return v[id];
+  }
   const getScans = () => load(LS.scans, {});
   const scanCount = id => getScans()[id] || 0;
   const addScan = id => {
@@ -166,11 +185,11 @@ const TRY = (() => {
   const pointsFor = id => {
     const lr = liveRating(id);
     const userReviews = load(LS.reviews, []).filter(r => r.restId === id).length;
-    return Math.round(lr.r * 20) + lr.n + userReviews * 5 + (isFav(id) ? 10 : 0) + scanCount(id) * 3;
+    return Math.round(lr.r * 20) + lr.n + userReviews * 5 + (isFav(id) ? 10 : 0) + scanCount(id) * 3 + visitCount(id);
   };
   /* Renditja kryesore: vlerësimi zbritës; barazimet i zgjidhin pikët, pastaj nr. i vlerësimeve */
   const leaderboard = () => dataArr()
-    .map(r => ({ r, lr: liveRating(r.id), pts: pointsFor(r.id), scans: scanCount(r.id) }))
+    .map(r => ({ r, lr: liveRating(r.id), pts: pointsFor(r.id), scans: scanCount(r.id), visits: visitCount(r.id) }))
     .sort((a, b) => (b.lr.r - a.lr.r) || (b.pts - a.pts) || (b.lr.n - a.lr.n));
 
   /* ---------- "e hapur tani" nga orari i publikuar (orare) ---------- */
@@ -522,11 +541,9 @@ const TRY = (() => {
     });
   }
 
-  function trackPage(){ /* placeholder for analytics hook */ }
-
   return { LS, QYTETET, DITET, MUAJT, SLOTS, $, $$, esc, load, save, uid, todayStr, fmtDate,
     cmimTxt, genCode, toast, markSVG, coverSVG, coverFor, waLink, citySVG, stars, restById, getReviews,
-    liveRating, favs, isFav, toggleFav, getScans, scanCount, addScan, pointsFor, leaderboard, openNow,
+    liveRating, favs, isFav, toggleFav, getScans, scanCount, addScan, getVisits, visitCount, pointsFor, leaderboard, openNow,
     suitableTables, slotInfo, freeTablesList,
     bookings, createBooking, findBooking, updateBooking, renderChrome, cardHTML, bindFavs, trackPage,
     shareText, shareWhats, copyShare, menuDraft, menuTotal, menuLine, menuWaLine, MB_LS,

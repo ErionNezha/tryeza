@@ -74,6 +74,18 @@ if(document.readyState==='complete')ready();else{window.addEventListener('load',
       <label for="jobCity" data-i18n="job.cityLbl">Filtro sipas qytetit</label>
       <select id="jobCity"></select>
     </div>
+    <div>
+      <label for="jobQ" data-i18n="job.searchLbl">Kërko restorant</label>
+      <input type="search" id="jobQ" data-i18n-ph="job.searchPh" placeholder="Emri ose lagjja…" autocomplete="off">
+    </div>
+    <div>
+      <label for="jobSort" data-i18n="job.sortLbl">Rendit sipas</label>
+      <select id="jobSort">
+        <option value="rating" data-i18n="job.sortRating">Vlerësimi më i lartë</option>
+        <option value="name" data-i18n="job.sortName">Emri A–Z</option>
+        <option value="reviews" data-i18n="job.sortReviews">Më shumë vlerësime</option>
+      </select>
+    </div>
     <p class="result-count" id="jobCount" style="margin:0"></p>
   </div>
   <div class="job-grid" id="jobGrid"></div>
@@ -92,6 +104,10 @@ TRY.renderChrome("pune.html");
   const sel = TRY.$("#jobCity");
   sel.innerHTML = `<option value="">${TRY.esc(TRY.t("job.cityAll"))}</option>` +
     TRY.QYTETET.map(q => `<option value="${TRY.esc(q)}">${TRY.esc(q)}</option>`).join("");
+  const qInp = TRY.$("#jobQ");
+  const sortSel = TRY.$("#jobSort");
+  /* normalizim për kërkim: pa diakritikë (ë→e, ç→c), shkronja të vogla */
+  const norm = s => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
   function jobCard(r){
     const { r: rt, n } = TRY.liveRating(r.id);
@@ -112,12 +128,26 @@ TRY.renderChrome("pune.html");
 
   function render(){
     const city = sel.value;
-    const list = city ? R.filter(r => r.qytet === city) : R;
-    TRY.$("#jobGrid").innerHTML = list.map(jobCard).join("");
+    const q = norm(qInp.value.trim());
+    let list = R.filter(r =>
+      (!city || r.qytet === city) &&
+      (!q || norm(r.emer).includes(q) || norm(r.lagje).includes(q)));
+    const mode = sortSel.value;
+    list = [...list].sort((a, b) => {
+      if (mode === "name") return a.emer.localeCompare(b.emer, "sq");
+      const la = TRY.liveRating(a.id), lb2 = TRY.liveRating(b.id);
+      if (mode === "reviews") return (lb2.n - la.n) || ((lb2.r || 0) - (la.r || 0));
+      return ((lb2.r || 0) - (la.r || 0)) || (lb2.n - la.n); /* rating */
+    });
+    TRY.$("#jobGrid").innerHTML = list.length
+      ? list.map(jobCard).join("")
+      : `<p class="hint" style="grid-column:1/-1;text-align:center;padding:1.2rem 0">${TRY.esc(TRY.t("job.noResults"))}</p>`;
     TRY.$("#jobCount").textContent =
       list.length === 1 ? TRY.t("job.count1") : TRY.t("job.countN", { n: list.length });
   }
   sel.addEventListener("change", render);
+  qInp.addEventListener("input", render);
+  sortSel.addEventListener("change", render);
   render();
 })();
 </script>
