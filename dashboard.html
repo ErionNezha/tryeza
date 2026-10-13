@@ -127,7 +127,7 @@ const $ = TRY.$;
 const NAMES = ["Arben Hoxha","Mimoza Krasniqi","Gerti Leka","Anisa Basha","Petrit Gjoni","Jonida Marku",
   "Erion Dervishi","Klevisa Rama","Sokol Berisha","Mirela Kola","Dritan Shehu","Alma Prifti",
   "Blerina Meta","Fatos Kola","Jonida Aliu","Pëllumb Deda"];
-const STATUS_TXT = { "aktive": TRY.t("db.stActive"), "anuluar": TRY.t("db.stCancelled"), "no-show": TRY.t("db.stNoshow") };
+const STATUS_TXT = { "aktive": TRY.t("db.stActive"), "anuluar": TRY.t("db.stCancelled"), "no-show": TRY.t("db.stsNoshow") };
 const STATUS_CLS = { "aktive": "st-ok", "anuluar": "st-cancel", "no-show": "st-noshow" };
 
 function phash(s){ let h = 2166136261; for(let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }

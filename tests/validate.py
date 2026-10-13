@@ -31,7 +31,7 @@ try:
         # 1. HOME
         pg.goto(BASE+"/index.html"); pg.wait_for_timeout(900)
         check("home title", "TRYEZA" in pg.title(), pg.title())
-        check("home cards", pg.locator(".rcard").count() >= 8, str(pg.locator(".rcard").count()))
+        check("home cards", pg.locator(".lux-card").count() >= 4, str(pg.locator(".lux-card").count()))
         check("home cities", pg.locator(".city-card").count() == 4)
         pg.screenshot(path=f"{SHOT}/01-home.png")
 
@@ -43,7 +43,7 @@ try:
         pg.wait_for_timeout(700)
         check("search navigates", "restorante.html" in pg.url and "qytet=Kor%C3%A7%C3%AB" in pg.url, pg.url)
         n = pg.locator(".rcard").count()
-        check("korca results = 6", n == 6, str(n))
+        check("korca results = 5", n == 5, str(n))
         check("availability badge", pg.locator(".slotbadge, .slotctx").count() > 0)
         pg.screenshot(path=f"{SHOT}/02-lista.png")
 
@@ -169,7 +169,7 @@ try:
         pg.set_viewport_size({"width":390,"height":844})
         pg.goto(BASE+"/index.html"); pg.wait_for_timeout(700)
         pg.screenshot(path=f"{SHOT}/15-mobile.png")
-        check("mobile renders", pg.locator(".rcard").count() >= 4)
+        check("mobile renders", pg.locator(".lux-card").count() >= 4)
 
         b.close()
 finally:

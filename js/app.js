@@ -206,16 +206,21 @@ const TRY = (() => {
   }
   function openNow(rest, now = new Date()){
     if(!rest || !rest.orare) return false;
-    const dow = now.getDay(), mins = now.getHours() * 60 + now.getMinutes();
-    for(const [days, ranges] of Object.entries(rest.orare)){
-      if(!dayInRange(days, dow)) continue;
-      for(const part of String(ranges).split(",")){
-        const m = part.trim().match(/^(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})$/);
-        if(!m) continue;
-        const o = (+m[1]) * 60 + (+m[2]);
-        let c = (+m[3]) * 60 + (+m[4]);
-        if(c <= o) c += 1440; // mbyllje pas mesnate
-        if((mins >= o && mins < c) || (mins + 1440 >= o && mins + 1440 < c)) return true;
+    const mins = now.getHours() * 60 + now.getMinutes();
+    /* off=0: turnet e sotme; off=-1: turni i djeshëm që mbyllet pas mesnate (derdhja) */
+    for(const off of [0, -1]){
+      const dow = (now.getDay() + off + 7) % 7;
+      for(const [days, ranges] of Object.entries(rest.orare)){
+        if(!dayInRange(days, dow)) continue;
+        for(const part of String(ranges).split(/[,\/]/)){ // ndarësit: "," ose "/"
+          const m = part.trim().match(/^(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})$/);
+          if(!m) continue;
+          const o = (+m[1]) * 60 + (+m[2]);
+          let c = (+m[3]) * 60 + (+m[4]);
+          if(c <= o) c += 1440; // mbyllje pas mesnate
+          if(off === 0){ if(mins >= o && mins < c) return true; }
+          else if(c > 1440 && mins < c - 1440) return true;
+        }
       }
     }
     return false;
@@ -482,22 +487,8 @@ const TRY = (() => {
       });
     }, {threshold:.4}) : null;
     document.querySelectorAll("[data-count]").forEach(el => { if(cio) cio.observe(el); else el.textContent = el.dataset.count; });
-    /* hero parallax */
-    const heroInner = document.querySelector(".hero-inner"), heroMedia = document.querySelector(".hero-media");
-    if((heroInner||heroMedia) && !reduced){
-      let ticking = false;
-      window.addEventListener("scroll", () => {
-        if(ticking) return; ticking = true;
-        requestAnimationFrame(() => {
-          const y = window.scrollY;
-          if(y < window.innerHeight*1.2){
-            if(heroInner) heroInner.style.transform = `translateY(${y*.22}px)`;
-            if(heroMedia) heroMedia.style.transform = `translateY(${y*.1}px)`;
-          }
-          ticking = false;
-        });
-      }, {passive:true});
-    }
+    /* hero parallax: e bën loop-i i grimcave të arta në index.html (rAF, me pauzë
+       kur hero s'duket) — këtu NUK dublohet, që dy shkrues të mos luftojnë për transform */
     /* gold cursor follower (fine pointers only) */
     if(window.matchMedia && matchMedia("(pointer:fine)").matches && !reduced){
       const dot = document.createElement("div"); dot.className = "cursor-dot"; dot.setAttribute("aria-hidden","true");
