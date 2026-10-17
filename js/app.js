@@ -36,6 +36,8 @@ const TRY = (() => {
     const D = en?DITET_EN:DITET, M = en?MUAJT_EN:MUAJT;
     return `${D[dt.getDay()]}, ${d} ${M[m-1]} ${y}`; };
   const cmimTxt = n => "€".repeat(n);
+  /* grupim mijëshesh sipas zakonit shqiptar: 2078 -> "2.078" */
+  const fmtNum = n => String(Math.round(+n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   const genCode = () => "TRZ-" + Array.from({length:6},()=>"ABCDEFGHJKMNPQRSTUVWXYZ23456789"[Math.floor(Math.random()*31)]).join("");
 
   /* ---------- toast ---------- */
@@ -98,14 +100,14 @@ const TRY = (() => {
   function stars(r, n=0){
     if(r==null || !(r>0)){
       return `<span class="stars" title="${T("card.noRating")}"><span class="off">★★★★★</span></span>` +
-        (n?` <span style="color:var(--muted2);font-size:.82rem">(${n})</span>`:`<span style="color:var(--muted2);font-size:.82rem"> · ${T("card.noRating")}</span>`);
+        (n?` <span style="color:var(--muted2);font-size:.82rem">(${fmtNum(n)})</span>`:`<span style="color:var(--muted2);font-size:.82rem"> · ${T("card.noRating")}</span>`);
     }
     const full = Math.round(r*2)/2;
     let s = "";
     for(let i=1;i<=5;i++){
       s += i<=Math.floor(full) ? "★" : (i-0.5===full ? "⯪" : `<span class="off">★</span>`);
     }
-    return `<span class="stars" title="${r.toFixed(1)} / 5">${s}</span>` + (n?` <span style="color:var(--muted2);font-size:.82rem">(${n})</span>`:"");
+    return `<span class="stars" title="${r.toFixed(1)} / 5">${s}</span>` + (n?` <span style="color:var(--muted2);font-size:.82rem">(${fmtNum(n)})</span>`:"");
   }
 
   /* ---------- cover: foto reale nëse ka, ndryshe art gjenerativ ---------- */
@@ -187,10 +189,10 @@ const TRY = (() => {
     const userReviews = load(LS.reviews, []).filter(r => r.restId === id).length;
     return Math.round(lr.r * 20) + lr.n + userReviews * 5 + (isFav(id) ? 10 : 0) + scanCount(id) * 3 + visitCount(id);
   };
-  /* Renditja kryesore: vlerësimi zbritës; barazimet i zgjidhin pikët, pastaj nr. i vlerësimeve */
+  /* Renditja kryesore: pikët zbritëse (pikët përfshijnë vlerësimin + nr. e vlerësimeve + aktivitetin lokal); barazimet i zgjidh vlerësimi, pastaj nr. i vlerësimeve */
   const leaderboard = () => dataArr()
     .map(r => ({ r, lr: liveRating(r.id), pts: pointsFor(r.id), scans: scanCount(r.id), visits: visitCount(r.id) }))
-    .sort((a, b) => (b.lr.r - a.lr.r) || (b.pts - a.pts) || (b.lr.n - a.lr.n));
+    .sort((a, b) => (b.pts - a.pts) || (b.lr.r - a.lr.r) || (b.lr.n - a.lr.n));
 
   /* ---------- "e hapur tani" nga orari i publikuar (orare) ---------- */
   const DAY_NAMES = ["e diel","e hënë","e martë","e mërkurë","e enjte","e premte","e shtunë"];
@@ -521,7 +523,7 @@ const TRY = (() => {
       <a class="cover" href="restorant.html?id=${r.id}" aria-label="${esc(r.emer)}">${coverFor(r)}</a>
       <div class="body">
         <h3><a href="restorant.html?id=${r.id}">${esc(r.emer)}</a></h3>
-        <div class="meta">${stars(rt,n)}<span class="price">${cmimTxt(r.cmim)}</span><span>· ${esc(r.lagje)}</span></div>
+        <div class="meta">${stars(rt,n)}<span class="price">${cmimTxt(r.cmim)}</span>${r.lagje ? `<span>· ${esc(r.lagje)}</span>` : ""}</div>
         <div class="tags">${(r.kuzhina||[]).slice(0,3).map(k=>`<span class="tag">${esc(k)}</span>`).join("")}</div>
         <div style="margin-top:auto;padding-top:.6rem"><a class="btn btn-ghost btn-sm" style="width:100%" href="restorant.html?id=${r.id}#rezervo">${T("card.find")}</a></div>
       </div></article>`;
@@ -533,7 +535,7 @@ const TRY = (() => {
   }
 
   return { LS, QYTETET, DITET, MUAJT, SLOTS, $, $$, esc, load, save, uid, todayStr, fmtDate,
-    cmimTxt, genCode, toast, markSVG, coverSVG, coverFor, waLink, citySVG, stars, restById, getReviews,
+    cmimTxt, fmtNum, genCode, toast, markSVG, coverSVG, coverFor, waLink, citySVG, stars, restById, getReviews,
     liveRating, favs, isFav, toggleFav, getScans, scanCount, addScan, getVisits, visitCount, pointsFor, leaderboard, openNow,
     suitableTables, slotInfo, freeTablesList,
     bookings, createBooking, findBooking, updateBooking, renderChrome, cardHTML, bindFavs, trackPage,

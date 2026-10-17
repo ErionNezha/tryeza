@@ -2,7 +2,7 @@
 /* TRYEZA — Service Worker: offline-first shell, network-first pages. */
 "use strict";
 
-var CACHE = "tryeza-v1";
+var CACHE = "tryeza-v2";
 var SCOPE_URL = self.registration.scope; // p.sh. https://erionnezha.github.io/tryeza/
 var U = function (p) { return new URL(p, SCOPE_URL).toString(); };
 

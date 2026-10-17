@@ -61,8 +61,8 @@ with sync_playwright() as p:
         sw_ok = False
     check("SW regjistrohet + kontrollon faqen", sw_ok)
     keys = pg.evaluate("caches.keys()")
-    check("cache tryeza-v1 ekziston", "tryeza-v1" in keys, str(keys))
-    n_shell = pg.evaluate("caches.open('tryeza-v1').then(c => c.keys()).then(k => k.length)")
+    check("cache tryeza-v2 ekziston", "tryeza-v2" in keys, str(keys))
+    n_shell = pg.evaluate("caches.open('tryeza-v2').then(c => c.keys()).then(k => k.length)")
     check("shell i pre-cache-uar >= 10 hyrje", n_shell >= 10, str(n_shell))
     check("index pa gabime console (SW aktiv)", not errs, "; ".join(errs[:3]))
     pg.goto(BASE + "/restorante.html")  # vizitë e dytë (për offline)

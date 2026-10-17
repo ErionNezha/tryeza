@@ -6,6 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Restoranti — TRYEZA</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 8 L24 20 L20 32 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/CormorantGaramond-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css">
 <style>
 .dish-mini-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.8rem;margin-top:1rem}
@@ -100,6 +102,7 @@ function tick(now){var p=Math.min(1,(now-t0)/DUR),e=1-Math.pow(1-p,3);
 if(fill)fill.style.width=Math.round(e*100)+'%';if(p<1)requestAnimationFrame(tick);}
 requestAnimationFrame(tick);
 var exited=false,t0b=Date.now(),MINT=1400;
+try{if(sessionStorage.getItem('tryeza.seenLoader')){MINT=250;}else{sessionStorage.setItem('tryeza.seenLoader','1');}}catch(e){}
 function exit(){if(exited)return;exited=true;el.classList.add('done');setTimeout(kill,750);}
 function ready(){setTimeout(exit,Math.max(0,MINT-(Date.now()-t0b)));}
 if(document.readyState==='complete')ready();else{window.addEventListener('load',ready);setTimeout(ready,5000);}})();</script>
@@ -312,10 +315,10 @@ function buildPage() {
       </div>
 
       <div class="tabpane" id="pane-pjata">
-        <div class="dish-mini-grid">
-          ${rest.menu.slice(0, 4).map(m =>
-            `<div class="dish-mini"><b>${TRY.esc(m.emer)}</b><span>${m.cmim ? m.cmim + " L" : TRY.t("det.priceNA")} · ${TRY.esc(m.kategori)}</span></div>`).join("")}
-        </div>
+        ${(rest.menu && rest.menu.length)
+          ? `<div class="dish-mini-grid">${rest.menu.slice(0, 4).map(m =>
+            `<div class="dish-mini"><b>${TRY.esc(m.emer)}</b><span>${m.cmim ? m.cmim + " L" : TRY.t("det.priceNA")} · ${TRY.esc(m.kategori)}</span></div>`).join("")}</div>`
+          : `<p class="hint">${TRY.t("det.fullMenuNote")}</p>`}
       </div>
 
       <div class="tabpane" id="pane-menu">${menuHTML}</div>
@@ -328,6 +331,7 @@ function buildPage() {
       </div>
 
       <div class="tabpane" id="pane-vler">
+        <div id="revSummary"></div>
         <div id="revList"></div>
         <div class="divider"></div>
         <h3 style="margin-bottom:1rem">${TRY.t("det.writeReview")}</h3>
@@ -344,14 +348,14 @@ function buildPage() {
         <dl class="detail-list">
           <div><dt>${TRY.t("det.addr")}</dt><dd>${TRY.esc(rest.adrese)}<br><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rest.emer + " " + rest.adrese + " " + rest.qytet)}" target="_blank" rel="noopener" style="color:var(--gold)">📍 ${TRY.t("det.map")}</a></dd></div>
           ${(rest.telefon && digits) ? `<div><dt>${TRY.t("det.phone")}</dt><dd><a href="tel:+${digits}" style="color:var(--gold)">${TRY.esc(rest.telefon)}</a></dd></div>` : ""}
-          <div><dt>${TRY.t("det.hours")}</dt><dd>${Object.entries(rest.orare).map(([d, o]) => `${TRY.esc(d)}: <b>${TRY.esc(o)}</b>`).join("<br>")}</dd></div>
+          ${(rest.orare && Object.keys(rest.orare).length) ? `<div><dt>${TRY.t("det.hours")}</dt><dd>${Object.entries(rest.orare).map(([d, o]) => `${TRY.esc(d)}: <b>${TRY.esc(o)}</b>`).join("<br>")}</dd></div>` : ""}
           <div><dt>${TRY.t("det.cuisine")}</dt><dd>${rest.kuzhina.map(TRY.esc).join(", ")}</dd></div>
           ${rest.stil ? `<div><dt>${TRY.t("det.style")}</dt><dd>${TRY.esc(rest.stil)}</dd></div>` : ""}
           ${rest.dressCode ? `<div><dt>${TRY.t("det.dress")}</dt><dd>${TRY.esc(rest.dressCode)}</dd></div>` : ""}
           ${rest.parking ? `<div><dt>${TRY.t("det.parking")}</dt><dd>${TRY.esc(rest.parking)}</dd></div>` : ""}
           ${(rest.pagesa && rest.pagesa.length) ? `<div><dt>${TRY.t("det.payment")}</dt><dd>${rest.pagesa.map(TRY.esc).join(", ")}</dd></div>` : ""}
           ${rest.maxPersona ? `<div><dt>${TRY.t("det.maxP")}</dt><dd>${TRY.t("det.maxPTxt",{n:rest.maxPersona})}</dd></div>` : ""}
-          ${rest.ratingBurim ? `<div><dt>${TRY.t("det.ratingSrc")}</dt><dd>${TRY.t("det.ratingSrc")} ${TRY.esc(rest.ratingBurim)}</dd></div>` : ""}
+          ${rest.ratingBurim ? `<div><dt>${TRY.t("det.ratingSrc")}</dt><dd>${TRY.esc(rest.ratingBurim)}</dd></div>` : ""}
         </dl>
       </div>
 
@@ -407,6 +411,12 @@ function buildPage() {
 
   function renderReviews() {
     const list = TRY.getReviews(rest.id);
+    const sumEl = document.getElementById("revSummary");
+    if (sumEl) {
+      sumEl.innerHTML = (rest.rating != null && rest.nrVleresime && rest.ratingBurim)
+        ? `<div class="rev-summary">${TRY.stars(rest.rating)}<p>${TRY.esc(TRY.t("det.revSummary", { r: rest.rating.toFixed(1).replace(".", ","), n: TRY.fmtNum(rest.nrVleresime), src: rest.ratingBurim }))}</p></div>`
+        : "";
+    }
     document.getElementById("revList").innerHTML = list.length ? list.map(v => `
       <div class="review">
         <div class="who"><b>${TRY.esc(v.emer)}</b><span class="when">${TRY.fmtDate(v.data)}</span></div>
@@ -466,11 +476,11 @@ function buildPage() {
       </div>
 
       <div class="bk-step"><span class="lbl">${TRY.t("bk.s2")}</span>
-        <input type="date" id="bkDate" min="${TRY.todayStr()}" max="${TRY.todayStr(60)}" value="${S.date}">
+        <input type="date" id="bkDate" aria-label="${TRY.t("bk.s2")}" min="${TRY.todayStr()}" max="${TRY.todayStr(60)}" value="${S.date}">
       </div>
 
       <div class="bk-step"><span class="lbl">${TRY.t("bk.s3")}</span>
-        <select id="bkTimeSel" style="margin-bottom:.6rem">
+        <select id="bkTimeSel" aria-label="${TRY.t("bk.s3")}" style="margin-bottom:.6rem">
           <option value="">${TRY.t("bk.s3sel")}</option>
           ${TRY.SLOTS.map(s => `<option value="${s}">${s}</option>`).join("")}
         </select>
@@ -612,9 +622,10 @@ function buildPage() {
     const ppl = S.persona === 1 ? TRY.t("bk.sumPerson") : TRY.t("bk.sumPersons");
     const md = menuDraftForRest();
     const menuHtml = md ? `<br/><span class="mb-sum-line">${TRY.esc(TRY.menuLine({menu: md}))}</span>` : "";
-    document.getElementById("bkSummary").innerHTML =
-      `<b>${S.persona}</b> ${ppl} · ${TRY.fmtDate(S.date)} · ` +
-      `<b>${S.time || "—"}</b> · ${TRY.esc(zonaEmer())} · <b>${TRY.esc(tbl)}</b>${menuHtml}`;
+    const parts = [`<b>${S.persona}</b> ${ppl}`, TRY.fmtDate(S.date)];
+    if (S.time) parts.push(`<b>${S.time}</b>`);
+    parts.push(TRY.esc(zonaEmer()), `<b>${TRY.esc(tbl)}</b>`);
+    document.getElementById("bkSummary").innerHTML = parts.join(" · ") + menuHtml;
   }
 
   const validTel = tel => {

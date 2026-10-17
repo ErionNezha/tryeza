@@ -1433,7 +1433,7 @@ var RESTORANTET = [
    "E Shtunë": "12:00 - 22:00",
    "E Diel": "12:00 - 17:00"
   },
-  "telefon": "+355 69 20 92 785",
+  "telefon": "+355 69 209 2785",
   "telefonBurim": "faqja zyrtare",
   "adrese": "Rruga Stef Kaculini, 2001, Durrës",
   "stil": "",
@@ -1574,7 +1574,7 @@ var RESTORANTET = [
   "orare": {
    "E Hënë - E Diel": "08:00 - 23:00"
   },
-  "telefon": "+355 69 20 71 569",
+  "telefon": "+355 69 207 1569",
   "telefonBurim": "faqja zyrtare",
   "adrese": "Rruga Taulantia 1, Durrës 2001",
   "stil": "",
@@ -1705,7 +1705,7 @@ var RESTORANTET = [
   "orare": {
    "E Hënë - E Diel": "11:00 - 24:00"
   },
-  "telefon": "+355676084889",
+  "telefon": "+355 67 608 4889",
   "telefonBurim": "faqja zyrtare",
   "adrese": "Rruga Taulantia, Durrës",
   "stil": "",
@@ -1832,7 +1832,7 @@ var RESTORANTET = [
   "orare": {
    "E Hënë - E Diel": "12:00 - 23:00"
   },
-  "telefon": "+355673000700",
+  "telefon": "+355 67 300 0700",
   "telefonBurim": "faqja zyrtare",
   "adrese": "Rruga Taulantia, Durrës 2001",
   "stil": "",
@@ -2165,7 +2165,7 @@ var RESTORANTET = [
   "ratingBurim": "",
   "pershkrim": "Restorant i vendosur brenda Hotel Tradita, në një ndërtesë historike osmane nga viti 1694. Salla e madhe me mure guri dhe skarë të hapur shërben gatime tradicionale të veriut, mes mobiljesh antike dhe sendesh muzeale. Çdo javë organizohen mbrëmje me muzikë live tradicionale.",
   "orare": {},
-  "telefon": "+355684842219",
+  "telefon": "+355 68 484 2219",
   "telefonBurim": "karta Google (faqja zyrtare traditagt.com)",
   "adrese": "Rruga Edith Durham 25, Shkodër",
   "stil": "",
@@ -2276,7 +2276,7 @@ var RESTORANTET = [
   "orare": {
    "E Hënë - E Diel": "08:00 - 22:00"
   },
-  "telefon": "+355686015026",
+  "telefon": "+355 68 601 5026",
   "telefonBurim": "faqja zyrtare rozafa.al",
   "adrese": "Rruga Marin Bicikemi, Shkodër 4001",
   "stil": "",
@@ -2407,7 +2407,7 @@ var RESTORANTET = [
   "orare": {
    "E Hënë - E Diel": "07:00 - 23:00"
   },
-  "telefon": "+355693924624",
+  "telefon": "+355 69 392 4624",
   "telefonBurim": "faqja zyrtare arkapi.al",
   "adrese": "Rruga Vilson, Shkodër",
   "stil": "",
@@ -2548,7 +2548,7 @@ var RESTORANTET = [
   "orare": {
    "E Hënë - E Diel": "11:00 - 23:00"
   },
-  "telefon": "+355693634258",
+  "telefon": "+355 69 363 4258",
   "telefonBurim": "faqja zyrtare fisirestaurant.com",
   "adrese": "Bulevardi Skënderbeu, Shkodër 4001",
   "stil": "",
@@ -2699,7 +2699,7 @@ var RESTORANTET = [
    "E Martë": "08:00 - 16:00 / 19:00 - 23:00",
    "E Mërkurë - E Diel": "08:00 - 23:00"
   },
-  "telefon": "+35522240799",
+  "telefon": "+355 22 240 799",
   "telefonBurim": "karta Google",
   "adrese": "Rruga Hasan Riza Pasha 33, Shkodër 4001",
   "stil": "",

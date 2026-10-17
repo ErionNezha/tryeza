@@ -7,6 +7,8 @@
 <title data-i18n="pg.sherbime">TRYEZA — Shërbime për restorante</title>
 <meta name="description" content="Shërbime profesionale për restorante: Promovim Premium dhe Prani Dixhitale — website, logo dhe rrjete sociale për restorantin tënd.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18' fill='%23070b16' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M20 9 L24 20 L20 31 L16 20 Z' fill='%23d4af37'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/CormorantGaramond-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css">
 <style>
 #tryLoader{position:fixed;inset:0;z-index:2000;background:#0e0f12;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s}
@@ -81,6 +83,7 @@ function tick(now){var p=Math.min(1,(now-t0)/DUR),e=1-Math.pow(1-p,3);
 if(fill)fill.style.width=Math.round(e*100)+'%';if(p<1)requestAnimationFrame(tick);}
 requestAnimationFrame(tick);
 var exited=false,t0b=Date.now(),MINT=1400;
+try{if(sessionStorage.getItem('tryeza.seenLoader')){MINT=250;}else{sessionStorage.setItem('tryeza.seenLoader','1');}}catch(e){}
 function exit(){if(exited)return;exited=true;el.classList.add('done');setTimeout(kill,750);}
 function ready(){setTimeout(exit,Math.max(0,MINT-(Date.now()-t0b)));}
 if(document.readyState==='complete')ready();else{window.addEventListener('load',ready);setTimeout(ready,5000);}})();</script>
@@ -96,7 +99,7 @@ if(document.readyState==='complete')ready();else{window.addEventListener('load',
     <article class="pkg-card hot">
       <span class="pkg-badge" data-i18n="svc.popular">Më e kërkuara</span>
       <h3 data-i18n="svc.p1t">Promovim Premium</h3>
-      <div class="pkg-price">10 € <small data-i18n="svc.p1per">për 7 ditë</small></div>
+      <div class="pkg-price"><span class="num">10 €</span> <small data-i18n="svc.p1per">për 7 ditë</small></div>
       <ul class="pkg-list">
         <li data-i18n="svc.p1f1">Restoranti yt shfaqet në krye të listës për shtatë ditë rresht</li>
         <li data-i18n="svc.p1f2">Promovim i dedikuar në kanalet tona sociale</li>
